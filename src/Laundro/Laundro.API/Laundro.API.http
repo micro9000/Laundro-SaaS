@@ -1,0 +1,6 @@
+@Laundro.API_HostAddress = http://localhost:5251
+
+GET {{Laundro.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

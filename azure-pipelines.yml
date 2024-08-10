@@ -1,0 +1,180 @@
+# Temporary disable the pipelien
+trigger: none
+
+pool:
+  vmImage: "ubuntu-22.04"
+
+variables:
+  - template: build/variables-template.yml
+  - name: ServiceConnection
+    value: "Pay-As-You-Go"
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Version
+        steps:
+          - checkout: none
+          - task: UseDotNet@2
+            displayName: "dotnet: Use .NET SDK 8.x"
+            inputs:
+              version: 8.x
+              packageType: sdk
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "18.x"
+
+      - job: BuildWebApi
+        displayName: Build Web Api
+        dependsOn: Version
+
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: "dotnet: Restore"
+            inputs:
+              command: restore
+              projects: "**/$(WEB_API_DIR)/$(WEB_API_CSPROJ)"
+
+          - task: DotNetCoreCLI@2
+            displayName: "dotnet: Publish"
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: "**/$(WEB_API_DIR)/$(WEB_API_CSPROJ)"
+              arguments: "-o $(Build.ArtifactStagingDirectory) -c $(DOTNET_BUILD_CONFIGURATION) --no-restore"
+              zipAfterPublish: false
+
+          - task: ArchiveFiles@2
+            displayName: "Archive: Api"
+            inputs:
+              rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/$(WEB_API_PROJ_NAME)"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: "$(WEB_API_ARCHIVE_FILE_PATH)"
+              replaceExistingArchive: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish API Artifacts"
+            inputs:
+              PathtoPublish: "$(WEB_API_ARCHIVE_FILE_PATH)"
+
+      - job: BuildWeb
+        displayName: Build Web App
+        dependsOn: Version
+
+        steps:
+          - script: npm --version
+            displayName: "Npm Version"
+
+          - task: Bash@3
+            displayName: "Dump environment variables and list files"
+            inputs:
+              targetType: inline
+              script: |
+                printenv
+                ls -la
+
+          - script: npm install
+            displayName: "Install Web Packages"
+            workingDirectory: $(WEB_APP_DIR)
+
+          - script: npm run build
+            displayName: "Npm Build"
+            workingDirectory: $(WEB_APP_DIR)
+
+          - script: |
+              ls
+              cd $(WEB_APP_DIR)
+              ls
+            displayName: "Show Web files"
+
+          - task: CopyFiles@2
+            displayName: "Copy Required NextJs files"
+            inputs:
+              SourceFolder: "$(WEB_APP_DIR)/.next"
+              Contents: "**/*"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
+              cleanTargetFolder: true
+
+          - task: ArchiveFiles@2
+            displayName: "Archive: Web"
+            inputs:
+              rootFolderOrFile: "$(Build.ArtifactStagingDirectory)"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(WEB_APP_ARCHIVE_FILE_PATH)
+              replaceExistingArchive: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish WEB Artifacts"
+            inputs:
+              PathtoPublish: $(WEB_APP_ARCHIVE_FILE_PATH)
+
+      - job: BuildIaC
+        displayName: "Archive IaC files"
+        dependsOn: Version
+
+        steps:
+          - task: CopyFiles@2
+            displayName: "Copy IaC files"
+            inputs:
+              SourceFolder: "$(INFRA_DIR)"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
+              Contents: "**/*"
+              CleanTargetFolder: true
+
+          - task: ArchiveFiles@2
+            displayName: "Archive Terraform files"
+            inputs:
+              rootFolderOrFile: "$(Build.ArtifactStagingDirectory)"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(IaC_ARCHIVE_FILE_PATH)
+              replaceExistingArchive: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish Terraform Artifacts"
+            inputs:
+              PathtoPublish: $(IaC_ARCHIVE_FILE_PATH)
+
+# ******************  Development Environment *************************
+
+  - stage: ProvisionTFBackendStorageDevEnv
+    displayName: "Provision Terraform Backend Storage"
+    dependsOn: [Build]
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+    variables:
+      - template: build/development-variables.yml
+    jobs:
+      - template: build/tf-state-backend-storage-template.yml
+        parameters:
+          TF_RESOURCE_GROUP: $(TF_RESOURCE_GROUP)
+          TF_RESOURCE_GROUP_LOCATION: $(TF_RESOURCE_GROUP_LOCATION)
+          TF_REMOTE_BACKEND_STORAGE: $(TF_REMOTE_BACKEND_STORAGE)
+          TF_REMOTE_BACKEND_STORAGE_SKU: $(TF_REMOTE_BACKEND_STORAGE_SKU)
+          TF_CONTAINER_NAME: $(TF_CONTAINER_NAME)
+
+  - stage: Development
+    displayName: 'Development Env'
+    dependsOn: [Build, ProvisionTFBackendStorageDevEnv]
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+    variables:
+      - template: build/development-variables.yml
+    jobs:
+      - template: azure-pipelines-deploy.yml
+        parameters:
+          TF_RESOURCE_GROUP: $(TF_RESOURCE_GROUP)
+          TF_RESOURCE_GROUP_LOCATION: $(TF_RESOURCE_GROUP_LOCATION)
+          TF_REMOTE_BACKEND_STORAGE: $(TF_REMOTE_BACKEND_STORAGE)
+          TF_CONTAINER_NAME: $(TF_CONTAINER_NAME)
+          TF_VERSION: $(TF_VERSION)
+          WEB_API_DROP_DIR: $(WEB_API_DROP_DIR)
+          WEB_APP_DROP_DIR: $(WEB_APP_DROP_DIR)
+          IaC_DROP_DIR: $(IaC_DROP_DIR)
+          WEB_API_ARCHIVE_FILE_NAME: $(WEB_API_ARCHIVE_FILE_NAME)
+          WEB_APP_ARCHIVE_FILE_NAME: $(WEB_APP_ARCHIVE_FILE_NAME)
+          IaC_ARCHIVE_FILE_NAME: $(IaC_ARCHIVE_FILE_NAME)
+
+# ******************  Other Environment *************************

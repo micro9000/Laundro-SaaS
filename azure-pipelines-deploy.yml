@@ -1,0 +1,114 @@
+      
+parameters:
+- name: TF_RESOURCE_GROUP
+  type: string
+- name: TF_RESOURCE_GROUP_LOCATION
+  type: string
+- name: TF_REMOTE_BACKEND_STORAGE
+  type: string
+- name: TF_CONTAINER_NAME
+  type: string
+- name: TF_VERSION
+  type: string
+- name: WEB_API_DROP_DIR
+  type: string
+- name: WEB_APP_DROP_DIR
+  type: string
+- name: IaC_DROP_DIR
+  type: string
+- name: WEB_API_ARCHIVE_FILE_NAME
+  type: string
+- name: WEB_APP_ARCHIVE_FILE_NAME
+  type: string
+- name: IaC_ARCHIVE_FILE_NAME
+  type: string
+
+jobs:
+  - deployment: DeployInfrastructure
+    displayName: Deploy Infrastructure
+    environment:
+      name: Development
+    variables:
+      - group: ARM_CREDENTIALS
+      - name: ServiceConnection
+        value: "Pay-As-You-Go"
+    strategy:
+      runOnce:
+        preDeploy:
+          steps:
+            - download: current
+              artifact: drop
+            - script: ls -la
+
+        deploy:
+          steps:
+            # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/extract-files-v1?view=azure-pipelines
+            - task: ExtractFiles@1
+              displayName: "Extract Infra Files"
+              inputs:
+                archiveFilePatterns: "$(Pipeline.Workspace)/drop/${{ parameters.IaC_ARCHIVE_FILE_NAME }}"
+                cleanDestinationFolder: true
+                overwriteExistingFiles: false
+                destinationFolder: "$(Pipeline.Workspace)/${{ parameters.IaC_DROP_DIR }}"
+
+            - task: Bash@3
+              displayName: "Dump environment variables and list files"
+              inputs:
+                workingDirectory: "$(Pipeline.Workspace)/${{ parameters.IaC_DROP_DIR }}"
+                targetType: inline
+                script: |
+                  printenv
+                  ls -la
+
+            - task: TerraformInstaller@1
+              displayName: Install Terraform
+              inputs:
+                terraformVersion: ${{ parameters.TF_VERSION }}
+
+            - task: AzureCLI@2
+              displayName: "Get TF State Storage Access Key"
+              inputs:
+                azureSubscription: $(ServiceConnection)
+                scriptType: bash
+                scriptLocation: inlineScript
+                useGlobalConfig: false
+                inlineScript: |
+                  tfStateStorageKey=$(az storage account keys list -g ${{ parameters.TF_RESOURCE_GROUP }} -n ${{ parameters.TF_REMOTE_BACKEND_STORAGE }} --query [0].value -o tsv)
+                  echo "##vso[task.setvariable variable=TF_STATE_STORAGE_ACCESS_KEY;issecret=true]$tfStateStorageKey"
+
+            - bash: |
+                terraform init \
+                  -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
+                  -backend-config="storage_account_name=$TF_REMOTE_BACKEND_STORAGE" \
+                  -backend-config="container_name=$TF_CONTAINER_NAME" \
+                  -backend-config="key=$TF_KEY" \
+                  -backend-config="access_key=$TF_STORAGE_ACCESS_KEY"
+              displayName: "Initialize Terraform"
+              workingDirectory: "$(Pipeline.Workspace)/${{ parameters.IaC_DROP_DIR }}"
+              env:
+                TF_RESOURCE_GROUP: ${{ parameters.TF_RESOURCE_GROUP }}
+                TF_REMOTE_BACKEND_STORAGE: ${{ parameters.TF_REMOTE_BACKEND_STORAGE }}
+                TF_CONTAINER_NAME: ${{ parameters.TF_CONTAINER_NAME }}
+                TF_KEY: ${{ parameters.TF_CONTAINER_NAME }}
+                TF_STORAGE_ACCESS_KEY: $(TF_STATE_STORAGE_ACCESS_KEY)
+
+            - bash: |
+                terraform plan
+              displayName: "Terraform Plan"
+              workingDirectory: "$(Pipeline.Workspace)/${{ parameters.IaC_DROP_DIR }}"
+              env:
+                ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+                ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+                ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+                ARM_TENANT_ID: $(ARM_TENANT_ID)
+
+            - bash: |
+                terraform apply -auto-approve
+              displayName: "Terraform Apply"
+              workingDirectory: "$(Pipeline.Workspace)/${{ parameters.IaC_DROP_DIR }}"
+              env:
+                ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+                ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+                ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+                ARM_TENANT_ID: $(ARM_TENANT_ID)
+        

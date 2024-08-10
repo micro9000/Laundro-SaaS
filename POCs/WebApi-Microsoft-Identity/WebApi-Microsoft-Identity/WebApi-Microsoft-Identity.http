@@ -1,0 +1,6 @@
+@WebApi_Microsoft_Identity_HostAddress = http://localhost:5019
+
+GET {{WebApi_Microsoft_Identity_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
