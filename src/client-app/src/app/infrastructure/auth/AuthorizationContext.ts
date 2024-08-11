@@ -1,16 +1,20 @@
 import React, {useContext} from "react";
 
 export interface IAuthorizationContext {
-    hasAnyRole: boolean;
+	userName: string;
+	userEmail: string;
+  hasAnyRole: boolean;
 }
 
 export const defaultAuthorizationContext: IAuthorizationContext ={
-    hasAnyRole: false
+	userName: "",
+	userEmail: "",
+  hasAnyRole: false
 }
 
 export const AuthorizationContext = React.createContext<IAuthorizationContext>(defaultAuthorizationContext);
 export const AuthorizationConsumer = AuthorizationContext.Consumer;
 
 export const useAuthorization = () => {
-    return useContext(AuthorizationContext);
+  return useContext(AuthorizationContext);
 }

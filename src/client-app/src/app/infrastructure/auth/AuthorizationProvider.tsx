@@ -9,7 +9,7 @@ import {
 	IAuthorizationContext,
 	defaultAuthorizationContext,
 } from "./AuthorizationContext";
-import { UserRoles } from "@/app/constants/UserRoles";
+import { UserRoles } from "@/app/constants";
 import { has as hasProperty } from "lodash";
 
 export type AuthorizationProviderProps = PropsWithChildren<{
@@ -29,11 +29,12 @@ export const AuthorizationProvider = ({
 	const UpdateContextValue = () => {
 		var accounts = instance.getAllAccounts();
 		var currentAccount = accounts[0];
-		var currentRole: string | undefined =
-			currentAccount?.idTokenClaims?.roles?.at(0);
+		var currentRole: string | undefined = currentAccount?.idTokenClaims?.roles?.at(0);
 
 		setContextValue({
-			hasAnyRole: hasProperty(UserRoles, currentRole ?? ""),
+			userName: currentAccount?.name,
+			userEmail: currentAccount?.username,
+			hasAnyRole: hasProperty(TmpRolesRequired, currentRole ?? ""),
 		} as IAuthorizationContext);
 	};
 
@@ -47,7 +48,7 @@ export const AuthorizationProvider = ({
 
 	useEffect(() => {
 		UpdateContextValue();
-	}, [activeAccount]);
+	}, [activeAccount?.username]);
 
 	return (
 		<AuthorizationContext.Provider value={contextValue}>

@@ -6,7 +6,7 @@ import { initializeMsal } from "./infrastructure/auth/msal";
 import { MsalProvider } from "@azure/msal-react";
 import { AuthorizationProvider } from "./infrastructure/auth/AuthorizationProvider";
 import { MantineProvider, createTheme } from "@mantine/core";
-import { ApplicationShell } from "./components/AppShell/ApplicationShell";
+import { ApplicationShell } from "./components/AppShell";
 
 const theme = createTheme({
 	fontFamily: "Open Sans, sans-serif",
