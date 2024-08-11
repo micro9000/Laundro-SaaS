@@ -50,4 +50,13 @@ export const loginRequest = {
 	scopes: [Config.Auth.Scope],
 };
 
+export const userDataLoginRequest = {
+	scopes: ["user.read"]
+};
+
+export const graphConfig = {
+	graphMeEndpoint: "https://graph.microsoft.com/v1.0/me"
+};
+
 export const msalInstance = new PublicClientApplication(msalConfig);
+

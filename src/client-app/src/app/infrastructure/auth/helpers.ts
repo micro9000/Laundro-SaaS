@@ -2,9 +2,6 @@
 
 export function extractInitials(name: string | null | undefined): string {
 	if (!name) return '';
-
-	console.log(name);
-
 	const ignoreList = ["ext"]; // titles to ignore
 
 	return name

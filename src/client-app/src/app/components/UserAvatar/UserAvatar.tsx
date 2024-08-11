@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { useAuthorization } from "@/app/infrastructure/auth/AuthorizationContext";
 import { handleLogin, handleLogout } from "@/app/infrastructure/auth/msal";
 import {
@@ -17,6 +17,9 @@ import {
 	Button,
 	rem,
 } from "@mantine/core";
+import { msalInstance } from "@/app/infrastructure/auth/authConfig";
+import { getUserPhotoAvatar } from "@/app/infrastructure/auth/msalGraph";
+import { extractInitials } from "@/app/infrastructure/auth/helpers";
 
 interface UserButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	image: string;
@@ -59,6 +62,31 @@ const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
 
 export default function UserAvatar() {
 	const auth = useAuthorization();
+	const [userPhoto, setUserPhoto] = useState<string | null>(null);
+	const [showUserInitials, setShowUserInitials] = useState(false);
+	const [userInitials, setUserInitials] = useState('?');
+
+	const user = msalInstance.getActiveAccount();
+
+	useEffect(() => {
+		if (user) {
+			getUserPhotoAvatar().then((response: any) => {
+					console.log("getUserPhotoAvatar", response);
+					if (response instanceof Blob) {
+							const url = URL.createObjectURL(response);
+							setUserPhoto(url);
+					} else if (typeof response === "string") {
+							setUserPhoto(response);
+							setShowUserInitials(false);
+					} else {
+							console.log("Unsupported photo data type.");
+					}
+			});
+			setShowUserInitials(false);
+			setUserInitials(extractInitials(user.name));
+			console.log(user);
+		}
+	}, [user?.username]);
 
 	return (
 		<>

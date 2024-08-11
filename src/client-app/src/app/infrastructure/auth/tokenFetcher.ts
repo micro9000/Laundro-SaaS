@@ -5,7 +5,7 @@ export async function getCurrentToken(
 	msalInstance: PublicClientApplication
 ): Promise<string | null> {
 	const acquireAccessToken = async () => {
-		const activeAccount = msalInstance.getActiveAccount(); // This will only return a non-null value if you have logic somewhere else that calls the setActiveAccount API
+		const activeAccount = msalInstance.getActiveAccount();
 		const accounts = msalInstance.getAllAccounts();
 
 		if (!activeAccount && accounts.length === 0) {
