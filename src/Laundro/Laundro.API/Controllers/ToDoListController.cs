@@ -21,9 +21,7 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpGet]
-    [RequiredScopeOrAppPermission(
-    RequiredScopesConfigurationKey = "AzureAD:Scopes:Read",
-    RequiredAppPermissionsConfigurationKey = "AzureAD:AppPermissions:Read")]
+    [RequiredScopeOrAppPermission(RequiredScopesConfigurationKey = "AzureAD:Scopes:Read")]
     public async Task<IActionResult> GetAsync()
     {
         var toDos = await _laundroDbContext.ToDos!
@@ -34,10 +32,7 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpPost]
-    [RequiredScopeOrAppPermission(
-        RequiredScopesConfigurationKey = "AzureAD:Scopes:Write",
-        RequiredAppPermissionsConfigurationKey = "AzureAD:AppPermissions:Write"
-    )]
+    [RequiredScopeOrAppPermission(RequiredScopesConfigurationKey = "AzureAD:Scopes:Write")]
     public async Task<IActionResult> PostAsync([FromBody] ToDo toDo)
     {
         // Only let applications with global to-do access set the user ID or to-do's
