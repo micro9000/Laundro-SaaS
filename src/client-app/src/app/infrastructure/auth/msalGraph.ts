@@ -1,7 +1,10 @@
 import Error from "next/error";
 import { msalInstance, userDataLoginRequest, graphConfig } from "./authConfig";
+import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import { getToken } from "./msal";
 
 export async function getUserPhotoAvatar() {
+	await msalInstance.initialize();
 	const instance = msalInstance;
 	const account = instance.getActiveAccount();
 
@@ -9,14 +12,15 @@ export async function getUserPhotoAvatar() {
 		throw 'No active account! Verify a user has been signed in and setActiveAccount has been called.';
 	}
 
-	await instance.initialize();
-	const tokenResponse = await instance.acquireTokenSilent({
+	const request = {
 		...userDataLoginRequest,
 		account: account,
-	});
+	};
+
+	var accessToken = await getToken();
 
 	const headers = new Headers();
-	headers.append("Authorization", `Bearer ${tokenResponse.accessToken}`);
+	headers.append("Authorization", `Bearer ${accessToken}`);
 
 	const photoEndpoint = `${graphConfig.graphMeEndpoint}/photo/$value`;
 

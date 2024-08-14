@@ -1,16 +1,30 @@
 'use client';
 
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
-import { AppShell, Avatar, Burger, Button, Group, Skeleton, UnstyledButton } from '@mantine/core';
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsalAuthentication } from '@azure/msal-react';
+import { AppShell, Burger, Group, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { MantineLogo } from '@mantinex/mantine-logo';
 import classes from './ApplicationShell.module.css';
-import {IconLogin2} from '@tabler/icons-react'
-import { handleLogin } from '@/app/infrastructure/auth/msal';
 import UserAvatar from '../UserAvatar/UserAvatar';
+import { InteractionRequiredAuthError, InteractionType } from '@azure/msal-browser';
+import { loginRequest } from '@/app/infrastructure/auth/authConfig';
+import { useEffect } from 'react';
+import { Config } from '@/app/infrastructure/config';
 
 export function ApplicationShell({ children }: { children: React.ReactNode }): React.ReactElement {
   const [opened, { toggle }] = useDisclosure();
+
+	const { login, result, error } = useMsalAuthentication(
+		InteractionType.Silent,
+		loginRequest
+	);
+
+	useEffect(() => {
+		if (error instanceof InteractionRequiredAuthError) {
+			var interactionType = Config.SignInFlow === "popup" ? InteractionType.Popup : InteractionType.Redirect;
+			login(interactionType, loginRequest);
+		}
+	}, [error]);
 
   return (
     <AppShell

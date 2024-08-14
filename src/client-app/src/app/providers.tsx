@@ -3,11 +3,10 @@
 import { useEffect } from "react";
 import { msalInstance } from "./infrastructure/auth/authConfig";
 import { initializeMsal } from "./infrastructure/auth/msal";
-import { MsalProvider } from "@azure/msal-react";
+import { MsalProvider, useMsalAuthentication } from "@azure/msal-react";
 import { AuthorizationProvider } from "./infrastructure/auth/AuthorizationProvider";
 import { MantineProvider, createTheme } from "@mantine/core";
 import { ApplicationShell } from "./components/AppShell";
-
 const theme = createTheme({
 	fontFamily: "Open Sans, sans-serif",
 	primaryColor: "cyan",

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint"
   },
+	"engines": { "node": "18.17.1", "npm": "10.5.0" },
   "dependencies": {
     "@azure/msal-browser": "^3.20.0",
     "@azure/msal-react": "^2.0.22",
