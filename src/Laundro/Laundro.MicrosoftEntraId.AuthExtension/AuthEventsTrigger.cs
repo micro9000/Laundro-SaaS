@@ -16,10 +16,7 @@ namespace Laundro.MicrosoftEntraId.AuthExtension
     public static class AuthEventsTrigger
     {
         [FunctionName("onTokenIssuanceStart")]
-        public static WebJobsAuthenticationEventResponse Run([WebJobsAuthenticationEventsTriggerAttribute(
-            AudienceAppId = "<custom_authentication_extension_app_id>",
-            AuthorityUrl = "<authority_uri>",
-            AuthorizedPartyAppId = "<authorized_party_app_id>")] WebJobsTokenIssuanceStartRequest request, ILogger log)
+        public static WebJobsAuthenticationEventResponse Run([WebJobsAuthenticationEventsTriggerAttribute()] WebJobsTokenIssuanceStartRequest request, ILogger log)
         {
             try
             {
