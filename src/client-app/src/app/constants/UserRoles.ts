@@ -1,3 +1,3 @@
 export const UserRoles = {
-    BusinessOwner: "BusinessOwner"
+  BusinessOwner: 'BusinessOwner',
 } as const;
