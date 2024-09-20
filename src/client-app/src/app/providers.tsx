@@ -5,10 +5,9 @@ import { useEffect } from 'react';
 import { MsalProvider } from '@azure/msal-react';
 import { MantineProvider, createTheme } from '@mantine/core';
 
-import { ApplicationShell } from './components/app-shell';
-import { msalInstance } from './infrastructure/auth/auth-config';
-import { AuthorizationProvider } from './infrastructure/auth/authorization-provider';
-import { initializeMsal } from './infrastructure/auth/msal';
+import { msalInstance } from '../infrastructure/auth/auth-config';
+import { AuthorizationProvider } from '../infrastructure/auth/authorization-provider';
+import { initializeMsal } from '../infrastructure/auth/msal';
 
 const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
@@ -23,9 +22,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <MsalProvider instance={msalInstance}>
       <AuthorizationProvider instance={msalInstance}>
-        <MantineProvider theme={theme}>
-          <ApplicationShell>{children}</ApplicationShell>
-        </MantineProvider>
+        <MantineProvider theme={theme}>{children}</MantineProvider>
       </AuthorizationProvider>
     </MsalProvider>
   );

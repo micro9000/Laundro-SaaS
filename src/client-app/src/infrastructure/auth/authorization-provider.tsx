@@ -13,7 +13,7 @@ import {
 } from '@azure/msal-browser';
 import { has as hasProperty } from 'lodash';
 
-import { UserRoles } from '@/app/constants';
+import { UserRoles } from '@/constants';
 
 import {
   AuthorizationContext,
