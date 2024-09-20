@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react';
 
-import { MsalProvider, useMsalAuthentication } from '@azure/msal-react';
+import { MsalProvider } from '@azure/msal-react';
 import { MantineProvider, createTheme } from '@mantine/core';
 
-import { ApplicationShell } from './components/AppShell';
-import { AuthorizationProvider } from './infrastructure/auth/AuthorizationProvider';
-import { msalInstance } from './infrastructure/auth/authConfig';
+import { ApplicationShell } from './components/app-shell';
+import { msalInstance } from './infrastructure/auth/auth-config';
+import { AuthorizationProvider } from './infrastructure/auth/authorization-provider';
 import { initializeMsal } from './infrastructure/auth/msal';
 
 const theme = createTheme({

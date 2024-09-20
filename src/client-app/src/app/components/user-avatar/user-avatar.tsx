@@ -22,8 +22,8 @@ import {
   IconSettings,
 } from '@tabler/icons-react';
 
-import { useAuthorization } from '@/app/infrastructure/auth/AuthorizationContext';
-import { msalInstance } from '@/app/infrastructure/auth/authConfig';
+import { msalInstance } from '@/app/infrastructure/auth/auth-config';
+import { useAuthorization } from '@/app/infrastructure/auth/authorization-context';
 import { handleLogin, handleLogout } from '@/app/infrastructure/auth/msal';
 
 // import { getUserPhotoAvatar } from "@/app/infrastructure/auth/msalGraph";
@@ -37,10 +37,7 @@ interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
 }
 
 const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
-  function UserButton(
-    { image, name, email, icon, ...others }: UserButtonProps,
-    ref
-  ) {
+  ({ image, name, email, icon, ...others }: UserButtonProps, ref) => {
     return (
       <UnstyledButton
         ref={ref}
@@ -67,6 +64,7 @@ const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
     );
   }
 );
+UserButton.displayName = 'UserButton';
 
 export default function UserAvatar() {
   const auth = useAuthorization();

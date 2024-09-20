@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import {
   EventMessage,
@@ -13,7 +19,7 @@ import {
   AuthorizationContext,
   IAuthorizationContext,
   defaultAuthorizationContext,
-} from './AuthorizationContext';
+} from './authorization-context';
 
 export type AuthorizationProviderProps = PropsWithChildren<{
   instance: IPublicClientApplication;
@@ -27,9 +33,12 @@ export const AuthorizationProvider = ({
     defaultAuthorizationContext
   );
 
-  const TmpRolesRequired: string[] = [UserRoles.BusinessOwner];
+  const TmpRolesRequired: string[] = useMemo(
+    () => [UserRoles.BusinessOwner],
+    []
+  );
 
-  const UpdateContextValue = () => {
+  const UpdateContextValue = useCallback(() => {
     var accounts = instance.getAllAccounts();
     var currentAccount = accounts[0];
     var currentRole: string | undefined =
@@ -40,7 +49,7 @@ export const AuthorizationProvider = ({
       userEmail: currentAccount?.username,
       hasAnyRole: hasProperty(TmpRolesRequired, currentRole ?? ''),
     } as IAuthorizationContext);
-  };
+  }, [instance, TmpRolesRequired]);
 
   instance.addEventCallback((message: EventMessage) => {
     if (message.eventType === EventType.LOGIN_SUCCESS) {
@@ -52,7 +61,7 @@ export const AuthorizationProvider = ({
 
   useEffect(() => {
     UpdateContextValue();
-  }, [activeAccount?.username]);
+  }, [UpdateContextValue, activeAccount?.username]);
 
   return (
     <AuthorizationContext.Provider value={contextValue}>

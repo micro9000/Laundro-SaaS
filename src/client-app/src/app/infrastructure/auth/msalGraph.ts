@@ -2,7 +2,7 @@ import Error from 'next/error';
 
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 
-import { graphConfig, msalInstance, userDataLoginRequest } from './authConfig';
+import { graphConfig, msalInstance, userDataLoginRequest } from './auth-config';
 import { getToken } from './msal';
 
 export async function getUserPhotoAvatar() {

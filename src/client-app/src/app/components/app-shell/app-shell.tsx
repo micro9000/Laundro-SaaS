@@ -15,11 +15,11 @@ import { AppShell, Burger, Group, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { MantineLogo } from '@mantinex/mantine-logo';
 
-import { loginRequest } from '@/app/infrastructure/auth/authConfig';
+import { loginRequest } from '@/app/infrastructure/auth/auth-config';
 import { Config } from '@/app/infrastructure/config';
 
-import UserAvatar from '../UserAvatar/UserAvatar';
-import classes from './ApplicationShell.module.css';
+import UserAvatar from '../user-avatar/user-avatar';
+import classes from './app-shell.module.css';
 
 export function ApplicationShell({
   children,
@@ -41,7 +41,7 @@ export function ApplicationShell({
           : InteractionType.Redirect;
       login(interactionType, loginRequest);
     }
-  }, [error]);
+  }, [login, error]);
 
   return (
     <AppShell

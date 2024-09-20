@@ -1,6 +1,9 @@
 {
 	"editor.formatOnSave": true,
 	"editor.codeActionsOnSave": {
-		"source.fixAll": "always"
-	}
+		"source.fixAll.eslint": "always"
+	},
+	"eslint.nodePath": "C:\\Program Files\\nodejs",
+	"eslint.validate": ["javascript", "javascriptreact", "html", "typescriptreact"],
+	"typescript.tsdk": "node_modules\\typescript\\lib"
 }
