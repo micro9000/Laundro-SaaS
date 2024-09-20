@@ -11,7 +11,7 @@ import { initializeMsal } from '../infrastructure/auth/msal';
 
 const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
-  primaryColor: 'cyan',
+  // primaryColor: 'cyan',
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -22,7 +22,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <MsalProvider instance={msalInstance}>
       <AuthorizationProvider instance={msalInstance}>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider defaultColorScheme="dark" theme={theme}>
+          {children}
+        </MantineProvider>
       </AuthorizationProvider>
     </MsalProvider>
   );

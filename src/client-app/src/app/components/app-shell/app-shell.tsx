@@ -17,6 +17,7 @@ import { AuthButton } from '@/app/components/authentication-buttons';
 // import { loginRequest } from '@/infrastructure/auth/auth-config';
 // import { Config } from '@/infrastructure/config';
 import classes from './app-shell.module.css';
+import { ThemeToggle } from './theme-toggle';
 
 interface ApplicationShellProps {
   children: React.ReactNode;
@@ -68,6 +69,7 @@ export function ApplicationShell({
               <UnstyledButton className={classes.control}>
                 Support
               </UnstyledButton>
+              <ThemeToggle />
               <AuthButton />
             </Group>
           </Group>
