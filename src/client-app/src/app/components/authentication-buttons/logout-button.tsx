@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef } from 'react';
 
 import { Avatar, Group, Menu, Text, UnstyledButton, rem } from '@mantine/core';
 import {

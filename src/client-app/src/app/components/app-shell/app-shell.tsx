@@ -20,7 +20,7 @@ import classes from './app-shell.module.css';
 
 interface ApplicationShellProps {
   children: React.ReactNode;
-  isDesktopView: boolean;
+  isDesktopView?: boolean;
 }
 
 export function ApplicationShell({
