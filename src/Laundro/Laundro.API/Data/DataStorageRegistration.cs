@@ -19,6 +19,8 @@ public static class DataStorageRegistration
             .EnableSensitiveDataLogging(enableSensitiveLogging)
             .LogTo(m => Log.Logger.Information(m), LogLevel.Information));
 
+        services.AddScoped<IRoleLookup, RoleLookup>();
+
         return services;
     }
 }

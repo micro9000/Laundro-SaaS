@@ -10,4 +10,7 @@ public class LaundroDbContext : DbContext
         
     }
     public DbSet<ToDo> ToDos { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Store> Stores { get; set; }
 }
