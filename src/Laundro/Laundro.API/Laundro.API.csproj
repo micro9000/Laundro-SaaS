@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2e5de8c1-93a9-47ee-95ba-552717074abe</UserSecretsId>
+	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
