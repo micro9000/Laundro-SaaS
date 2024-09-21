@@ -1,6 +1,6 @@
+using Laundro.API.Authentication;
+using Laundro.API.Data;
 using Laundro.Core.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,16 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add authentication scheme
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration);
-
-builder.Services.AddDbContext<LaundroDbContext>(
-    options =>
-    {
-        var connectionString = builder.Configuration.GetConnectionString("LaundroConnectionString");
-        options.UseSqlServer(connectionString);
-    });
+builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
+builder.Services.AddDatabaseStorage(builder.Configuration);
 
 var app = builder.Build();
 
@@ -35,8 +27,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseLaundroAzureADAuthentication();
 
 app.MapControllers();
 
