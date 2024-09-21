@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Mock\Common\Mock0001_TestUsers.sql" />
+    <None Remove="SchemaScripts\DropProgrammabilityObjects.sql" />
+    <None Remove="Scripts\Script0001 - Initial Tables.sql" />
+    <None Remove="Seed\Roles.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Mock\Common\Mock0001_TestUsers.sql" />
+    <EmbeddedResource Include="SchemaScripts\DropProgrammabilityObjects.sql" />
+    <EmbeddedResource Include="Scripts\Script0001 - Initial Tables.sql" />
+    <EmbeddedResource Include="Seed\Roles.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-sqlserver" Version="5.0.41" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mock\Dev\" />
+    <Folder Include="SchemaScripts\TVFs\" />
+    <Folder Include="SchemaScripts\Views\" />
+    <Folder Include="SchemaScripts\StoredProcedures\" />
+    <Folder Include="SchemaScripts\Shared\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Laundro.Core\Laundro.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
