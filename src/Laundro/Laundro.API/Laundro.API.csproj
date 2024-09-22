@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Laundro.Core\Laundro.Core.csproj" />
+    <ProjectReference Include="..\Laundro.ServiceDefaults\Laundro.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

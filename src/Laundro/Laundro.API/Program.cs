@@ -3,6 +3,8 @@ using Laundro.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // We can remove this if we are not going to use controllers later
 builder.Services.AddControllers();
 
@@ -18,6 +20,8 @@ builder.Services.AddDatabaseStorage(builder.Configuration);
 builder.Services.AddCaching(builder.Configuration);
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
