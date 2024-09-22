@@ -2,5 +2,7 @@
 public class User : Entity
 {
     public string Email { get; set; } = string.Empty;
-    public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
+    public string Name { get; set; }
+    public int RoleId { get; set; }
+    public Role? Role { get; set; }
 }

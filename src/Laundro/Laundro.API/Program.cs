@@ -1,7 +1,5 @@
 using Laundro.API.Authentication;
 using Laundro.API.Data;
-using Laundro.Core.Data;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +10,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
+builder.Services.AddGlobalCorsPolicy(builder.Configuration);
+
+// Application components
 builder.Services.AddDatabaseStorage(builder.Configuration);
+builder.Services.AddCaching(builder.Configuration);
 
 var app = builder.Build();
 
@@ -25,8 +26,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
+//app.UseHttpsRedirection();
 
+app.UseGlobalCorsPolicy();
 app.UseLaundroAzureADAuthentication();
 
 app.MapControllers();

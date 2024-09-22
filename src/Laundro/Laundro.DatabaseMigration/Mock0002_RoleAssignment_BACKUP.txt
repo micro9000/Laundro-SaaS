@@ -4,7 +4,7 @@ using Laundro.Core.Models;
 using System.Data;
 using System.Linq;
 
-namespace Laundro.DatabaseMigration.Mock.Common;
+namespace Laundro.DatabaseMigration;
 public class Mock0002_RoleAssignment : IScript
 {
     public string ProvideScript(Func<IDbCommand> dbCommandFactory)
@@ -20,7 +20,7 @@ public class Mock0002_RoleAssignment : IScript
         var dbUsers = GetUsers(emails, dbCommandFactory);
         var dbRoles = GetRoles(roleNames, dbCommandFactory);
 
-        foreach(var user in userWithRoles)
+        foreach (var user in userWithRoles)
         {
             var userRoles = user.roles.Select(r => r.ToString()).ToList();
             var userDb = dbUsers.FirstOrDefault(u => u.Email == user.email);
@@ -54,7 +54,7 @@ WHEN MATCHED THEN
                 }
             }
 
-            
+
         }
 
         return string.Empty;

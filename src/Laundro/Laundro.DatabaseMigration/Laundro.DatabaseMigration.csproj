@@ -10,15 +10,22 @@
 
   <ItemGroup>
     <None Remove="Mock\Common\Mock0001_TestUsers.sql" />
+    <None Remove="Mock\Common\Mock0002_RoleAssignment_BACKUP.txt" />
     <None Remove="SchemaScripts\DropProgrammabilityObjects.sql" />
     <None Remove="Scripts\Script0001 - Initial Tables.sql" />
+    <None Remove="Scripts\Script0002 - Add DistributedCache table.sql" />
     <None Remove="Seed\Roles.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Mock0002_RoleAssignment_BACKUP.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Mock\Common\Mock0001_TestUsers.sql" />
     <EmbeddedResource Include="SchemaScripts\DropProgrammabilityObjects.sql" />
     <EmbeddedResource Include="Scripts\Script0001 - Initial Tables.sql" />
+    <EmbeddedResource Include="Scripts\Script0002 - Add DistributedCache table.sql" />
     <EmbeddedResource Include="Seed\Roles.sql" />
   </ItemGroup>
 

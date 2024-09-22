@@ -15,19 +15,13 @@ CREATE TABLE Users
 (
 	Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	Email VARCHAR(255) NOT NULL,
-	IsActive BIT NOT NULL DEFAULT 1,
-)
-
-CREATE TABLE UserRoles
-(
-	UserId INT NOT NULL,
+	[Name] VARCHAR(255) NOT NULL,
 	RoleId INT NOT NULL,
 	IsActive BIT NOT NULL DEFAULT 1,
-	CONSTRAINT FK_User FOREIGN KEY (UserId) REFERENCES Users(Id),
 	CONSTRAINT FK_Role FOREIGN KEY (RoleId) REFERENCES Roles(Id)
 )
-CREATE UNIQUE  NONCLUSTERED INDEX IX_UserRoles_UserId_RoleId_IsActive
-ON UserRoles (UserId, RoleId, IsActive);
+CREATE UNIQUE  NONCLUSTERED INDEX IX_Users_Email_RoleId_IsActive
+ON Users (Email, RoleId, IsActive);
 
 
 CREATE TABLE Stores
@@ -37,4 +31,13 @@ CREATE TABLE Stores
 	OwnerId INT NOT NULL,
 	IsActive BIT NOT NULL DEFAULT 1,
 	CONSTRAINT FK_Owner FOREIGN KEY (OwnerId) REFERENCES Users(Id)
+)
+
+-- A User should only be assigned to only one store, and we will going to facilitate the validation in the system
+CREATE TABLE StoreStaffAssignments
+(
+	StaffId INT NOT NULL,
+	StoreId INT NOT NULL,
+	CONSTRAINT FK_Staff FOREIGN KEY (StaffId) REFERENCES Users(Id),
+	CONSTRAINT FK_Store FOREIGN KEY (StoreId) REFERENCES Stores(Id)
 )
