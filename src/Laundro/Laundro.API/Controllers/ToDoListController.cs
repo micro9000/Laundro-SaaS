@@ -24,11 +24,9 @@ public class ToDoListController : ControllerBase
     [RequiredScopeOrAppPermission(RequiredScopesConfigurationKey = "AzureAD:Scopes:Read")]
     public async Task<IActionResult> GetAsync()
     {
-        var toDos = await _laundroDbContext.ToDos!
-            .Where(td => RequestCanAccessToDo(td.Owner))
-            .ToListAsync();
+        var users = await _laundroDbContext.Users.ToListAsync();
 
-        return Ok(toDos);
+        return Ok(users);
     }
 
     [HttpPost]
