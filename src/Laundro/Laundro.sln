@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.Core", "Laundro.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.MicrosoftEntraId.AuthExtension", "Laundro.MicrosoftEntraId.AuthExtension\Laundro.MicrosoftEntraId.AuthExtension.csproj", "{354382AF-D033-4704-A609-51885AA44F47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laundro.DatabaseMigration", "Laundro.DatabaseMigration\Laundro.DatabaseMigration.csproj", "{9E13D97B-5518-4F8C-8C38-1691F88AD834}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.DatabaseMigration", "Laundro.DatabaseMigration\Laundro.DatabaseMigration.csproj", "{9E13D97B-5518-4F8C-8C38-1691F88AD834}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laundro.AppHost", "Laundro.AppHost\Laundro.AppHost.csproj", "{025519DE-3B03-4B5A-AC22-1F344B913853}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.AppHost", "Laundro.AppHost\Laundro.AppHost.csproj", "{025519DE-3B03-4B5A-AC22-1F344B913853}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.ServiceDefaults", "Laundro.ServiceDefaults\Laundro.ServiceDefaults.csproj", "{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laundro.Shared", "Laundro.Shared\Laundro.Shared.csproj", "{587712A7-C856-409E-B368-32892632A309}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{587712A7-C856-409E-B368-32892632A309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{587712A7-C856-409E-B368-32892632A309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{587712A7-C856-409E-B368-32892632A309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{587712A7-C856-409E-B368-32892632A309}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

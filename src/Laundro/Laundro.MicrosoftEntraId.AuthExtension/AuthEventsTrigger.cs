@@ -16,13 +16,17 @@ namespace Laundro.MicrosoftEntraId.AuthExtension
     public static class AuthEventsTrigger
     {
         [FunctionName("onTokenIssuanceStart")]
-        public static WebJobsAuthenticationEventResponse Run([WebJobsAuthenticationEventsTriggerAttribute()] WebJobsTokenIssuanceStartRequest request, ILogger log)
+        public static WebJobsAuthenticationEventResponse Run(
+            [WebJobsAuthenticationEventsTriggerAttribute()] WebJobsTokenIssuanceStartRequest request, 
+            ILogger log)
         {
             try
             {
                 // Checks if the request is successful and did the token validation pass
                 if (request.RequestStatus == WebJobsAuthenticationEventsRequestStatusType.Successful)
                 {
+                    var userEmail = request.Data.AuthenticationContext.User.Mail;
+
                     // Fetches information about the user from external data store
                     // Add new claims to the token's response
                     request.Response.Actions.Add(

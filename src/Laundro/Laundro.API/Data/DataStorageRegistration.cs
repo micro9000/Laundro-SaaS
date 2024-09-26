@@ -2,6 +2,7 @@
 using Laundro.Core.Authentication;
 using Laundro.Core.Constants;
 using Laundro.Core.Data;
+using Laundro.Core.Lookups;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 

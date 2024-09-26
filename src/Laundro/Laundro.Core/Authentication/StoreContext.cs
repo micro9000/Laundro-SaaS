@@ -9,8 +9,8 @@ namespace Laundro.Core.Authentication;
 public class StoreContext
 {
     public int StoreId { get; set; }
-    public int OwnerId { get; set; }
+    public int ManagerId { get; set; }
 
     [JsonInclude]
-    public List<int> StaffUserIds { get; set; }
+    public List<int> StaffUserIds { get; set; } = new List<int>();
 }

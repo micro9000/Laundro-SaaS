@@ -1,16 +1,14 @@
 ﻿using Laundro.Core.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Laundro.Core.Models;
 public class Store : Entity
 {
     public string Name { get; set; } = string.Empty;
-    public int OwnerId { get; set; }
-    public User? Owner { get; set; }
+    public int ManagerId { get; set; }
+    public User? Manager { get; set; }
+
+    public int TenantId { get; set; }
+    public Tenant? Tenant { get; set; }
 
     public ICollection<StoreStaffAssignment> StaffAssignments { get; set; } = new List<StoreStaffAssignment>();
 }

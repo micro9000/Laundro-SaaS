@@ -1,9 +1,11 @@
 ﻿using Laundro.Core.Constants;
+using Laundro.Core.Data;
 using Laundro.Core.Models;
+using Laundro.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Laundro.Core.Data;
+namespace Laundro.Core.Lookups;
 public interface IRoleLookup
 {
     Task<Role?> StoreAdminAssistant();

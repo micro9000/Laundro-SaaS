@@ -161,7 +161,7 @@ public class UserContextMiddleware
         var stores = await dbContext.Stores
             .Include(s => s.StaffAssignments)
             .AsNoTracking()
-            .Where(s => s.OwnerId == user.Id || s.StaffAssignments.Any(u => u.UserId == user.Id))
+            .Where(s => s.ManagerId == user.Id || s.StaffAssignments.Any(u => u.UserId == user.Id))
             .ToListAsync();
 
         foreach (var store in stores) 
@@ -169,7 +169,7 @@ public class UserContextMiddleware
             var storeContext = new StoreContext
             {
                 StoreId = store.Id,
-                OwnerId = store.OwnerId,
+                ManagerId = store.ManagerId,
                 StaffUserIds = store.StaffAssignments.Select(a => a.UserId).ToList()
             };
             userContext.Stores.Add(storeContext);

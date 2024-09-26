@@ -9,16 +9,12 @@ public static class CachingRegistration
     {
         var settings = configuration.GetSection(DistributedCacheSettings.SectionName)
             .Get<DistributedCacheSettings>() ?? new DistributedCacheSettings();
-        var laundroConnectionString = configuration.GetConnectionString(SystemContants.LaundroConnectionString);
-
+        
         services.AddMemoryCache();
-        services.AddDistributedSqlServerCache(options =>
+        services.AddStackExchangeRedisCache(options =>
         {
-            options.ConnectionString = string.IsNullOrEmpty(settings.ConnectionString)
-                ? laundroConnectionString
-                : settings.ConnectionString;
-            options.SchemaName = settings.SchemaName;
-            options.TableName = settings.TableName;
+            options.Configuration = settings.ConnectionString;
+            options.InstanceName = settings.InstanceName;
         });
         services.AddTransient<ICache, Cache>();
 

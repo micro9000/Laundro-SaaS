@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Mock0002_RoleAssignment_BACKUP.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Mock\Common\Mock0001_TestUsers.sql" />
     <EmbeddedResource Include="SchemaScripts\DropProgrammabilityObjects.sql" />
     <EmbeddedResource Include="Scripts\Script0001 - Initial Tables.sql" />

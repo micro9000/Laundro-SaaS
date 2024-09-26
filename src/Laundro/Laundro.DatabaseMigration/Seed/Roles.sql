@@ -7,7 +7,8 @@ CREATE TABLE #TempRoles
 INSERT INTO #TempRoles ([Name], [SystemKey]) 
 VALUES('Store Owner Admin', 'store_owner_admin'),
 ('Store Admin Assistant', 'store_admin_assistant'),
-('Store Staff', 'store_staff')
+('Store Staff', 'store_staff'),
+('New User', 'new_user')
 
 MERGE [Roles] As [Target]
 USING
