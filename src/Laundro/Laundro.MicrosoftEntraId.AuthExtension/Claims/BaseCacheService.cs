@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Threading.Tasks;
 
-namespace Laundro.MicrosoftEntraId.AuthExtension.Data;
+namespace Laundro.MicrosoftEntraId.AuthExtension.Claims;
 public abstract class BaseCacheService<T>
 {
     private readonly ICache _cache;

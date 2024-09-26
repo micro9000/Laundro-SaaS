@@ -1,30 +1,31 @@
 ﻿using Dapper;
+using Laundro.MicrosoftEntraId.AuthExtension.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Data.Common;
-using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
-namespace Laundro.MicrosoftEntraId.AuthExtension.Data;
+namespace Laundro.MicrosoftEntraId.AuthExtension.Claims;
 
-public interface IUserRepository
+public interface IClaimsRepository
 {
-    Task<string?> GetUserRole(string email);
+    Task<UserInfo?> GetUserInfo(string email);
 }
 
-public class UserRepository : IUserRepository
+public class ClaimsRepository : IClaimsRepository
 {
     private readonly IConfiguration _configuration;
 
-    public UserRepository(IConfiguration configuration)
+    public ClaimsRepository(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public async Task<string?> GetUserRole(string email)
+    public async Task<UserInfo?> GetUserInfo(string email)
     {
-        string? userRole = null;
+        UserInfo? userInfo = null;
         var connectionString = _configuration.GetConnectionString("LaundroConnectionString");
         if (connectionString.IsNullOrEmpty())
         {
@@ -33,17 +34,17 @@ public class UserRepository : IUserRepository
 
         using (DbConnection connection = new SqlConnection(connectionString))
         {
-            var query = @"SELECT TOP 1 R.SystemKey
+            var query = @"SELECT TOP 1 U.Id As UserId,  R.SystemKey
                                     FROM Users U
                                     JOIN Roles R ON R.Id=U.RoleId
                                     WHERE U.IsActive=1 AND R.IsActive=1 AND U.Email=@Email";
 
-            userRole = await connection.ExecuteScalarAsync<string>(query, new
+            userInfo = await connection.QueryFirstOrDefaultAsync<UserInfo>(query, new
             {
                 Email = email
             });
         }
 
-        return userRole;
+        return userInfo;
     }
 }

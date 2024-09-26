@@ -1,4 +1,5 @@
 ﻿using Laundro.MicrosoftEntraId.AuthExtension.Caching;
+using Laundro.MicrosoftEntraId.AuthExtension.Claims;
 using Laundro.MicrosoftEntraId.AuthExtension.Data;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -27,15 +28,8 @@ public class Startup : FunctionsStartup
     {
         var configuration = builder.GetContext().Configuration;
 
-        builder.Services.AddTransient<ICache, Cache>();
-        builder.Services.AddTransient<IUserRepository, UserRepository>();
-        builder.Services.AddTransient<IUserCache, UserCache>();
+        builder.Services.AddCaching(configuration);
+        builder.Services.AddClaimsServices();
 
-        var redisConnectionString = configuration.GetConnectionString("RedisCacheConnString");
-        builder.Services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = redisConnectionString;
-            options.InstanceName = "LaundroInstance";
-        });
     }
 }
