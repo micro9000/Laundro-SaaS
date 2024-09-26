@@ -19,7 +19,7 @@ public class UserCache : BaseCacheService<string>, IUserCache
 
     public async Task<string?> GetUserRole(string email)
     {
-        var userRoleSystemKey = await Fetch(email, async () =>
+        var userRoleSystemKey = await Fetch(email, async e =>
         {
             var roleSystemKey = await _userRepository.GetUserRole(email);
             return roleSystemKey;

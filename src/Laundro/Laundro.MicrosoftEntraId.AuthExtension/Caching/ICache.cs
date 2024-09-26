@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Threading.Tasks;
 
 namespace Laundro.MicrosoftEntraId.AuthExtension.Caching;
 public interface ICache
 {
-    Task<TData?> GetOrCreateAsync<TData>(
+    Task<TData> GetOrCreateAsync<TData>(
         string cacheKey,
-        Func<Task<TData>> valueGetter,
-        TimeSpan? options = null);
+        Func<DistributedCacheEntryOptions, Task<TData>> valueGetter,
+        DistributedCacheEntryOptions? options = null);
 
     Task RemoveAsync(string key);
 }

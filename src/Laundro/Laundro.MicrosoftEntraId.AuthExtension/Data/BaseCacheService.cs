@@ -1,4 +1,5 @@
 ﻿using Laundro.MicrosoftEntraId.AuthExtension.Caching;
+using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Threading.Tasks;
 
@@ -12,17 +13,17 @@ public abstract class BaseCacheService<T>
         _cache = cache;
     }
 
-    public async Task<T?> Fetch(string cacheKey, Func<Task<T?>> userContextFactory, TimeSpan? expirationFromNow = null)
+    public async Task<T?> Fetch(string cacheKey, Func<DistributedCacheEntryOptions, Task<T?>> userContextFactory)
     {
         var key = cacheKey.ToUpperInvariant();
-        return await _cache.GetOrCreateAsync(key, userContextFactory, expirationFromNow);
+        return await _cache.GetOrCreateAsync(key, userContextFactory);
     }
 
-    public async Task<T?> Refresh(string cacheKey, Func<Task<T?>> userContextFactory, TimeSpan? expirationFromNow = null)
+    public async Task<T?> Refresh(string cacheKey, Func<DistributedCacheEntryOptions, Task<T?>> userContextFactory)
     {
         var key = cacheKey.ToUpperInvariant();
         await _cache.RemoveAsync(key);
-        return await _cache.GetOrCreateAsync(key, userContextFactory, expirationFromNow);
+        return await _cache.GetOrCreateAsync(key, userContextFactory);
     }
 
     public void Invalidate(string cacheKey)
