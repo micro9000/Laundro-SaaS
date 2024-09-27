@@ -7,7 +7,8 @@ public static class ClaimsServicesRegistrations
     {
         services.AddTransient<IClaimsRepository, ClaimsRepository>();
         services.AddTransient<IUserInfoCaching, UserInfoCaching>();
-
+        services.AddTransient<ITenantInfoCaching, TenantInfoCaching>();
+        services.AddTransient<IStoresCaching, StoresCaching>();
 
         services.AddTransient<IClaimsService, ClaimsService>();
 

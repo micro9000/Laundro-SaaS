@@ -1,11 +1,6 @@
 
-DECLARE @store_owner_admin_id INT;
-DECLARE @store_admin_assistant INT;
-DECLARE @store_staff INT;
-
-SELECT @store_owner_admin_id=Id FROM Roles WHERE SystemKey = 'store_owner_admin';
-SELECT @store_admin_assistant=Id FROM Roles WHERE SystemKey = 'store_admin_assistant';
-SELECT @store_staff=Id FROM Roles WHERE SystemKey = 'store_staff';
+DECLARE @tenant_owner_id INT;
+SELECT @tenant_owner_id=Id FROM Roles WHERE SystemKey = 'tenant_owner';
 
 CREATE TABLE #TempUsers
 (
@@ -15,7 +10,7 @@ CREATE TABLE #TempUsers
 )
 
 INSERT INTO #TempUsers ([Email], [Name], [RoleId]) 
-VALUES('ranielgarcia101@gmail.com', 'Raniel Garcia', @store_owner_admin_id)
+VALUES('ranielgarcia101@gmail.com', 'Raniel Garcia', @tenant_owner_id)
 
 MERGE [Users] As [Target]
 USING

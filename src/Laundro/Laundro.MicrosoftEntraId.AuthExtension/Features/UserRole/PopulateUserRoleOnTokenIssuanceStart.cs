@@ -15,16 +15,17 @@ namespace Laundro.MicrosoftEntraId.AuthExtension.Features.UserRole;
 public class PopulateUserRoleOnTokenIssuanceStart
 {
     private readonly IClaimsService _claimsService;
+    private readonly ILogger<PopulateUserRoleOnTokenIssuanceStart> _logger;
 
-    public PopulateUserRoleOnTokenIssuanceStart(IClaimsService claimsService)
+    public PopulateUserRoleOnTokenIssuanceStart(IClaimsService claimsService, ILogger<PopulateUserRoleOnTokenIssuanceStart> logger)
     {
         _claimsService = claimsService;
+        _logger = logger;
     }
 
     [FunctionName("PopulateUserRoleOnTokenIssuanceStart")]
     public async Task<WebJobsAuthenticationEventResponse> Run(
-        [WebJobsAuthenticationEventsTrigger()] WebJobsTokenIssuanceStartRequest request,
-        ILogger log)
+        [WebJobsAuthenticationEventsTrigger()] WebJobsTokenIssuanceStartRequest request)
     {
         try
         {
@@ -42,7 +43,7 @@ public class PopulateUserRoleOnTokenIssuanceStart
             }
             else
             {
-                log.LogInformation(request.StatusMessage);
+                _logger.LogInformation(request.StatusMessage);
             }
             return request.Completed();
         }

@@ -1,9 +1,16 @@
 ﻿using Laundro.MicrosoftEntraId.AuthExtension.Caching;
 using Laundro.MicrosoftEntraId.AuthExtension.Claims;
-using Laundro.MicrosoftEntraId.AuthExtension.Data;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Abstractions;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
+using Serilog.Sinks.SystemConsole.Themes;
 using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(Laundro.MicrosoftEntraId.AuthExtension.Startup))]
@@ -27,6 +34,18 @@ public class Startup : FunctionsStartup
     public override void Configure(IFunctionsHostBuilder builder)
     {
         var configuration = builder.GetContext().Configuration;
+
+        var telemetryConfiguration = new TelemetryConfiguration();
+
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(theme: SystemConsoleTheme.Literate)
+            .WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces)
+            .CreateLogger();
+
+        builder.Services.AddLogging(logConfig =>
+            logConfig.AddSerilog(Log.Logger, dispose: true)
+        );
 
         builder.Services.AddCaching(configuration);
         builder.Services.AddClaimsServices();
