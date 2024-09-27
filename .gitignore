@@ -482,3 +482,4 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+/Infra/.terraform/providers/registry.terraform.io/hashicorp
