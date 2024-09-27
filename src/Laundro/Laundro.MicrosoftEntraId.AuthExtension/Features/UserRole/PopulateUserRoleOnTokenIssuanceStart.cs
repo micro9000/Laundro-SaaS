@@ -35,7 +35,7 @@ public class PopulateUserRoleOnTokenIssuanceStart
             {
 
                 request.Response.Actions.Add(new WebJobsProvideClaimsForToken(
-                    new WebJobsAuthenticationEventsTokenClaim("role", nameof(Roles.new_user))));
+                    new WebJobsAuthenticationEventsTokenClaim("laundroRole", nameof(Roles.new_user))));
 
                 //var userEmail = request.Data.AuthenticationContext.User.Mail;
                 //var claims = await _claimsService.GetUserClaims(userEmail);
