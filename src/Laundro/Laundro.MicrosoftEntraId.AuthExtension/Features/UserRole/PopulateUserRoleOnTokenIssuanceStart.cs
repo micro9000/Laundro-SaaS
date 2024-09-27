@@ -1,10 +1,12 @@
 using Laundro.MicrosoftEntraId.AuthExtension.Claims;
+using Laundro.Shared.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents;
 using Microsoft.Azure.WebJobs.Extensions.AuthenticationEvents.TokenIssuanceStart;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 // https://learn.microsoft.com/en-us/entra/identity-platform/custom-extension-overview
@@ -31,15 +33,18 @@ public class PopulateUserRoleOnTokenIssuanceStart
         {
             if (request.RequestStatus == WebJobsAuthenticationEventsRequestStatusType.Successful)
             {
-                var userEmail = request.Data.AuthenticationContext.User.Mail;
-                
-                var claims = await _claimsService.GetUserClaims(userEmail);
 
-                // additional claims
-                claims.Append(new WebJobsAuthenticationEventsTokenClaim("correlationId",
-                        request.Data.AuthenticationContext.CorrelationId.ToString()));
+                request.Response.Actions.Add(new WebJobsProvideClaimsForToken(
+                    new WebJobsAuthenticationEventsTokenClaim("role", nameof(Roles.new_user))));
 
-                request.Response.Actions.Add(new WebJobsProvideClaimsForToken(claims));
+                //var userEmail = request.Data.AuthenticationContext.User.Mail;
+                //var claims = await _claimsService.GetUserClaims(userEmail);
+
+                //// additional claims
+                //claims.Append(new WebJobsAuthenticationEventsTokenClaim("correlationId",
+                //        request.Data.AuthenticationContext.CorrelationId.ToString()));
+
+                //request.Response.Actions.Add(new WebJobsProvideClaimsForToken(claims));
             }
             else
             {
