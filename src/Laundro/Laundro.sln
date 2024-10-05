@@ -7,15 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.API", "Laundro.API\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.Core", "Laundro.Core\Laundro.Core.csproj", "{14284379-2254-473C-AA1B-561F9B08B5B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.MicrosoftEntraId.AuthExtension", "Laundro.MicrosoftEntraId.AuthExtension\Laundro.MicrosoftEntraId.AuthExtension.csproj", "{354382AF-D033-4704-A609-51885AA44F47}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.DatabaseMigration", "Laundro.DatabaseMigration\Laundro.DatabaseMigration.csproj", "{9E13D97B-5518-4F8C-8C38-1691F88AD834}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.AppHost", "Laundro.AppHost\Laundro.AppHost.csproj", "{025519DE-3B03-4B5A-AC22-1F344B913853}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.ServiceDefaults", "Laundro.ServiceDefaults\Laundro.ServiceDefaults.csproj", "{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laundro.Shared", "Laundro.Shared\Laundro.Shared.csproj", "{587712A7-C856-409E-B368-32892632A309}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.Shared", "Laundro.Shared\Laundro.Shared.csproj", "{587712A7-C856-409E-B368-32892632A309}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{5229AEC2-8C13-4BBD-994F-BC95A93031A7}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,10 +34,6 @@ Global
 		{14284379-2254-473C-AA1B-561F9B08B5B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14284379-2254-473C-AA1B-561F9B08B5B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14284379-2254-473C-AA1B-561F9B08B5B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{354382AF-D033-4704-A609-51885AA44F47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{354382AF-D033-4704-A609-51885AA44F47}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{354382AF-D033-4704-A609-51885AA44F47}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{354382AF-D033-4704-A609-51885AA44F47}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E13D97B-5518-4F8C-8C38-1691F88AD834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E13D97B-5518-4F8C-8C38-1691F88AD834}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E13D97B-5518-4F8C-8C38-1691F88AD834}.Release|Any CPU.ActiveCfg = Release|Any CPU

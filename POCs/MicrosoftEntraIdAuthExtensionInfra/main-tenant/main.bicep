@@ -1,5 +1,3 @@
-extension microsoftGraphV1_0
-
 @description('The name of the function app that you wish to create.')
 param appName string = 'fnapp${uniqueString(resourceGroup().id)}'
 
@@ -99,6 +97,14 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: functionWorkerRuntime
         }
+        {
+          name: 'ConnectionStrings__LaundroConnectionString'
+          value: 'test'
+        }
+        {
+          name: 'ConnectionStrings__RedisCacheConnString'
+          value: 'test'
+        }
       ]
       ftpsState: 'FtpsOnly'
       minTlsVersion: '1.2'
@@ -115,32 +121,4 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
     Application_Type: 'web'
     Request_Source: 'rest'
   }
-}
-
-resource authenticationEventsAPI 'Microsoft.Graph/applications@v1.0' = {
-  uniqueName: 'Azure Functions authentication events API'
-  displayName: 'Azure Functions authentication events API'
-  signInAudience: 'AzureADMyOrg'
-  api: {
-    acceptMappedClaims: null
-    knownClientApplications: []
-    oauth2PermissionScopes: []
-    preAuthorizedApplications: []
-    requestedAccessTokenVersion: 2
-  }
-  requiredResourceAccess: [
-    {
-      resourceAccess: [
-        {
-          id: '00aa00aa-bb11-cc22-dd33-44ee44ee44ee'
-          type: 'Role'
-        }
-      ]
-      resourceAppId: '00000003-0000-0000-c000-000000000000'
-    }
-  ]
-}
-
-resource clientSp 'Microsoft.Graph/servicePrincipals@v1.0' = {
-  appId: authenticationEventsAPI.appId
 }
