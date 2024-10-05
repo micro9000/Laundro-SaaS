@@ -14,7 +14,8 @@ builder.Services.AddApplicationInsightsTelemetry();
 Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .Enrich.FromLogContext()
-                 .WriteTo.Console(theme: SystemConsoleTheme.Literate)
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentName()
                 .CreateBootstrapLogger();
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
