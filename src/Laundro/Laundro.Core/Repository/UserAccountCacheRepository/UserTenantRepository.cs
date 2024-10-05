@@ -2,7 +2,7 @@
 using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.Core.Authentication.UserAccountCacheRepository;
+namespace Laundro.Core.Repository.UserAccountCacheRepository;
 
 public interface IUserTenantRepository
 {
@@ -15,7 +15,7 @@ public class UserTenantRepository : BaseCacheService<Tenant>, IUserTenantReposit
 {
     private readonly LaundroDbContext _dbContext;
 
-    public UserTenantRepository(Cache cache, LaundroDbContext dbContext) : base(cache)
+    public UserTenantRepository(ICache cache, LaundroDbContext dbContext) : base(cache)
     {
         _dbContext = dbContext;
     }

@@ -2,7 +2,7 @@
 using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.Core.Authentication.UserAccountCacheRepository;
+namespace Laundro.Core.Repository.UserAccountCacheRepository;
 
 public interface IUserInfoRepository
 {
@@ -15,7 +15,7 @@ public class UserInfoRepository : BaseCacheService<User>, IUserInfoRepository
 {
     private readonly LaundroDbContext _dbContext;
 
-    public UserInfoRepository(Cache cache, LaundroDbContext dbContext) : base(cache)
+    public UserInfoRepository(ICache cache, LaundroDbContext dbContext) : base(cache)
     {
         _dbContext = dbContext;
     }
@@ -24,7 +24,7 @@ public class UserInfoRepository : BaseCacheService<User>, IUserInfoRepository
     {
         var userInfo = await Fetch(GetCachedKey(userEmail), async e =>
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            return await _dbContext.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Email == userEmail);
         });
         return userInfo;
     }
@@ -33,7 +33,7 @@ public class UserInfoRepository : BaseCacheService<User>, IUserInfoRepository
     {
         var userInfo = await Refresh(GetCachedKey(userEmail), async e =>
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            return await _dbContext.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Email == userEmail);
         });
         return userInfo;
     }

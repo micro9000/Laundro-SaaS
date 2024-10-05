@@ -7,7 +7,7 @@ public class UserContext
     public string? Email { get; set; }
 
     public Tenant? Tenant { get; set; }
-    public List<Role>? Roles { get; set; }
+    public Role? Role { get; set; }
 
     //[JsonInclude]
     public List<Store>? Stores { get; set; }

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Authentication\UserAccountCacheRepository\UserInfoRepository.cs~RF1bf691.TMP" />
+    <None Remove="Repository\UserAccountCacheRepository\UserInfoRepository.cs~RF1bf691.TMP" />
   </ItemGroup>
 
   <ItemGroup>

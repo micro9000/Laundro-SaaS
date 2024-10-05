@@ -16,7 +16,7 @@ public static class CachingRegistration
             options.Configuration = redisConnectionString;
             options.InstanceName = "LaundroInstance";
         });
-        services.AddTransient<ICache, Cache>();
+        services.AddScoped<ICache, Cache>();
 
         return services;
     }

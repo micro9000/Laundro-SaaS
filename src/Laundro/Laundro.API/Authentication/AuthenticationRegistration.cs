@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Laundro.Core.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
-using Laundro.Core.Authentication;
 
 namespace Laundro.API.Authentication;
 
@@ -11,7 +11,7 @@ public static class AuthenticationRegistration
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"));
 
-        services.AddUserAccountStateServices();
+        services.AddScoped<IUserAccountStateService, UserAccountStateService>();
 
         return services;
     }

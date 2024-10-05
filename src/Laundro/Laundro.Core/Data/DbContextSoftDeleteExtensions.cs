@@ -39,7 +39,7 @@ public static class DbContextSoftDeleteExtensions
 
     private static LambdaExpression GetIsDeletedFilter<TEntity>() where TEntity : Entity // Entity is a base class of all domain classes
     {
-        Expression<Func<TEntity, bool>> filter = e => !e.IsActive;
+        Expression<Func<TEntity, bool>> filter = e => e.IsActive;
         return filter;
     }
 }
