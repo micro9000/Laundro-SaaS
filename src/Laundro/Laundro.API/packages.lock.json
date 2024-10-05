@@ -59,6 +59,15 @@
         "resolved": "1.19.6",
         "contentHash": "7GOQdMzQcH7o/bPFL/I2kQEgMnq2pYZ+exhGb9nNqs624K9w2jB2zieh4sOH9+a01i/G9iTWfeUI3IGMF7SKNg=="
       },
+      "NodaTime": {
+        "type": "Direct",
+        "requested": "[3.1.12, )",
+        "resolved": "3.1.12",
+        "contentHash": "nDcUbG0jiEXmV8cOz7V8GnUKlmPJjqZm/R+E2JNnUSdlMoaQ19xSU8GXFLReGs/Nt8xdBfA8XfO77xVboWO1Vg==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
+        }
+      },
       "Serilog.AspNetCore": {
         "type": "Direct",
         "requested": "[8.0.2, )",
@@ -1165,7 +1174,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[8.0.7, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[8.0.7, )"
+          "Microsoft.EntityFrameworkCore.SqlServer": "[8.0.7, )",
+          "NodaTime": "[3.1.12, )"
         }
       },
       "laundro.servicedefaults": {

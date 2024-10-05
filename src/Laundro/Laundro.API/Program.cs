@@ -1,5 +1,6 @@
 using Laundro.API.Authentication;
 using Laundro.API.Data;
+using Laundro.API.Plumbing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
 builder.Services.AddGlobalCorsPolicy(builder.Configuration);
+builder.Services.AddCustomNodaTimeClock();
 
 // Application components
 builder.Services.AddDatabaseStorage(builder.Configuration);

@@ -1,5 +1,5 @@
-﻿using Laundro.Core.Constants;
-using Laundro.Core.Data;
+﻿using Laundro.Core.Data;
+using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
 
 namespace Laundro.API.Data;
 
@@ -9,6 +9,7 @@ public static class CachingRegistration
     {
         var redisConnectionString = configuration.GetConnectionString("RedisCacheConnString");
 
+        //services.AddInMemoryTokenCaches();
         services.AddMemoryCache();
         services.AddStackExchangeRedisCache(options =>
         {

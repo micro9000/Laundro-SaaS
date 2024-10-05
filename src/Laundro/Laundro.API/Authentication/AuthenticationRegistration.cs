@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
+using Laundro.Core.Authentication;
 
 namespace Laundro.API.Authentication;
 
@@ -11,9 +11,7 @@ public static class AuthenticationRegistration
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"));
 
-        services.AddInMemoryTokenCaches();
-
-        services.AddSingleton<IUserStateCache, UserStateDistributedCache>();
+        services.AddUserAccountStateServices();
 
         return services;
     }

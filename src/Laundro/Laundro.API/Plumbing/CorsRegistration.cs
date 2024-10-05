@@ -1,7 +1,7 @@
 ﻿using Microsoft.Net.Http.Headers;
 using Serilog;
 
-namespace Laundro.API.Authentication;
+namespace Laundro.API.Plumbing;
 
 public static class CorsRegistration
 {
@@ -9,7 +9,7 @@ public static class CorsRegistration
     {
         var allowedHosts = configuration.GetSection("CORS:AllowedHosts").Get<string[]>();
 
-        foreach(var host in allowedHosts)
+        foreach (var host in allowedHosts)
         {
             Log.Information("CORS {AllowedHost}", host);
         }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace Laundro.Core.Lookups;
 public interface IRoleLookup
 {
+    Task<Role?> NewUser();
     Task<Role?> TenantOwner();
     Task<Role?> StoreManager();
     Task<Role?> StoreStaff();
@@ -21,6 +22,12 @@ public class RoleLookup : IRoleLookup
     {
         _context = context;
         _memoryCache = memoryCache;
+    }
+
+    public async Task<Role?> NewUser()
+    {
+        var roles = await GetRoleDb();
+        return roles?.SingleOrDefault(r => r.SystemKey == nameof(Roles.new_user));
     }
 
     public async Task<Role?> TenantOwner()

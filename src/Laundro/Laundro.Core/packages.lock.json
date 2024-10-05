@@ -24,6 +24,15 @@
           "Microsoft.EntityFrameworkCore.Relational": "8.0.7"
         }
       },
+      "NodaTime": {
+        "type": "Direct",
+        "requested": "[3.1.12, )",
+        "resolved": "3.1.12",
+        "contentHash": "nDcUbG0jiEXmV8cOz7V8GnUKlmPJjqZm/R+E2JNnUSdlMoaQ19xSU8GXFLReGs/Nt8xdBfA8XfO77xVboWO1Vg==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.35.0",
@@ -433,9 +442,6 @@
         "dependencies": {
           "System.Drawing.Common": "6.0.0"
         }
-      },
-      "laundro.shared": {
-        "type": "Project"
       }
     }
   }
