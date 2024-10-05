@@ -1,4 +1,4 @@
-﻿using Laundro.Core.Models;
+﻿using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;

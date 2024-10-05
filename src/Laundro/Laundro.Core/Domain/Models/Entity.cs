@@ -1,4 +1,4 @@
-﻿namespace Laundro.Core.Models;
+﻿namespace Laundro.Core.Domain.Models;
 public abstract class Entity
 {
     public int Id { get; set; }

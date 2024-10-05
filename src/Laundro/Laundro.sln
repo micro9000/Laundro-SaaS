@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.AppHost", "Laundro.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.ServiceDefaults", "Laundro.ServiceDefaults\Laundro.ServiceDefaults.csproj", "{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.Shared", "Laundro.Shared\Laundro.Shared.csproj", "{587712A7-C856-409E-B368-32892632A309}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{5229AEC2-8C13-4BBD-994F-BC95A93031A7}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
@@ -46,10 +44,6 @@ Global
 		{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BC77A96-3AB0-4516-AEA8-FACA3A94A5E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{587712A7-C856-409E-B368-32892632A309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{587712A7-C856-409E-B368-32892632A309}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{587712A7-C856-409E-B368-32892632A309}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{587712A7-C856-409E-B368-32892632A309}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

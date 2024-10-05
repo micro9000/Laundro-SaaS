@@ -7,14 +7,13 @@ public static class CachingRegistration
 {
     public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
     {
-        var settings = configuration.GetSection(DistributedCacheSettings.SectionName)
-            .Get<DistributedCacheSettings>() ?? new DistributedCacheSettings();
-        
+        var redisConnectionString = configuration.GetConnectionString("RedisCacheConnString");
+
         services.AddMemoryCache();
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = settings.ConnectionString;
-            options.InstanceName = settings.InstanceName;
+            options.Configuration = redisConnectionString;
+            options.InstanceName = "LaundroInstance";
         });
         services.AddTransient<ICache, Cache>();
 

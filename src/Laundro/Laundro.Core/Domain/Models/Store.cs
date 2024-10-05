@@ -1,6 +1,6 @@
 ﻿using Laundro.Core.Data;
 
-namespace Laundro.Core.Models;
+namespace Laundro.Core.Domain.Models;
 public class Store : Entity
 {
     public string Name { get; set; } = string.Empty;

@@ -1,6 +1,5 @@
-﻿using Laundro.Core.Models;
+﻿using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laundro.Core.Data;
 

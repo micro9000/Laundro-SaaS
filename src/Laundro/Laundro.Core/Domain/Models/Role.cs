@@ -1,4 +1,4 @@
-﻿namespace Laundro.Core.Models;
+﻿namespace Laundro.Core.Domain.Models;
 public class Role : Entity
 {
     public string Name { get; set; }

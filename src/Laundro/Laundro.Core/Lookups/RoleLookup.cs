@@ -1,6 +1,6 @@
-﻿using Laundro.Core.Data;
-using Laundro.Core.Models;
-using Laundro.Shared.Constants;
+﻿using Laundro.Core.Constants;
+using Laundro.Core.Data;
+using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 

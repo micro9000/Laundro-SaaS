@@ -1,6 +1,6 @@
 ﻿using Laundro.Core.Authentication;
 using Laundro.Core.Data;
-using Laundro.Core.Models;
+using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Identity.Web;

@@ -51,6 +51,7 @@ public class Cache : ICache
             });
 
     }
+
     public async Task RemoveAsync(string key)
     {
         await _cache.RemoveAsync(key);
