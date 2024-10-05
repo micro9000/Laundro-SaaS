@@ -27,7 +27,7 @@ public class UserContextMiddleware
         if (httpContext != null && !string.IsNullOrWhiteSpace(userEmail))
         {
             var userName = GetNameClaim(httpContext);
-            var userAuthId = GetObjectIdClaim(httpContext);
+            //var userAuthId = GetObjectIdClaim(httpContext);
 
             var userState = await userAccountStateService.GetAndUpsertCurrentUserAccountState(userEmail, userName!);
 
@@ -48,6 +48,6 @@ public class UserContextMiddleware
     private static string? GetNameClaim(HttpContext httpContext) =>
         httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimConstants.Name)?.Value;
 
-    private static string? GetObjectIdClaim(HttpContext httpContext) =>
-        httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimConstants.ObjectId)?.Value;
+    //private static string? GetObjectIdClaim(HttpContext httpContext) =>
+    //    httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimConstants.ObjectId)?.Value;
 }

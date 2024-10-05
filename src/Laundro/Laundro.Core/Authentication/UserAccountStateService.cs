@@ -131,6 +131,7 @@ public class UserAccountStateService : IUserAccountStateService
         else
         {
             user.RoleId = newUserRole!.Id;
+            userContext.Role = newUserRole;
         }
 
         if (userDetailsHasChanged)
