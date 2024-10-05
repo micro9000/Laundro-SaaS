@@ -1,11 +1,6 @@
 ﻿using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Laundro.Core.Data;
 public class SystemBaseDbContext : DbContext
@@ -15,8 +10,11 @@ public class SystemBaseDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
         ConfigureManyToManyRelationships(modelBuilder);
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Where(t => typeof(Entity).IsAssignableFrom(t.ClrType)))
+        {
+            entityType.AddISoftDeleteQueryFilter();
+        }
     }
 
     private static void ConfigureManyToManyRelationships(ModelBuilder modelBuilder)
@@ -38,5 +36,16 @@ public class SystemBaseDbContext : DbContext
                     .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
             }
         }
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        InterceptChanges();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void InterceptChanges()
+    {
+        ChangeTracker.ApplySoftDeleteOverride();
     }
 }

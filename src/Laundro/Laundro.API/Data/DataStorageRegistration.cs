@@ -18,6 +18,7 @@ public static class DataStorageRegistration
         services.AddDbContext<LaundroDbContext>(options => 
             options.UseSqlServer(connectionString, opt =>
             {
+                opt.UseNodaTime();
                 opt.CommandTimeout(60);
                 opt.EnableAzureSqlRetryOnFailure();
             })

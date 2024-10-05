@@ -2,11 +2,12 @@
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Laundro.Core.Lookups;
 public interface IRoleLookup
 {
+    Task<Role?> NewUser();
     Task<Role?> TenantOwner();
     Task<Role?> StoreManager();
     Task<Role?> StoreStaff();
@@ -15,35 +16,53 @@ public interface IRoleLookup
 public class RoleLookup : IRoleLookup
 {
     private readonly LaundroDbContext _context;
-    private readonly IMemoryCache _memoryCache;
+    private readonly ICache _cache;
+    private readonly ILogger<RoleLookup> _logger;
 
-    public RoleLookup(LaundroDbContext context, IMemoryCache memoryCache)
+    public RoleLookup(LaundroDbContext context, ICache cache, ILogger<RoleLookup> logger)
     {
         _context = context;
-        _memoryCache = memoryCache;
+        _cache = cache;
+        _logger = logger;
+    }
+
+    public async Task<Role?> NewUser()
+    {
+        return await GetRole(nameof(Roles.new_user));
     }
 
     public async Task<Role?> TenantOwner()
     {
-        var roles = await GetRoleDb();
-        return roles?.SingleOrDefault(r => r.SystemKey == nameof(Roles.tenant_owner));
+        return await GetRole(nameof(Roles.tenant_owner));
     }
     
     public async Task<Role?> StoreManager()
     {
-        var roles = await GetRoleDb();
-        return roles?.SingleOrDefault(r => r.SystemKey == nameof(Roles.store_manager));
+        return await GetRole(nameof(Roles.store_manager));
     }
 
     public async Task<Role?> StoreStaff()
     {
-        var roles = await GetRoleDb();
-        return roles?.SingleOrDefault(r => r.SystemKey == nameof(Roles.store_staff));
+        return await GetRole(nameof(Roles.store_staff));
+    }
+
+    private async Task<Role?> GetRole(string role)
+    {
+        try
+        {
+            var roles = await GetRoleDb();
+            return roles?.SingleOrDefault(r => r.SystemKey == role);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Role [{role}] record in database is missing");
+            throw;
+        }
     }
 
     private async Task<IEnumerable<Role>?> GetRoleDb()
     {
-        var roles = await _memoryCache.GetOrCreateAsync("Laundro.User.Roles", async c =>
+        var roles = await _cache.GetOrCreateAsync("Laundro.User.Roles", async c =>
         {
             c.SlidingExpiration = TimeSpan.FromMinutes(15);
             return await _context.Roles.ToListAsync();

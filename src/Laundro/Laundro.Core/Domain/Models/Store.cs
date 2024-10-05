@@ -10,16 +10,16 @@ public class Store : Entity
     public int TenantId { get; set; }
     public Tenant? Tenant { get; set; }
 
-    public ICollection<StoreStaffAssignment> StaffAssignments { get; set; } = new List<StoreStaffAssignment>();
+    public ICollection<StoreStaffAssignments> StaffAssignments { get; set; } = new List<StoreStaffAssignments>();
 }
 
 
-[ManyToManyEntity(nameof(StoreId), nameof(UserId))]
-public class StoreStaffAssignment
+[ManyToManyEntity(nameof(StoreId), nameof(StaffId))]
+public class StoreStaffAssignments
 {
     public int StoreId { get; set; }
     public Store? Store { get; set; }
 
-    public int UserId { get; set; }
+    public int StaffId { get; set; }
     public User? User { get; set; }
 }

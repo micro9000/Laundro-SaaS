@@ -637,6 +637,14 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
+      "NodaTime": {
+        "type": "Transitive",
+        "resolved": "3.1.12",
+        "contentHash": "nDcUbG0jiEXmV8cOz7V8GnUKlmPJjqZm/R+E2JNnUSdlMoaQ19xSU8GXFLReGs/Nt8xdBfA8XfO77xVboWO1Vg==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
+        }
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.2",
@@ -1924,7 +1932,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[8.0.7, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[8.0.7, )"
+          "Microsoft.EntityFrameworkCore.SqlServer": "[8.0.7, )",
+          "NodaTime": "[3.1.12, )"
         }
       }
     }
