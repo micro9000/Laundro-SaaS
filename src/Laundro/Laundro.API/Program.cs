@@ -5,7 +5,6 @@ using Microsoft.ApplicationInsights.Extensibility;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,12 +13,13 @@ builder.Services.AddApplicationInsightsTelemetry();
 Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .Enrich.FromLogContext()
-                 .WriteTo.Console(theme: SystemConsoleTheme.Literate)
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentName()
                 .CreateBootstrapLogger();
 
-builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
-            .WriteTo.ApplicationInsights(
-                    services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces));
+//builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
+//            .WriteTo.ApplicationInsights(
+//                    services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces));
 
 builder.AddServiceDefaults();
 
