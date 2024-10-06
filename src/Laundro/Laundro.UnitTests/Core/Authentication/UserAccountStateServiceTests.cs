@@ -77,4 +77,35 @@ public partial class UserAccountStateServiceTests
         userAccountState.UserContext!.Stores!.Count().Should().Be(2);
     }
 
+    [Fact]
+    public async Task WHEN_ExistingStoreStaffUser_SignedIn_THEN_ItShouldReturnUserContextCorrectly_1()
+    {
+        var userAccountState = await _sut.GetAndUpsertCurrentUserAccountState(TestContextData.storeStaffEmail_1, TestContextData.storeStaffName_1);
+
+        userAccountState.DbState.Should().Be(UserAccountState.UserStateInDb.Active);
+        userAccountState.UserContext.Should().NotBeNull();
+        userAccountState.UserContext!.Role.Should().NotBeNull();
+        userAccountState.UserContext!.Role!.SystemKey.Should().Be(nameof(Roles.store_staff));
+        userAccountState.UserContext!.Email.Should().Be(TestContextData.storeStaffEmail_1);
+        userAccountState.UserContext!.Stores.Should().NotBeEmpty();
+        userAccountState.UserContext!.Stores!.Count().Should().Be(1);
+        userAccountState.UserContext!.Stores!.First().Name.Should().Be(TestContextData.firstStore);
+    }
+
+
+    [Fact]
+    public async Task WHEN_ExistingStoreStaffUser_SignedIn_THEN_ItShouldReturnUserContextCorrectly_2()
+    {
+        var userAccountState = await _sut.GetAndUpsertCurrentUserAccountState(TestContextData.storeStaffEmail_2, TestContextData.storeStaffName_2);
+
+        userAccountState.DbState.Should().Be(UserAccountState.UserStateInDb.Active);
+        userAccountState.UserContext.Should().NotBeNull();
+        userAccountState.UserContext!.Role.Should().NotBeNull();
+        userAccountState.UserContext!.Role!.SystemKey.Should().Be(nameof(Roles.store_staff));
+        userAccountState.UserContext!.Email.Should().Be(TestContextData.storeStaffEmail_2);
+        userAccountState.UserContext!.Stores.Should().NotBeEmpty();
+        userAccountState.UserContext!.Stores!.Count().Should().Be(1);
+        userAccountState.UserContext!.Stores!.First().Name.Should().Be(TestContextData.secondStore);
+    }
+
 }
