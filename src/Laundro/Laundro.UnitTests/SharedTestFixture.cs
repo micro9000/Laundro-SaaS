@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 
 namespace Laundro.UnitTests;
 public class SharedTestFixture : IDisposable
@@ -34,13 +32,17 @@ public class SharedTestFixture : IDisposable
         var services = new ServiceCollection();
         services.AddLogging();
 
-        services.AddDbContext<LaundroDbContext>(options => options.UseInMemoryDatabase("LaundroDb"));
+        // https://stackoverflow.com/a/45346358/11065063
+        services.AddDbContext<LaundroDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
         services.AddMemoryCache();
         services.AddDistributedMemoryCache();
         services.AddScoped<ICache, Cache>();
         services.AddTransient<ICurrentUserAccessor, HttpUserContextAccessor>();
         services.AddTransient<IRoleLookup, RoleLookup>();
         services.AddCustomNodaTimeClock();
+
+        services.AddTransient<IRoleLookup, RoleLookup>();
+        services.AddRepositories();
 
         serviceProvider = services.BuildServiceProvider();
 
@@ -61,6 +63,7 @@ public class SharedTestFixture : IDisposable
 
     public void Dispose()
     {
+        dbContext.Database.EnsureDeleted();
         dbContext.Dispose();
         loggerFactory.Dispose();
     }

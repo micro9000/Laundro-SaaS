@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Laundro.UnitTests.Core.Lookups;
-public class RoleLookupTests : IClassFixture<SharedTestFixture>
+
+[Collection("LookupsTestCollection")]
+public class RoleLookupTests
 {
     private readonly SharedTestFixture _sharedTestFixture;
     private readonly RoleLookup _sut;
@@ -22,11 +24,41 @@ public class RoleLookupTests : IClassFixture<SharedTestFixture>
     }
 
     [Fact]
-    public async Task When_GetNewUserRole_ItShouldReturnCorrectNewUserDbRow()
+    public async Task When_GetNewUserRole_ItShouldReturnCorrectDbRow()
     {
         var actualDbRow = _sharedTestFixture.dbContext.Roles.FirstOrDefault(r => r.SystemKey == nameof(Roles.new_user));
 
         var newUserRole = await _sut.NewUser();
+
+        actualDbRow!.Name.Should().Be(newUserRole!.Name);
+    }
+
+    [Fact]
+    public async Task When_GetTenantOwnerRole_ItShouldReturnCorrectDbRow()
+    {
+        var actualDbRow = _sharedTestFixture.dbContext.Roles.FirstOrDefault(r => r.SystemKey == nameof(Roles.tenant_owner));
+
+        var newUserRole = await _sut.TenantOwner();
+
+        actualDbRow!.Name.Should().Be(newUserRole!.Name);
+    }
+
+    [Fact]
+    public async Task When_GetStoreManagerRole_ItShouldReturnCorrectDbRow()
+    {
+        var actualDbRow = _sharedTestFixture.dbContext.Roles.FirstOrDefault(r => r.SystemKey == nameof(Roles.store_manager));
+
+        var newUserRole = await _sut.StoreManager();
+
+        actualDbRow!.Name.Should().Be(newUserRole!.Name);
+    }
+
+    [Fact]
+    public async Task When_GetStoreStaffRole_ItShouldReturnCorrectDbRow()
+    {
+        var actualDbRow = _sharedTestFixture.dbContext.Roles.FirstOrDefault(r => r.SystemKey == nameof(Roles.store_staff));
+
+        var newUserRole = await _sut.StoreStaff();
 
         actualDbRow!.Name.Should().Be(newUserRole!.Name);
     }

@@ -14,4 +14,7 @@ public class LaundroDbContext : SystemBaseDbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<Store> Stores { get; set; }
+
+    // This is only use in Unit and Integration tests
+    public DbSet<StoreStaffAssignments> StoreStaffAssignments { get; set; }
 }
