@@ -109,6 +109,19 @@
           "Serilog": "4.0.0"
         }
       },
+      "Serilog.Extensions.Hosting": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "db0OcbWeSCvYQkHWu6n0v40N4kKaTAXNjlM3BKvcbwvNzYphQFcBR+36eQ/7hMMwOkJvAyLC2a9/jNdUL5NjtQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Hosting.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Serilog": "3.1.1",
+          "Serilog.Extensions.Logging": "8.0.0"
+        }
+      },
       "Serilog.Sinks.ApplicationInsights": {
         "type": "Direct",
         "requested": "[4.0.0, )",
@@ -1141,18 +1154,6 @@
         "type": "Transitive",
         "resolved": "4.0.0",
         "contentHash": "2jDkUrSh5EofOp7Lx5Zgy0EB+7hXjjxE2ktTb1WVQmU00lDACR2TdROGKU0K1pDTBSJBN1PqgYpgOZF8mL7NJw=="
-      },
-      "Serilog.Extensions.Hosting": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "db0OcbWeSCvYQkHWu6n0v40N4kKaTAXNjlM3BKvcbwvNzYphQFcBR+36eQ/7hMMwOkJvAyLC2a9/jNdUL5NjtQ==",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Hosting.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
-          "Serilog": "3.1.1",
-          "Serilog.Extensions.Logging": "8.0.0"
-        }
       },
       "Serilog.Extensions.Logging": {
         "type": "Transitive",
