@@ -1,21 +1,19 @@
 using Laundro.API.Authentication;
 using Laundro.API.Data;
 using Laundro.API.Plumbing;
+using Microsoft.IdentityModel.Logging;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Serilog;
 using System.Text.Json;
 
-Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateBootstrapLogger();
+Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddSerilogLogging(builder.Configuration);
-
     builder.AddServiceDefaults();
 
     // We can remove this if we are not going to use controllers later
@@ -40,15 +38,14 @@ try
     builder.Services.AddRepositories();
     builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
 
+
     var app = builder.Build();
-
-    app.UseSerilogRequestLogging();
-
+    app.UseSerilogLogging();
     app.MapDefaultEndpoints();
-
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
+        IdentityModelEventSource.ShowPII = true;
         app.UseSwagger();
         app.UseSwaggerUI();
     }
