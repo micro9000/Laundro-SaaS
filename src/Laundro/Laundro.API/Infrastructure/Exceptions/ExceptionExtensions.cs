@@ -3,6 +3,8 @@ using System.Text;
 
 namespace Laundro.API.Infrastructure.Exceptions;
 
+//https://medium.com/@AntonAntonov88/handling-errors-with-iexceptionhandler-in-asp-net-core-8-0-48c71654cc2e
+
 public static class ExceptionExtensions
 {
     public const string ErrorCodeKey = "errorCode";

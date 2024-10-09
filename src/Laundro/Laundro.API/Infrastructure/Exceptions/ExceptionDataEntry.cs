@@ -3,6 +3,8 @@ using System.Text.Json;
 
 namespace Laundro.API.Infrastructure.Exceptions;
 
+// https://medium.com/@AntonAntonov88/using-exception-data-property-to-log-user-defined-information-about-exceptions-7cdc35d537b2
+
 /// <summary>
 /// Defines a value/json pair to represent an exception data value as JSON
 /// </summary>
