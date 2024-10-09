@@ -1,5 +1,6 @@
 ﻿using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Hosting;
 
@@ -13,14 +14,22 @@ public static class ConfigureSerilogLogging
                 .WriteTo.Debug()
                 .CreateBootstrapLogger();
 
+    // If you would like to see timing and dependency information in Seq,
+    // SerilogTracing is a Serilog extension that supports both logs and traces.
+    // https://github.com/datalust/serilog-sinks-seq?tab=readme-ov-file
+    // https://github.com/serilog-tracing/serilog-tracing
     public static IServiceCollection AddSerilogLogging(
         this IServiceCollection services, IConfiguration configuration)
     {
+        var levelSwitch = new LoggingLevelSwitch();
+
         services.AddSerilog((services, loggerConfiguration) =>
                 loggerConfiguration
+                    .MinimumLevel.ControlledBy(levelSwitch)
                     .ReadFrom.Configuration(configuration)
                     .ReadFrom.Services(services)
                     .Enrich.FromLogContext()
+                    .Enrich.WithProperty("Application", "Laundro.API")
                     .WriteTo.Console()
                     .WriteTo.Debug()
                     .WriteTo.ApplicationInsights(services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces));

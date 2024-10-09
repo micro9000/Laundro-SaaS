@@ -1,5 +1,6 @@
 using Laundro.API.Authentication;
 using Laundro.API.Data;
+using Laundro.API.Infrastructure.Exceptions;
 using Laundro.API.Plumbing;
 using Microsoft.IdentityModel.Logging;
 using NodaTime;
@@ -32,6 +33,10 @@ try
     builder.Services.AddGlobalCorsPolicy(builder.Configuration);
     builder.Services.AddCustomNodaTimeClock();
 
+    // Exception handler
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
+
     // Application components
     builder.Services.AddDatabaseStorage(builder.Configuration);
     builder.Services.AddCaching(builder.Configuration);
@@ -41,6 +46,7 @@ try
 
     var app = builder.Build();
     app.UseSerilogLogging();
+    app.UseExceptionHandler();
     app.MapDefaultEndpoints();
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -66,7 +72,7 @@ catch (Exception ex)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }
 
 
