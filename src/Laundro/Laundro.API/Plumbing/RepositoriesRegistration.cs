@@ -1,4 +1,4 @@
-﻿using Laundro.Core.Features.ContextState.Repositories;
+﻿using Laundro.Core.Features.UserContextState.Repositories;
 
 namespace Laundro.API.Plumbing;
 

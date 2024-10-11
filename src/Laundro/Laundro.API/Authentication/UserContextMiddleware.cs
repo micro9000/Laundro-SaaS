@@ -1,6 +1,6 @@
 ﻿using Laundro.Core.Data;
-using Laundro.Core.Features.ContextState.Models;
-using Laundro.Core.Features.ContextState.Services;
+using Laundro.Core.Features.UserContextState.Models;
+using Laundro.Core.Features.UserContextState.Services;
 using Microsoft.Identity.Web;
 
 namespace Laundro.API.Authentication;

@@ -1,4 +1,4 @@
-﻿namespace Laundro.Core.Features.ContextState.Models;
+﻿namespace Laundro.Core.Features.UserContextState.Models;
 public class UserAccountState
 {
     public enum UserStateInDb

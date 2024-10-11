@@ -1,6 +1,6 @@
 ﻿using Laundro.Core.Domain.Entities;
 
-namespace Laundro.Core.Features.ContextState.Models;
+namespace Laundro.Core.Features.UserContextState.Models;
 public class UserContext
 {
     public int UserId { get; set; }

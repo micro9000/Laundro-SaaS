@@ -1,11 +1,11 @@
 ﻿using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
-using Laundro.Core.Features.ContextState.Models;
-using Laundro.Core.Features.ContextState.Repositories;
+using Laundro.Core.Features.UserContextState.Models;
+using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Lookups;
 using Laundro.Core.NodaTime;
 
-namespace Laundro.Core.Features.ContextState.Services;
+namespace Laundro.Core.Features.UserContextState.Services;
 
 public interface IUserAccountStateService
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Laundro.Core.Features.ContextState.Repositories;
+namespace Laundro.Core.Features.UserContextState.Repositories;
 public static class UserAccountStateRegistration
 {
     public static IServiceCollection AddUserAccountStateRepositories(this IServiceCollection services)

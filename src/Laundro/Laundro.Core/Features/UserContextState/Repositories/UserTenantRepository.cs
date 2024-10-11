@@ -2,7 +2,7 @@
 using Laundro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.Core.Features.ContextState.Repositories;
+namespace Laundro.Core.Features.UserContextState.Repositories;
 
 public interface IUserTenantRepository
 {
