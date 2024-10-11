@@ -1,7 +1,7 @@
 ﻿using Laundro.Core.Data;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Laundro.Core.Repository.UserAccountCacheRepository;
+namespace Laundro.Core.Features.ContextState.Repositories;
 public abstract class BaseCacheService<T>
 {
     private readonly ICache _cache;

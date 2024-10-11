@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Laundro.ServiceDefaults\Laundro.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\" />
+  </ItemGroup>
+
 </Project>

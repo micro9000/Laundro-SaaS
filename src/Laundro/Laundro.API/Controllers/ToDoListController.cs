@@ -1,5 +1,5 @@
 ﻿using Laundro.Core.Data;
-using Laundro.Core.Domain.Models;
+using Laundro.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

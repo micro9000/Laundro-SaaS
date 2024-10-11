@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
-using Laundro.Core.Authentication;
 using Laundro.Core.Constants;
+using Laundro.Core.Features.ContextState.Models;
+using Laundro.Core.Features.ContextState.Repositories;
+using Laundro.Core.Features.ContextState.Services;
 using Laundro.Core.Lookups;
 using Laundro.Core.NodaTime;
-using Laundro.Core.Repository.UserAccountCacheRepository;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Laundro.UnitTests.Core.Authentication;

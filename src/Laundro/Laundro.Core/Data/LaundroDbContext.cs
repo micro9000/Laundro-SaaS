@@ -1,4 +1,4 @@
-﻿using Laundro.Core.Domain.Models;
+﻿using Laundro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Laundro.Core.Data;

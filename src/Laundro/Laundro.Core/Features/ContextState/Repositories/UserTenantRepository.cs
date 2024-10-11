@@ -1,8 +1,8 @@
 ﻿using Laundro.Core.Data;
-using Laundro.Core.Domain.Models;
+using Laundro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.Core.Repository.UserAccountCacheRepository;
+namespace Laundro.Core.Features.ContextState.Repositories;
 
 public interface IUserTenantRepository
 {

@@ -1,6 +1,6 @@
 ﻿using Laundro.Core.Constants;
 using Laundro.Core.Data;
-using Laundro.Core.Domain.Models;
+using Laundro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

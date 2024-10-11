@@ -2,7 +2,7 @@
 using NodaTime;
 using System.Globalization;
 
-namespace Laundro.Core.Domain.Shared.Models;
+namespace Laundro.Core.Domain.Models;
 public class YearMonthDay
 {
     public int Year { get; set; }
@@ -41,7 +41,7 @@ public class YearMonthDay
     {
         var value = ToLocalDate();
         value = value.PlusDays(days);
-        return YearMonthDay.FromLocalDate(value);
+        return FromLocalDate(value);
     }
 
     public override string ToString()

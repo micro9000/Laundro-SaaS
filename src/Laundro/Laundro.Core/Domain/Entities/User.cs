@@ -1,4 +1,4 @@
-﻿namespace Laundro.Core.Domain.Models;
+﻿namespace Laundro.Core.Domain.Entities;
 public class User : Entity
 {
     public string Email { get; set; } = string.Empty;
