@@ -1,4 +1,5 @@
 using Laundro.API.Authentication;
+using Laundro.API.Authorization;
 using Laundro.API.Infrastructure.Exceptions;
 using Laundro.API.Plumbing;
 using Laundro.API.Plumbing.Database;
@@ -26,6 +27,7 @@ try
     builder.Services.AddCaching(builder.Configuration);
     builder.Services.AddRepositories();
     builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
+    builder.Services.AddLaundroAuthorization(builder.Configuration);
 
     var app = builder.Build();
     app.UseSerilogLogging();

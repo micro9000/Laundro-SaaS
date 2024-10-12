@@ -1,6 +1,8 @@
 ﻿using FastEndpoints;
+using Laundro.API.Authorization;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
+using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Features.UserContextState.Services;
 
 namespace Laundro.API.Features.Tenants.CreateTenant;
@@ -9,34 +11,39 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
 {
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly LaundroDbContext _dbContext;
+    private readonly IUserTenantRepository _userTenantRepository;
 
-    public CreateTenantEndpoint(ICurrentUserAccessor currentUserAccessor, LaundroDbContext dbContext)
+    public CreateTenantEndpoint(ICurrentUserAccessor currentUserAccessor, 
+        LaundroDbContext dbContext,
+        IUserTenantRepository userTenantRepository)
     {
         _currentUserAccessor = currentUserAccessor;
         _dbContext = dbContext;
+        _userTenantRepository = userTenantRepository;
     }
 
     public override void Configure()
     {
         Post("api/tenant/create");
+        Policies(PolicyName.CanCreateTenant);
     }
 
     public override async Task HandleAsync(CreateTenantRequest request, CancellationToken c)
     {
-
-    }
-
-    private async Task<bool> IsCurrentUserIsAllowedToCreateNewTenant(CreateTenantRequest request)
-    {
-        var userId = _currentUserAccessor.GetCurrentUser()?.UserId;
-
-        if (userId is not null)
+        var currentUser = _currentUserAccessor.GetCurrentUser();
+        _dbContext.Tenants.Add(new Tenant
         {
-            var userActiveTenant = _dbContext.Tenants.FirstOrDefault(t => t.OwnerId == userId);
+            OwnerId = currentUser!.UserId,
+            CompanyName = request.CompanyName
+        });
+        await _dbContext.SaveChangesAsync();
 
-        }
+        var userNewTenant = await _userTenantRepository.RefreshAndGetCachedTenantByOwner(currentUser!.UserId);
 
-        return false;
+        await SendAsync(new()
+        {
+            Tenant = userNewTenant
+        });
     }
 }
 
