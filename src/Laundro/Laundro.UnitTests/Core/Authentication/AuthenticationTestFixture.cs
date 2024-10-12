@@ -1,5 +1,5 @@
 ﻿using Laundro.Core.Data;
-using Laundro.Core.Domain.Models;
+using Laundro.Core.Domain.Entities;
 using Laundro.Core.Lookups;
 using Microsoft.Extensions.DependencyInjection;
 

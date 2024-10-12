@@ -1,12 +1,9 @@
 using Laundro.API.Authentication;
-using Laundro.API.Data;
+using Laundro.API.Authorization;
 using Laundro.API.Infrastructure.Exceptions;
 using Laundro.API.Plumbing;
-using Microsoft.IdentityModel.Logging;
-using NodaTime;
-using NodaTime.Serialization.SystemTextJson;
+using Laundro.API.Plumbing.Database;
 using Serilog;
-using System.Text.Json;
 
 Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
 
@@ -17,53 +14,35 @@ try
     builder.Services.AddSerilogLogging(builder.Configuration);
     builder.AddServiceDefaults();
 
-    // We can remove this if we are not going to use controllers later
-    builder.Services.AddControllers()
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            options.JsonSerializerOptions.WriteIndented = true;
-        });
-
-    // Add services to the container.
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-    builder.Services.AddGlobalCorsPolicy(builder.Configuration);
-    builder.Services.AddCustomNodaTimeClock();
-
     // Exception handler
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
+
+    builder.Services.AddFastEndpointsConfigs();
+    builder.Services.AddGlobalCorsPolicy(builder.Configuration);
+    builder.Services.AddCustomNodaTimeClock();
 
     // Application components
     builder.Services.AddDatabaseStorage(builder.Configuration);
     builder.Services.AddCaching(builder.Configuration);
     builder.Services.AddRepositories();
     builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
-
+    builder.Services.AddLaundroAuthorization(builder.Configuration);
 
     var app = builder.Build();
     app.UseSerilogLogging();
     app.UseExceptionHandler();
-    app.MapDefaultEndpoints();
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        IdentityModelEventSource.ShowPII = true;
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
 
+    // health checks endpoints
+    app.MapDefaultEndpoints();
     app.UseRouting();
     app.UseHttpsRedirection();
 
     app.UseGlobalCorsPolicy();
     app.UseLaundroAzureADAuthentication();
 
-    app.MapControllers();
-
+    app.UseFastEndpointsConfigs();
+    
     app.Run();
 }
 catch (Exception ex)

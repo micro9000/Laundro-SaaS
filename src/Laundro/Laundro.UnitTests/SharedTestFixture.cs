@@ -1,9 +1,9 @@
 ﻿using Laundro.API.Authentication;
 using Laundro.API.Plumbing;
-using Laundro.Core.Authentication;
 using Laundro.Core.Constants;
 using Laundro.Core.Data;
-using Laundro.Core.Domain.Models;
+using Laundro.Core.Domain.Entities;
+using Laundro.Core.Features.UserContextState.Services;
 using Laundro.Core.Lookups;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

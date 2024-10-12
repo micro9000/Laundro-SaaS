@@ -20,7 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{5229AEC2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{803CEAC2-6D10-4737-A112-66AAFC7809C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laundro.UnitTests", "Laundro.UnitTests\Laundro.UnitTests.csproj", "{49B84617-547C-4A52-BB20-EA5AD4353DED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laundro.UnitTests", "Laundro.UnitTests\Laundro.UnitTests.csproj", "{49B84617-547C-4A52-BB20-EA5AD4353DED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentations", "Documentations", "{057C4DEA-4FDF-47F8-AE1D-5E25E10F7CA0}"
+	ProjectSection(SolutionItems) = preProject
+		DecisionsMade.md = DecisionsMade.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

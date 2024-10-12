@@ -1,4 +1,4 @@
-﻿using Laundro.Core.Domain.Models;
+﻿using Laundro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
@@ -26,11 +26,11 @@ public static class DbContextSoftDeleteExtensions
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.CurrentValues[nameof(Entity.IsActive)] = false;
+                        entry.CurrentValues[nameof(Entity.IsActive)] = true;
                         break;
                     case EntityState.Deleted:
                         entry.State = EntityState.Modified;
-                        entry.CurrentValues[nameof(Entity.IsActive)] = true;
+                        entry.CurrentValues[nameof(Entity.IsActive)] = false;
                         break;
                 }
             }

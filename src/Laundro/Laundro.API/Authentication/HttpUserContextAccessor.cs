@@ -1,4 +1,5 @@
-﻿using Laundro.Core.Authentication;
+﻿using Laundro.Core.Features.UserContextState.Models;
+using Laundro.Core.Features.UserContextState.Services;
 
 namespace Laundro.API.Authentication;
 
