@@ -1,0 +1,4 @@
+ALTER TABLE Tenants
+ADD CampanyName VARCHAR(255)
+
+GO
