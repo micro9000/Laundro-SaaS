@@ -4,6 +4,6 @@
     {
         public int OwnerId { get; set; }
         public User? Owner { get; set; }
-        public string? CampanyName { get; set; }
+        public string? CompanyName { get; set; }
     }
 }

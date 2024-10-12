@@ -10,7 +10,7 @@ public class Store : Entity
     public int TenantId { get; set; }
     public Tenant? Tenant { get; set; }
 
-    public ICollection<StoreStaffAssignments> StaffAssignments { get; set; } = new List<StoreStaffAssignments>();
+    public ICollection<StoreStaffAssignments>? StaffAssignments { get; set; } = new List<StoreStaffAssignments>();
 }
 
 
