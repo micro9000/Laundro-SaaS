@@ -1,17 +1,17 @@
 ﻿using FastEndpoints;
-using Laundro.Core.Domain.Entities;
+using Entities = Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Models;
 using Laundro.Core.Features.UserContextState.Services;
 
-namespace Laundro.API.Features.UserContextState;
+namespace Laundro.API.Features.UserContextStates.GetUserContextState;
 
 public sealed class UserContextResponse
 {
     public int UserId { get; set; }
     public string? Email { get; set; }
-    public Tenant? Tenant { get; set; }
-    public Role? Role { get; set; }
-    public List<Store>? Stores { get; set; }
+    public Entities.Tenant? Tenant { get; set; }
+    public Entities.Role? Role { get; set; }
+    public List<Entities.Store>? Stores { get; set; }
 }
 
 internal sealed class UserContextMapper : ResponseMapper<UserContextResponse, UserContext>
