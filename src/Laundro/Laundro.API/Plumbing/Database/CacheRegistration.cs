@@ -1,7 +1,7 @@
 ﻿using Laundro.Core.Data;
 using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
 
-namespace Laundro.API.Data;
+namespace Laundro.API.Plumbing.Database;
 
 public static class CachingRegistration
 {

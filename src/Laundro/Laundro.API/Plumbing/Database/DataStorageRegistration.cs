@@ -6,7 +6,7 @@ using Laundro.Core.Lookups;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace Laundro.API.Data;
+namespace Laundro.API.Plumbing.Database;
 
 public static class DataStorageRegistration
 {
@@ -15,7 +15,7 @@ public static class DataStorageRegistration
         var connectionString = configuration.GetConnectionString(SystemContants.LaundroConnectionString);
         var enableSensitiveLogging = configuration.GetSection(nameof(Settings)).GetValue<bool>(nameof(Settings.EnableSensitiveLogging));
 
-        services.AddDbContext<LaundroDbContext>(options => 
+        services.AddDbContext<LaundroDbContext>(options =>
             options.UseSqlServer(connectionString, opt =>
             {
                 opt.UseNodaTime();
