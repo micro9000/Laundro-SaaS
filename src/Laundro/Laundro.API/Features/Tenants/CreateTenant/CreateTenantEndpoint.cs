@@ -31,11 +31,13 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     public override async Task HandleAsync(CreateTenantRequest request, CancellationToken c)
     {
         var currentUser = _currentUserAccessor.GetCurrentUser();
-        _dbContext.Tenants.Add(new Tenant
+        var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
             CompanyName = request.CompanyName
-        });
+        };
+
+        _dbContext.Tenants.Add(newTenant);
         await _dbContext.SaveChangesAsync();
 
         var userNewTenant = await _userTenantRepository.RefreshAndGetCachedTenantByOwner(currentUser!.UserId);
