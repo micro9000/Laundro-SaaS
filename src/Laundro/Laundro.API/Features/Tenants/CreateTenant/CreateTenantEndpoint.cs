@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
 using Laundro.Core.BusinessRequirementsValidators;
+using Laundro.Core.BusinessRequirementsValidators.TenantsRequirementsAndValidators.Create;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Repositories;
@@ -14,20 +15,20 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly LaundroDbContext _dbContext;
     private readonly IUserTenantRepository _userTenantRepository;
-    private readonly IBusinessRequirementValidator<Tenant> _businessRequirementsValidators;
     private readonly IClockService _clock;
+    private readonly IEnumerable<IBusinessRequirementHandler<UserCanOnlyOwnOneTenantRequirement, Tenant>> _canCreateValidator;
 
     public CreateTenantEndpoint(ICurrentUserAccessor currentUserAccessor, 
         LaundroDbContext dbContext,
         IUserTenantRepository userTenantRepository,
-        IBusinessRequirementValidator<Tenant> businessRequirementsValidators,
-        IClockService clock)
+        IClockService clock,
+        IEnumerable<IBusinessRequirementHandler<UserCanOnlyOwnOneTenantRequirement, Tenant>> canCreateValidator)
     {
         _currentUserAccessor = currentUserAccessor;
         _dbContext = dbContext;
         _userTenantRepository = userTenantRepository;
-        _businessRequirementsValidators = businessRequirementsValidators;
         _clock = clock;
+        _canCreateValidator = canCreateValidator;
     }
 
     public override void Configure()
@@ -40,8 +41,6 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     {
         var currentUser = _currentUserAccessor.GetCurrentUser();
 
-        // TODO: Add validation - the user can only have one tenant
-
         var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
@@ -49,7 +48,7 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
             CreatedAt = _clock.Now.ToDateTimeUtc()
         };
 
-        var validationResponse = await _businessRequirementsValidators.Validate(newTenant);
+        var validationResponse = await CanCreateValidate(newTenant);
         if (!validationResponse.IsSatisfied)
         {
             foreach(var errMsg in validationResponse.ErrorMessages)
@@ -71,6 +70,23 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
         {
             Tenant = userNewTenant
         });
+    }
+
+    public async Task<ValidatorResponse> CanCreateValidate(Tenant entity)
+    {
+        var responses = new List<ValidatorResponse>();
+        foreach (var validator in _canCreateValidator)
+        {
+            var res = await validator.IsSatisfied(entity);
+            responses.Add(res);
+        }
+
+        var errors = responses.SelectMany(r => r.ErrorMessages).ToList();
+
+        return new ValidatorResponse
+        {
+            ErrorMessages = errors
+        };
     }
 }
 

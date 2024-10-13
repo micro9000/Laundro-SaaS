@@ -4,18 +4,18 @@ using Laundro.Core.Features.UserContextState.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Laundro.Core.BusinessRequirementsValidators.TenantsRequirementsAndValidators;
-public class IsUserCreatingOrOwningMultipleTenantHandler
-    : IBusinessRequirementHandler<UserCanOnlyCreateAndOwnOneTenantRequirement, Tenant>
+namespace Laundro.Core.BusinessRequirementsValidators.TenantsRequirementsAndValidators.Create;
+public class IsUserCanCreateMultipleTenantHandler
+    : IBusinessRequirementHandler<UserCanOnlyOwnOneTenantRequirement, Tenant>
 {
     private readonly LaundroDbContext _dbContext;
     private readonly ICurrentUserAccessor _currentUserAccessor;
-    private readonly ILogger<IsUserCreatingOrOwningMultipleTenantHandler> _logger;
+    private readonly ILogger<IsUserCanCreateMultipleTenantHandler> _logger;
 
-    public IsUserCreatingOrOwningMultipleTenantHandler(
-        LaundroDbContext dbContext, 
+    public IsUserCanCreateMultipleTenantHandler(
+        LaundroDbContext dbContext,
         ICurrentUserAccessor currentUserAccessor,
-        ILogger<IsUserCreatingOrOwningMultipleTenantHandler> logger)
+        ILogger<IsUserCanCreateMultipleTenantHandler> logger)
     {
         _dbContext = dbContext;
         _currentUserAccessor = currentUserAccessor;

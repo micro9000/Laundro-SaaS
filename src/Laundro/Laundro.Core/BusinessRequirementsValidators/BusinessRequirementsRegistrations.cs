@@ -6,7 +6,7 @@ public static class BusinessRequirementsRegistrations
 {
     public static IServiceCollection AddBusinessRequirementsValidators(this IServiceCollection services)
     {
-        services.AddTenantsRequirementsAndValidators();
+        services.AddTenantsRequirements();
 
         return services;
     }
