@@ -3,6 +3,7 @@ using Laundro.API.Authorization;
 using Laundro.API.Infrastructure.Exceptions;
 using Laundro.API.Plumbing;
 using Laundro.API.Plumbing.Database;
+using Laundro.Core.BusinessRequirementsValidators;
 using Serilog;
 
 Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
@@ -28,6 +29,8 @@ try
     builder.Services.AddRepositories();
     builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
     builder.Services.AddLaundroAuthorization(builder.Configuration);
+
+    builder.Services.AddBusinessRequirementsValidators();
 
     var app = builder.Build();
     app.UseSerilogLogging();

@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
+using Laundro.Core.BusinessRequirementsValidators;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Repositories;
@@ -12,14 +13,17 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly LaundroDbContext _dbContext;
     private readonly IUserTenantRepository _userTenantRepository;
+    private readonly IBusinessRequirementValidator<Tenant> _businessRequirementsValidators;
 
     public CreateTenantEndpoint(ICurrentUserAccessor currentUserAccessor, 
         LaundroDbContext dbContext,
-        IUserTenantRepository userTenantRepository)
+        IUserTenantRepository userTenantRepository,
+        IBusinessRequirementValidator<Tenant> businessRequirementsValidators)
     {
         _currentUserAccessor = currentUserAccessor;
         _dbContext = dbContext;
         _userTenantRepository = userTenantRepository;
+        _businessRequirementsValidators = businessRequirementsValidators;
     }
 
     public override void Configure()
@@ -31,15 +35,23 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     public override async Task HandleAsync(CreateTenantRequest request, CancellationToken c)
     {
         var currentUser = _currentUserAccessor.GetCurrentUser();
+
+        // TODO: Add validation - the user can only have one tenant
+
         var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
             CompanyName = request.CompanyName
         };
 
+        var validationResponse = await _businessRequirementsValidators.Validate(newTenant);
+
+
         _dbContext.Tenants.Add(newTenant);
         await _dbContext.SaveChangesAsync();
 
+        // TODO: try to use FastEndpoints In-Process Event Bus Pattern (Pub/Sub) feature
+        // to refresh the cached tenant of the current user
         var userNewTenant = await _userTenantRepository.RefreshAndGetCachedTenantByOwner(currentUser!.UserId);
 
         await SendAsync(new()
