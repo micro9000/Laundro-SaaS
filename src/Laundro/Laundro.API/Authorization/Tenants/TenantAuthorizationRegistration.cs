@@ -7,7 +7,7 @@ public static class TenantAuthorizationRegistration
 {
     public static IServiceCollection AddTenantAuthorizationServices(this IServiceCollection services)
     {
-        services.AddScoped<IAuthorizationHandler, IsANewUserHandler>();
+        services.AddScoped<IAuthorizationHandler, IsInCorrectRoleHandler>();
 
         return services;
     }
@@ -16,7 +16,7 @@ public static class TenantAuthorizationRegistration
     {
         options.AddPolicy(PolicyName.CanCreateTenant, policyBuilder =>
             policyBuilder.AddRequirements(
-                new HasNewUserRoleRequirement()
+                new HasCorrectRoleToCreateNewTeanant()
                 ));
     }
 }

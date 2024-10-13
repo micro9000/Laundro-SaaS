@@ -19,23 +19,25 @@ public class SystemBaseDbContext : DbContext
 
     private static void ConfigureManyToManyRelationships(ModelBuilder modelBuilder)
     {
-        foreach (var type in typeof(LaundroDbContext).Assembly.GetTypes())
-        {
-            var attribute = type.GetCustomAttributes(false).OfType<ManyToManyEntityAttribute>().SingleOrDefault();
-            if (attribute == null) continue;
+        modelBuilder.ConfigureStoreUserManyToManyRelationships();
 
-            modelBuilder.Entity(type).HasKey(attribute.FirstKey, attribute.SecondKey);
+        //foreach (var type in typeof(LaundroDbContext).Assembly.GetTypes())
+        //{
+        //    var attribute = type.GetCustomAttributes(false).OfType<ManyToManyEntityAttribute>().SingleOrDefault();
+        //    if (attribute == null) continue;
 
-            // To resolve the error: Cannot insert explicit value of identity column in table '<tablename>' when
-            // IDENTITY_INSERT is set to OFF
-            var idProperty = type.GetProperty(nameof(Entity.Id));
-            if (idProperty != null)
-            {
-                modelBuilder.Entity(type)
-                    .Property(idProperty.Name).ValueGeneratedOnAddOrUpdate()
-                    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
-            }
-        }
+        //    modelBuilder.Entity(type).HasKey(attribute.FirstKey, attribute.SecondKey);
+
+        //    // To resolve the error: Cannot insert explicit value of identity column in table '<tablename>' when
+        //    // IDENTITY_INSERT is set to OFF
+        //    var idProperty = type.GetProperty(nameof(Entity.Id));
+        //    if (idProperty != null)
+        //    {
+        //        modelBuilder.Entity(type)
+        //            .Property(idProperty.Name).ValueGeneratedOnAddOrUpdate()
+        //            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //    }
+        //}
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)

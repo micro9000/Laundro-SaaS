@@ -5,15 +5,19 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Laundro.API.Authorization.Tenants.Create;
 
-public class IsANewUserHandler : UserAuthorizationHandler<HasNewUserRoleRequirement>
+public class IsInCorrectRoleHandler : UserAuthorizationHandler<HasCorrectRoleToCreateNewTeanant>
 {
-    public IsANewUserHandler(ICurrentUserAccessor currentUserAccessor) : base(currentUserAccessor){}
+    public IsInCorrectRoleHandler(ICurrentUserAccessor currentUserAccessor) : base(currentUserAccessor){}
 
-    private static readonly string _validRole = Roles.new_user.ToString();
-
-    protected override Task CheckRequirement(UserContext user, AuthorizationHandlerContext context, HasNewUserRoleRequirement requirement)
+    private static readonly string[] _validRoles = new string[]
     {
-        if (user.IsInRole(_validRole))
+        Roles.new_user.ToString(),
+        Roles.tenant_owner.ToString()
+    };
+
+    protected override Task CheckRequirement(UserContext user, AuthorizationHandlerContext context, HasCorrectRoleToCreateNewTeanant requirement)
+    {
+        if (user.IsInRole(_validRoles))
         {
             context.Succeed(requirement);
             return Task.CompletedTask;

@@ -6,12 +6,9 @@ namespace Laundro.Core.Features.UserContextState.Repositories;
 
 public interface IUserStoresRepository
 {
-    Task<List<Store>?> GetCachedStoresByManagerId(int userId);
-    Task<List<Store>?> GetCachedStoresByStaffId(int userId);
-    void InvalidCachedStoresByManagerId(int userId);
-    void InvalidCachedStoresByStaffId(int userId);
-    Task<List<Store>?> RefreshAndGetCachedStoresByManagerId(int userId);
-    Task<List<Store>?> RefreshAndGetCachedStoresByStaffId(int userId);
+    Task<List<Store>?> GetCachedStoresByUser(int userId);
+    void InvalidCachedStoresByUser(int userId);
+    Task<List<Store>?> RefreshAndGetCachedStoresByUser(int userId);
 
     Task<List<Store>?> GetCachedStoresByTenant(int tenantId);
     Task<List<Store>?> RefreshAndGetCachedStoresByTenant(int tenantId);
@@ -27,67 +24,35 @@ public class UserStoresRepository : BaseCacheService<List<Store>>, IUserStoresRe
         _dbContext = dbContext;
     }
 
-    #region Get stores by manager id
-    public async Task<List<Store>?> GetCachedStoresByManagerId(int userId)
+    public async Task<List<Store>?> GetCachedStoresByUser(int userId)
     {
-        var stores = await Fetch(GetCachedKeyForManager(userId), async e =>
+        var stores = await Fetch(GetCachedKeyForUser(userId), async e =>
         {
             return await _dbContext.Stores
-                .Include(s => s.Tenant)
-                .AsSplitQuery()
-                .Where(s => s.ManagerId == userId).ToListAsync();
+                .Include(s => s.StoreUser).ThenInclude(ss => ss.Role)
+                .Where(s => s.StoreUser != null && s.StoreUser.Any(ss => ss.UserId == userId))
+                .ToListAsync();
         });
         return stores;
     }
 
-    public async Task<List<Store>?> RefreshAndGetCachedStoresByManagerId(int userId)
+    public async Task<List<Store>?> RefreshAndGetCachedStoresByUser(int userId)
     {
-        var stores = await Refresh(GetCachedKeyForManager(userId), async e =>
+        var stores = await Refresh(GetCachedKeyForUser(userId), async e =>
         {
             return await _dbContext.Stores
-                .Include(s => s.Tenant)
-                .AsSplitQuery()
-                .Where(s => s.ManagerId == userId).ToListAsync();
+                .Include(s => s.StoreUser).ThenInclude(ss => ss.Role)
+                .Where(s => s.StoreUser != null && s.StoreUser.Any(ss => ss.UserId == userId))
+                .ToListAsync();
         });
         return stores;
     }
 
-    public void InvalidCachedStoresByManagerId(int userId)
+    public void InvalidCachedStoresByUser(int userId)
     {
-        Invalidate(GetCachedKeyForManager(userId));
+        Invalidate(GetCachedKeyForUser(userId));
     }
 
-    #endregion
-
-    #region Get stores by staff id
-    public async Task<List<Store>?> GetCachedStoresByStaffId(int userId)
-    {
-        var stores = await Fetch(GetCachedKeyForStaff(userId), async e =>
-        {
-            return await _dbContext.Stores
-                .Where(s => s.StaffAssignments.Any(a => a.StaffId == userId)).ToListAsync();
-        });
-        return stores;
-    }
-
-    public async Task<List<Store>?> RefreshAndGetCachedStoresByStaffId(int userId)
-    {
-        var stores = await Refresh(GetCachedKeyForStaff(userId), async e =>
-        {
-            return await _dbContext.Stores
-                .Where(s => s.StaffAssignments.Any(a => a.StaffId == userId)).ToListAsync();
-        });
-        return stores;
-    }
-
-    public void InvalidCachedStoresByStaffId(int userId)
-    {
-        Invalidate(GetCachedKeyForStaff(userId));
-    }
-
-    #endregion
-
-    #region Get stores by tenant
     public async Task<List<Store>?> GetCachedStoresByTenant(int tenantId)
     {
         var stores = await Fetch(GetCachedKeyForTenant(tenantId), async e =>
@@ -113,14 +78,9 @@ public class UserStoresRepository : BaseCacheService<List<Store>>, IUserStoresRe
         Invalidate(GetCachedKeyForTenant(tenantId));
     }
 
-    #endregion
-    private string GetCachedKeyForStaff(int userId)
+    private string GetCachedKeyForUser(int userId)
     {
-        return $"{_baseCacheName}stores-staffId-{userId}";
-    }
-    private string GetCachedKeyForManager(int userId)
-    {
-        return $"{_baseCacheName}stores-managerId-{userId}";
+        return $"{_baseCacheName}stores-userId-{userId}";
     }
     private string GetCachedKeyForTenant(int tenantId)
     {

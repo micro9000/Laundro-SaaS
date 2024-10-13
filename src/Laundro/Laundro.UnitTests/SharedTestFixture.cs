@@ -56,7 +56,7 @@ public class SharedTestFixture : IDisposable
     private void PopulateUserRoles(LaundroDbContext dbContext)
     {
         var enumRoles = Enum.GetValues(typeof(Roles)).Cast<Roles>().ToArray();
-        var roles = enumRoles.Select(r => new Role { Name = r.ToString(), SystemKey = r.ToString(), IsActive = true });
+        var roles = enumRoles.Select(r => new Role { Name = r.ToString(), SystemKey = r.ToString()});
         dbContext.AddRange(roles);
         dbContext.SaveChanges();
     }

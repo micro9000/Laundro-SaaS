@@ -1,0 +1,4 @@
+﻿namespace Laundro.Core.BusinessRequirementsValidators.TenantsRequirementsAndValidators;
+public class UserCanOnlyCreateAndOwnOneTenantRequirement : IBusinessRequirement
+{
+}

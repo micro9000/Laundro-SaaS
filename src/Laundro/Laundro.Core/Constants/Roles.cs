@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Laundro.Core.Constants;
+﻿namespace Laundro.Core.Constants;
 public enum Roles
 {
     new_user,
+    // Tenant Level Roles
     tenant_owner,
+    tenant_employee,
+
+    // Store Level Roles
     store_manager,
     store_staff
 }

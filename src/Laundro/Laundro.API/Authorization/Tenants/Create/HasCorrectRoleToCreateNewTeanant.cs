@@ -2,6 +2,6 @@
 
 namespace Laundro.API.Authorization.Tenants.Create;
 
-public class HasNewUserRoleRequirement : IAuthorizationRequirement
+public class HasCorrectRoleToCreateNewTeanant : IAuthorizationRequirement
 {
 }

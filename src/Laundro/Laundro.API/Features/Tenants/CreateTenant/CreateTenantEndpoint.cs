@@ -1,9 +1,11 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
+using Laundro.Core.BusinessRequirementsValidators;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Features.UserContextState.Services;
+using Laundro.Core.NodaTime;
 
 namespace Laundro.API.Features.Tenants.CreateTenant;
 
@@ -12,14 +14,20 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly LaundroDbContext _dbContext;
     private readonly IUserTenantRepository _userTenantRepository;
+    private readonly IBusinessRequirementValidator<Tenant> _businessRequirementsValidators;
+    private readonly IClockService _clock;
 
     public CreateTenantEndpoint(ICurrentUserAccessor currentUserAccessor, 
         LaundroDbContext dbContext,
-        IUserTenantRepository userTenantRepository)
+        IUserTenantRepository userTenantRepository,
+        IBusinessRequirementValidator<Tenant> businessRequirementsValidators,
+        IClockService clock)
     {
         _currentUserAccessor = currentUserAccessor;
         _dbContext = dbContext;
         _userTenantRepository = userTenantRepository;
+        _businessRequirementsValidators = businessRequirementsValidators;
+        _clock = clock;
     }
 
     public override void Configure()
@@ -31,15 +39,32 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     public override async Task HandleAsync(CreateTenantRequest request, CancellationToken c)
     {
         var currentUser = _currentUserAccessor.GetCurrentUser();
+
+        // TODO: Add validation - the user can only have one tenant
+
         var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
-            CompanyName = request.CompanyName
+            CompanyName = request.CompanyName,
+            CreatedAt = _clock.Now.ToDateTimeUtc()
         };
+
+        var validationResponse = await _businessRequirementsValidators.Validate(newTenant);
+        if (!validationResponse.IsSatisfied)
+        {
+            foreach(var errMsg in validationResponse.ErrorMessages)
+            {
+                AddError(errMsg);
+            }
+        }
+
+        ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
 
         _dbContext.Tenants.Add(newTenant);
         await _dbContext.SaveChangesAsync();
 
+        // TODO: try to use FastEndpoints In-Process Event Bus Pattern (Pub/Sub) feature
+        // to refresh the cached tenant of the current user
         var userNewTenant = await _userTenantRepository.RefreshAndGetCachedTenantByOwner(currentUser!.UserId);
 
         await SendAsync(new()

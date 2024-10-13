@@ -20,6 +20,12 @@ public static class MyRoleCheck
         return hasLanudroRole;
     }
 
+
+    public static bool IsInRole(this UserContext context, string[] roleSystemKey)
+    {
+        return roleSystemKey.Any(r => r == context.Role?.SystemKey);
+    }
+
     public static bool IsInRole(this UserContext context, string roleSystemKey)
     {
         return context.Role?.SystemKey == roleSystemKey;

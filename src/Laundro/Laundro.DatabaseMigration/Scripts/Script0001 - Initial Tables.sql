@@ -7,9 +7,7 @@ CREATE TABLE Roles
 (
 	Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	Name VARCHAR(255) NOT NULL,
-	SystemKey VARCHAR(100) NOT NULL,
-	IsActive BIT NOT NULL DEFAULT 1,
-	CreatedAt DATETIME2 DEFAULT SYSDATETIME()
+	SystemKey VARCHAR(100) NOT NULL
 )
 
 CREATE TABLE Users
@@ -41,18 +39,19 @@ CREATE TABLE Stores
 	Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	TenantId INT NOT NULL,
 	Name VARCHAR(255) NOT NULL,
-	ManagerId INT NOT NULL,
 	CreatedAt DATETIME2 DEFAULT SYSDATETIME(),
 	IsActive BIT NOT NULL DEFAULT 1,
-	CONSTRAINT FK_Tenant FOREIGN KEY (TenantId) REFERENCES Tenants(Id),
-	CONSTRAINT FK_Manager FOREIGN KEY (ManagerId) REFERENCES Users(Id)
+	CONSTRAINT FK_Tenant FOREIGN KEY (TenantId) REFERENCES Tenants(Id)
 )
 
--- A User should only be assigned to only one store, and we will going to facilitate the validation in the system
-CREATE TABLE StoreStaffAssignments
+CREATE TABLE StoreUsers
 (
-	StaffId INT NOT NULL,
+	UserId INT NOT NULL,
 	StoreId INT NOT NULL,
-	CONSTRAINT FK_Staff FOREIGN KEY (StaffId) REFERENCES Users(Id),
-	CONSTRAINT FK_Store FOREIGN KEY (StoreId) REFERENCES Stores(Id)
+	RoleId INT NOT NULL,
+	IsActive BIT NOT NULL DEFAULT 1,
+	CONSTRAINT PK_StoreUser PRIMARY KEY(UserId, StoreId),
+	CONSTRAINT FK_StoreUser_User FOREIGN KEY (UserId) REFERENCES Users(Id),
+	CONSTRAINT FK_StoreUser_Store FOREIGN KEY (StoreId) REFERENCES Stores(Id),
+	CONSTRAINT FK_StoreUser_Role FOREIGN KEY (RoleId) REFERENCES Roles(Id)
 )
