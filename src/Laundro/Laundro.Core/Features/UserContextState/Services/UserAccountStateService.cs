@@ -44,8 +44,7 @@ public class UserAccountStateService : IUserAccountStateService
 
         var newUserRole = await _roleLookup.NewUser();
         var tenantOwnerRole = await _roleLookup.TenantOwner();
-        var storeManagerRole = await _roleLookup.StoreManager();
-        var storeStaffRole = await _roleLookup.StoreStaff();
+        var tenantEmployeeRole = await _roleLookup.TenantEmployee();
 
         var user = await _userInfoRepository.GetCachedUserInfo(userEmail);
         if (user is null)
@@ -72,8 +71,7 @@ public class UserAccountStateService : IUserAccountStateService
         }
 
         var tenant = await _userTenantRepository.GetCachedTenantByOwner(user.Id);
-        var storesByManager = await _userStoresRepository.GetCachedStoresByManagerId(user.Id);
-        var storesByStaff = await _userStoresRepository.GetCachedStoresByStaffId(user.Id);
+        var storesByUser = await _userStoresRepository.GetCachedStoresByUser(user.Id);
 
         bool userDetailsHasChanged = false;
 
@@ -101,33 +99,17 @@ public class UserAccountStateService : IUserAccountStateService
 
             userContext.Tenant = tenant;
             userContext.Role = tenantOwnerRole;
+            userContext.IsTenantOwner = true;
             userContext.Stores = storesByTenant;
         }
-        else if (storesByManager is not null && storesByManager.Any())
+        else if (storesByUser is not null && storesByUser.Any())
         {
-            if (user.RoleId != storeManagerRole!.Id)
-            {
-                userDetailsHasChanged = true;
-                user.RoleId = storeManagerRole!.Id;
-            }
+            // Changing Employee Role is not necessary, as a tenant owner, you choose to assign employee role
 
-            var associatedTenantOfTheStore = storesByManager.First().Tenant;
+            var associatedTenantOfTheStore = storesByUser.First().Tenant;
             userContext.Tenant = associatedTenantOfTheStore;
-            userContext.Role = storeManagerRole;
-            userContext.Stores = storesByManager;
-        }
-        else if (storesByStaff is not null && storesByStaff.Any())
-        {
-            if (user.RoleId != storeStaffRole!.Id)
-            {
-                user.RoleId = storeStaffRole!.Id;
-                userDetailsHasChanged = true;
-            }
-
-            var associatedTenantOfTheStore = storesByStaff.First().Tenant;
-            userContext.Tenant = associatedTenantOfTheStore;
-            userContext.Role = storeStaffRole;
-            userContext.Stores = storesByStaff;
+            userContext.Role = tenantEmployeeRole;
+            userContext.Stores = storesByUser;
         }
         else
         {

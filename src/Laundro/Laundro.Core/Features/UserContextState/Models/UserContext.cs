@@ -8,6 +8,7 @@ public class UserContext
 
     public Tenant? Tenant { get; set; }
     public Role? Role { get; set; }
+    public bool IsTenantOwner { get; set; } = false;
 
     //[JsonInclude]
     public List<Store>? Stores { get; set; }

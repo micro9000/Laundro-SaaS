@@ -5,6 +5,7 @@ using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Features.UserContextState.Services;
+using Laundro.Core.NodaTime;
 
 namespace Laundro.API.Features.Tenants.CreateTenant;
 
@@ -14,16 +15,19 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
     private readonly LaundroDbContext _dbContext;
     private readonly IUserTenantRepository _userTenantRepository;
     private readonly IBusinessRequirementValidator<Tenant> _businessRequirementsValidators;
+    private readonly IClockService _clock;
 
     public CreateTenantEndpoint(ICurrentUserAccessor currentUserAccessor, 
         LaundroDbContext dbContext,
         IUserTenantRepository userTenantRepository,
-        IBusinessRequirementValidator<Tenant> businessRequirementsValidators)
+        IBusinessRequirementValidator<Tenant> businessRequirementsValidators,
+        IClockService clock)
     {
         _currentUserAccessor = currentUserAccessor;
         _dbContext = dbContext;
         _userTenantRepository = userTenantRepository;
         _businessRequirementsValidators = businessRequirementsValidators;
+        _clock = clock;
     }
 
     public override void Configure()
@@ -41,11 +45,20 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
         var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
-            CompanyName = request.CompanyName
+            CompanyName = request.CompanyName,
+            CreatedAt = _clock.Now.ToDateTimeUtc()
         };
 
         var validationResponse = await _businessRequirementsValidators.Validate(newTenant);
+        if (!validationResponse.IsSatisfied)
+        {
+            foreach(var errMsg in validationResponse.ErrorMessages)
+            {
+                AddError(errMsg);
+            }
+        }
 
+        ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
 
         _dbContext.Tenants.Add(newTenant);
         await _dbContext.SaveChangesAsync();

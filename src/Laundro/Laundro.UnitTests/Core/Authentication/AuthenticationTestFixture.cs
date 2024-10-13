@@ -15,7 +15,8 @@ public class AuthenticationTestFixture : SharedTestFixture
    
     private void PopulateTestData(LaundroDbContext dbContext, IRoleLookup roleLookup)
     {
-        var tenantRole = roleLookup.TenantOwner().Result;
+        var tenantOwnerRole = roleLookup.TenantOwner().Result;
+        var tenantEmployeeRole = roleLookup.TenantEmployee().Result;
         var storeManager = roleLookup.StoreManager().Result;
         var storeStaff = roleLookup.StoreStaff().Result;
 
@@ -25,28 +26,28 @@ public class AuthenticationTestFixture : SharedTestFixture
             {
                 Email = TestContextData.tenantOwnerEmail,
                 Name = TestContextData.tenantOwnerName,
-                RoleId = tenantRole!.Id,
+                RoleId = tenantOwnerRole!.Id,
                 IsActive = true
             },
             new User
             {
                 Email = TestContextData.storeManagerEmail,
                 Name = TestContextData.storeManagerName,
-                RoleId = storeManager!.Id,
+                RoleId = tenantEmployeeRole!.Id,
                 IsActive = true
             },
             new User
             {
                 Email = TestContextData.storeStaffEmail_1,
                 Name = TestContextData.storeStaffName_1,
-                RoleId = storeStaff!.Id,
+                RoleId = tenantEmployeeRole!.Id,
                 IsActive = true
             },
             new User
             {
                 Email = TestContextData.storeStaffEmail_2,
                 Name = TestContextData.storeStaffName_2,
-                RoleId = storeStaff!.Id,
+                RoleId = tenantEmployeeRole!.Id,
                 IsActive = true
             }
         });
@@ -63,6 +64,7 @@ public class AuthenticationTestFixture : SharedTestFixture
         {
             OwnerId = userTenantOwner.Id,
             CreatedAt = new DateTime(2024, 10, 6),
+            CompanyName = "test",
             IsActive = true
         });
         dbContext.SaveChanges();
@@ -75,7 +77,6 @@ public class AuthenticationTestFixture : SharedTestFixture
             {
                 TenantId = tenant.Id,
                 Name = TestContextData.firstStore,
-                ManagerId = userStoreManager.Id,
                 CreatedAt = new DateTime(2024, 10, 6),
                 IsActive = true
             },
@@ -83,7 +84,6 @@ public class AuthenticationTestFixture : SharedTestFixture
             {
                 TenantId = tenant.Id,
                 Name = TestContextData.secondStore,
-                ManagerId = userStoreManager.Id,
                 CreatedAt = new DateTime(2024, 10, 6),
                 IsActive = true
             }
@@ -93,19 +93,34 @@ public class AuthenticationTestFixture : SharedTestFixture
         var firstStoreDb = dbContext.Stores.First(s => s.Name == TestContextData.firstStore);
         var secondStoreDb = dbContext.Stores.First(s => s.Name == TestContextData.secondStore);
 
-        dbContext.StoreStaffAssignments.AddRange(new List<StoreStaffAssignments>
+        dbContext.StoreUsers.AddRange(new List<StoreUser>
         {
-            new StoreStaffAssignments
+            new StoreUser
             {
                 StoreId = firstStoreDb.Id,
-                StaffId = userStoreStaff_1.Id
+                UserId = userStoreManager.Id,
+                RoleId = storeManager!.Id
             },
-            new StoreStaffAssignments
+            new StoreUser
             {
                 StoreId = secondStoreDb.Id,
-                StaffId = userStoreStaff_2.Id
+                UserId = userStoreManager.Id,
+                RoleId = storeManager!.Id
+            },
+            new StoreUser
+            {
+                StoreId = firstStoreDb.Id,
+                UserId = userStoreStaff_1.Id,
+                RoleId = storeStaff!.Id
+            },
+            new StoreUser
+            {
+                StoreId = secondStoreDb.Id,
+                UserId = userStoreStaff_2.Id,
+                RoleId = storeStaff!.Id
             }
         });
+
         dbContext.SaveChanges();
     }
 }

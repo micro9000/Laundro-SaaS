@@ -9,6 +9,7 @@ public interface IRoleLookup
 {
     Task<Role?> NewUser();
     Task<Role?> TenantOwner();
+    Task<Role?> TenantEmployee();
     Task<Role?> StoreManager();
     Task<Role?> StoreStaff();
 }
@@ -35,7 +36,12 @@ public class RoleLookup : IRoleLookup
     {
         return await GetRole(nameof(Roles.tenant_owner));
     }
-    
+
+    public async Task<Role?> TenantEmployee()
+    {
+        return await GetRole(nameof(Roles.tenant_employee));
+    }
+
     public async Task<Role?> StoreManager()
     {
         return await GetRole(nameof(Roles.store_manager));
