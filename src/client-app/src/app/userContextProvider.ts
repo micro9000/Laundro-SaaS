@@ -2,11 +2,13 @@
 
 import React, { useEffect } from 'react';
 
+import { notifications } from '@mantine/notifications';
+
 import {
   populateUserContextThunkAsync,
-  selectUserContext,
+  selectUserContextStatus,
 } from '@/features/userContext/userContextSlice';
-import { useAppDispatch } from '@/state/hooks';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 export default function UserContextProvider({
   children,
@@ -14,12 +16,20 @@ export default function UserContextProvider({
   children: React.ReactNode;
 }>) {
   var dispatch = useAppDispatch();
+  var userContextLoadingStatus = useAppSelector(selectUserContextStatus);
 
   useEffect(() => {
     dispatch(populateUserContextThunkAsync());
   }, [dispatch]);
 
-  // TODO: Add some error handling here and show some modal or redirect the user to a page that shows the friendly error message
+  useEffect(() => {
+    if (userContextLoadingStatus == 'failed') {
+      notifications.show({
+        title: 'Failed to load user context',
+        message: 'Unable to load user context due to internal server error',
+      });
+    }
+  }, [userContextLoadingStatus]);
 
   return children;
 }

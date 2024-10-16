@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { MsalProvider } from '@azure/msal-react';
 import { MantineProvider, createTheme } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { Provider as ReduxProvider } from 'react-redux';
 
 import { store } from '@/state/store';
@@ -29,6 +30,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <ReduxProvider store={store}>
           <UserContextProvider>
             <MantineProvider defaultColorScheme="dark" theme={theme}>
+              <Notifications />
               {children}
             </MantineProvider>
           </UserContextProvider>

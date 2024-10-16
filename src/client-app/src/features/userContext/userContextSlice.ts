@@ -42,6 +42,8 @@ export default userContextSlice.reducer;
 // Selectors
 export const selectUserContext = (state: RootState) =>
   state.userContext.userContext;
+export const selectUserContextStatus = (state: RootState) =>
+  state.userContext.status;
 
 export const populateUserContextThunkAsync = createAsyncThunk(
   'userContext/fetchUserContext',
