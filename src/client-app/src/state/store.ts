@@ -2,7 +2,7 @@ import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 
 import counterReducer from '@/features/counter/counterSlice';
-import userContextReducer from '@/features/user-context/userContextSlice';
+import userContextReducer from '@/features/userContext/userContextSlice';
 
 export const store = configureStore({
   reducer: {

@@ -19,7 +19,7 @@ import {
   AuthorizationContext,
   IAuthorizationContext,
   defaultAuthorizationContext,
-} from './authorization-context';
+} from './authorizationContext';
 
 export type AuthorizationProviderProps = PropsWithChildren<{
   instance: IPublicClientApplication;

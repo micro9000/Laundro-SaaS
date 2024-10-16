@@ -12,12 +12,12 @@ import { AppShell, Burger, Group, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { MantineLogo } from '@mantinex/mantine-logo';
 
-import { AuthButton } from '@/app/components/authentication-buttons';
+import { AuthButton } from '@/app/components/authenticationButtons';
 
 // import { loginRequest } from '@/infrastructure/auth/auth-config';
 // import { Config } from '@/infrastructure/config';
-import classes from './app-shell.module.css';
-import { ThemeToggle } from './theme-toggle';
+import classes from './appShell.module.css';
+import { ThemeToggle } from './themeToggle';
 
 interface ApplicationShellProps {
   children: React.ReactNode;

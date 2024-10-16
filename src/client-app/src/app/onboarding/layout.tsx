@@ -2,7 +2,7 @@
 
 import { AuthenticatedTemplate } from '@azure/msal-react';
 
-import { ApplicationShell } from '@/app/components/app-shell/app-shell';
+import { ApplicationShell } from '@/app/components/appShell/appShell';
 
 export default function RootLayout({
   children,

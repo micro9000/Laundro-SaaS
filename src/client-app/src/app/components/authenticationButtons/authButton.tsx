@@ -5,8 +5,8 @@ import {
   UnauthenticatedTemplate,
 } from '@azure/msal-react';
 
-import { LoginButton } from './login-button';
-import { LogoutButton } from './logout-button';
+import { LoginButton } from './loginButton';
+import { LogoutButton } from './logoutButton';
 
 export function AuthButton() {
   return (

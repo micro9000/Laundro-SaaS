@@ -1,7 +1,7 @@
 import { AuthenticationResult, EventType } from '@azure/msal-browser';
 
 import { Config } from '../config';
-import { loginRequest, msalInstance } from './auth-config';
+import { loginRequest, msalInstance } from './authConfig';
 import { getCurrentToken } from './tokenFetcher';
 
 export async function initializeMsal() {

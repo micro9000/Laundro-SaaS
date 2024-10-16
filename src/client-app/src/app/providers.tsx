@@ -8,9 +8,10 @@ import { Provider as ReduxProvider } from 'react-redux';
 
 import { store } from '@/state/store';
 
-import { msalInstance } from '../infrastructure/auth/auth-config';
-import { AuthorizationProvider } from '../infrastructure/auth/authorization-provider';
+import { msalInstance } from '../infrastructure/auth/authConfig';
+import { AuthorizationProvider } from '../infrastructure/auth/authorizationProvider';
 import { initializeMsal } from '../infrastructure/auth/msal';
+import UserContextProvider from './userContextProvider';
 
 const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
@@ -26,9 +27,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <MsalProvider instance={msalInstance}>
       <AuthorizationProvider instance={msalInstance}>
         <ReduxProvider store={store}>
-          <MantineProvider defaultColorScheme="dark" theme={theme}>
-            {children}
-          </MantineProvider>
+          <UserContextProvider>
+            <MantineProvider defaultColorScheme="dark" theme={theme}>
+              {children}
+            </MantineProvider>
+          </UserContextProvider>
         </ReduxProvider>
       </AuthorizationProvider>
     </MsalProvider>

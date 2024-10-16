@@ -8,12 +8,12 @@ import type { AppThunk, RootState } from '@/state/store';
 import { fetchUserContext } from './userContextQueryApi';
 
 export interface UserContextState {
-  userContext?: UserContext;
+  userContext?: UserContext | null;
   status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: UserContextState = {
-  userContext: undefined,
+  userContext: null,
   status: 'idle',
 };
 
@@ -22,16 +22,26 @@ export const userContextSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(populateUserContextThunkAsync.pending, (state, action) => {
-      state.userContext = action.payload;
-    });
+    builder
+      .addCase(populateUserContextThunkAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(populateUserContextThunkAsync.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.userContext = action.payload;
+        state.status = 'idle';
+      })
+      .addCase(populateUserContextThunkAsync.rejected, (state) => {
+        state.status = 'failed';
+      });
   },
 });
 
 export default userContextSlice.reducer;
 
 // Selectors
-export const selectUserContext = (state: RootState) => state.userContext;
+export const selectUserContext = (state: RootState) =>
+  state.userContext.userContext;
 
 export const populateUserContextThunkAsync = createAsyncThunk(
   'userContext/fetchUserContext',
