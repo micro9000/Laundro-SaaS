@@ -24,12 +24,14 @@
     "@mantine/modals": "^7.12.0",
     "@mantine/notifications": "^7.12.0",
     "@mantinex/mantine-logo": "^1.0.1",
+    "@reduxjs/toolkit": "^2.3.0",
     "@tabler/icons-react": "^3.12.0",
     "dayjs": "^1.11.12",
     "lodash": "^4.17.21",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
+    "react-redux": "^9.1.2",
     "recharts": "^2.12.7"
   },
   "devDependencies": {

@@ -1,27 +1,8 @@
 import { AuthenticationResult, EventType } from '@azure/msal-browser';
 
 import { Config } from '../config';
-import { loginRequest, msalInstance } from './auth-config';
+import { loginRequest, msalInstance } from './authConfig';
 import { getCurrentToken } from './tokenFetcher';
-
-export async function initializeMsal() {
-  console.log('=> msal initialization..');
-
-  await msalInstance.initialize();
-
-  const accounts = msalInstance.getAllAccounts();
-  if (accounts.length > 0) {
-    msalInstance.setActiveAccount(accounts[0]);
-  }
-
-  msalInstance.addEventCallback(async (event) => {
-    if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
-      const payload = event.payload as AuthenticationResult;
-      const account = payload.account;
-      msalInstance.setActiveAccount(account);
-    }
-  });
-}
 
 export async function getToken() {
   const authToken = await getCurrentToken(msalInstance);

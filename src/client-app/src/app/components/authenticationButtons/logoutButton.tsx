@@ -7,7 +7,7 @@ import {
   IconSettings,
 } from '@tabler/icons-react';
 
-import { useAuthorization } from '@/infrastructure/auth/authorization-context';
+import { useAuthorization } from '@/infrastructure/auth/authorizationContext';
 import { handleLogout } from '@/infrastructure/auth/msal';
 
 // import { msalInstance } from '@/infrastructure/auth/auth-config';
