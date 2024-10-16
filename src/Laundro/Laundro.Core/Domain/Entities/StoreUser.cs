@@ -5,6 +5,9 @@ namespace Laundro.Core.Domain.Entities;
 
 public class StoreUser
 {
+    // Making Ids as optional here in the entity class, but they are required in the table
+    // to remove a EF Core warning that was something like this:
+    // Entity 'Role' has a global query filter defined and is the required end of a relationship with the entity 'StoreUser'. This may lead to unexpected results when the required entity is filtered out.
     public int? StoreId { get; set; }
     public Store? Store { get; set; }
 
