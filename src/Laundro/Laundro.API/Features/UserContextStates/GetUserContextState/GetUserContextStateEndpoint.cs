@@ -10,6 +10,7 @@ public sealed class UserContextResponse
     public int UserId { get; set; }
     public string? Email { get; set; }
     public Entities.Tenant? Tenant { get; set; }
+    public bool IsTenantOwner { get; set; }
     public Entities.Role? Role { get; set; }
     public List<Entities.Store>? Stores { get; set; }
 }
@@ -22,7 +23,8 @@ internal sealed class UserContextMapper : ResponseMapper<UserContextResponse, Us
         Email = e.Email,
         Tenant = e.Tenant,
         Role = e.Role,
-        Stores = e.Stores
+        Stores = e.Stores,
+        IsTenantOwner = e.IsTenantOwner
     };
 }
 
@@ -36,7 +38,7 @@ internal sealed class GetUserContextStateEndpoint : EndpointWithoutRequest<UserC
     }
     public override void Configure()
     {
-        Post("api/user-context-state");
+        Get("api/user-context-state");
     }
 
     public override async Task HandleAsync(CancellationToken c)

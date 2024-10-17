@@ -6,6 +6,7 @@ import { AuthenticationResult, EventType } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 
 import { store } from '@/state/store';
@@ -18,6 +19,8 @@ const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
   // primaryColor: 'cyan',
 });
+
+const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   //get initialize msalInstance
@@ -47,12 +50,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <MsalProvider instance={msalInstance}>
       <AuthorizationProvider instance={msalInstance}>
         <ReduxProvider store={store}>
-          <UserContextProvider>
-            <MantineProvider defaultColorScheme="dark" theme={theme}>
-              <Notifications />
-              {children}
-            </MantineProvider>
-          </UserContextProvider>
+          <QueryClientProvider client={queryClient}>
+            <UserContextProvider>
+              <MantineProvider defaultColorScheme="dark" theme={theme}>
+                <Notifications />
+                {children}
+              </MantineProvider>
+            </UserContextProvider>
+          </QueryClientProvider>
         </ReduxProvider>
       </AuthorizationProvider>
     </MsalProvider>

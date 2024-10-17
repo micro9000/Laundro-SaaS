@@ -6,6 +6,7 @@ export interface UserContext {
   userId: number;
   email: string;
   tenant?: Tenant;
+  isTenantOwner?: boolean;
   role?: Role;
   stores?: Store[];
 }
