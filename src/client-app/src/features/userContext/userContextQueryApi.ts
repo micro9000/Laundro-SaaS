@@ -5,7 +5,7 @@ import { Config } from '@/infrastructure/config';
 import { UserContext } from '@/models/userContext';
 
 // A mock function to mimic making an async request for data
-export const fetchUserContext = async () => {
+export const fetchUserContext = async (): Promise<{ data: UserContext }> => {
   var accessToken = await getToken();
 
   const response = await axios.get<UserContext>(
@@ -17,13 +17,5 @@ export const fetchUserContext = async () => {
     }
   );
 
-  return new Promise<{ data: UserContext }>((resolve) =>
-    setTimeout(
-      () =>
-        resolve({
-          data: response.data,
-        }),
-      500
-    )
-  );
+  return response;
 };
