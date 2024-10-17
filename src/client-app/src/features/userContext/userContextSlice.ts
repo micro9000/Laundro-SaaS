@@ -27,7 +27,6 @@ export const userContextSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(populateUserContextThunkAsync.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.userContext = action.payload;
         state.status = 'idle';
       })

@@ -42,7 +42,7 @@ const useAppQuery = <TData extends {}, TError = unknown>({
         }
       }
 
-      const response = await axios.get<TData>(`${Config.ApiUrl}/${path}`, {
+      const response = await axios.get<TData>(`${Config.ApiUrl}${path}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

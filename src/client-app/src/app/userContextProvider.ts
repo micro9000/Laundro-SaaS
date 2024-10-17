@@ -9,6 +9,7 @@ import {
   populateUserContextThunkAsync,
   selectUserContextStatus,
 } from '@/features/userContext/userContextSlice';
+import useAppQuery from '@/infrastructure/hooks/useAppQuery';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 export default function UserContextProvider({
@@ -41,6 +42,15 @@ export default function UserContextProvider({
   //     msalInstance.initialize();
   //   }
   // }, []);
+
+  var { data, isLoading, isError } = useAppQuery({
+    path: '/user-context-state',
+    queryOptions: {
+      queryKey: ['user-context-state'],
+    },
+  });
+
+  console.log(data, isLoading, isError);
 
   useEffect(() => {
     if (userContextLoadingStatus == 'failed') {
