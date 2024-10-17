@@ -2,14 +2,16 @@
 
 import React, { useEffect } from 'react';
 
-import { useMsal } from '@azure/msal-react';
-import { notifications } from '@mantine/notifications';
-
 import {
   populateUserContextThunkAsync,
   selectUserContextStatus,
 } from '@/features/userContext/userContextSlice';
-import useAppQuery from '@/infrastructure/hooks/useAppQuery';
+import {
+  useAppMutation,
+  useAppNotification,
+  useAppQuery,
+} from '@/infrastructure/hooks';
+import { UserContext } from '@/models/userContext';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 export default function UserContextProvider({
@@ -17,7 +19,8 @@ export default function UserContextProvider({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { instance, accounts, inProgress } = useMsal();
+  const { notifyError } = useAppNotification();
+  // const { instance, accounts, inProgress } = useMsal();
   var dispatch = useAppDispatch();
   var userContextLoadingStatus = useAppSelector(selectUserContextStatus);
 
@@ -43,23 +46,32 @@ export default function UserContextProvider({
   //   }
   // }, []);
 
-  var { data, isLoading, isError } = useAppQuery({
-    path: '/user-context-state',
-    queryOptions: {
-      queryKey: ['user-context-state'],
-    },
-  });
+  // var { data, isLoading, isError } = useAppQuery<UserContext>({
+  //   path: '/user-context-state',
+  //   queryOptions: {
+  //     queryKey: ['user-context-state'],
+  //   },
+  // });
 
-  console.log(data, isLoading, isError);
+  // var mutateTenant = useAppMutation({
+  //   mutationKey: 'create-tenant',
+  //   path: '/tenant/create',
+  // });
+
+  // useEffect(() => {
+  //   var formData = new FormData();
+  //   formData.append('companyName', 'test');
+  //   mutateTenant.mutate(formData);
+  // }, []);
 
   useEffect(() => {
     if (userContextLoadingStatus == 'failed') {
-      notifications.show({
-        title: 'Failed to load user context',
-        message: 'Unable to load user context due to internal server error',
-      });
+      notifyError(
+        'Failed to load user context',
+        'Unable to load user context due to internal server error'
+      );
     }
-  }, [userContextLoadingStatus]);
+  }, [userContextLoadingStatus, notifyError]);
 
   return children;
 }

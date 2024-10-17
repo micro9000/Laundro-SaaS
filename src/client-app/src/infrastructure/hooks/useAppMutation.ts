@@ -1,24 +1,21 @@
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import {
-  UseQueryOptions,
-  useQuery as useReactQuery,
-} from '@tanstack/react-query';
+import { useMutation as useReactMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { loginRequest } from '../auth/authConfig';
 import { Config } from '../config';
 
 interface useQueryParams<TData extends {}, TError = unknown> {
+  mutationKey: string;
   path: string;
   params?: any;
-  queryOptions?: UseQueryOptions<TData, TError>;
 }
 
-const useAppQuery = <TData extends {}, TError = unknown>({
+const useAppMutation = <TData extends {}, TError = unknown>({
+  mutationKey,
   path,
   params,
-  queryOptions,
 }: useQueryParams<TData, TError>) => {
   const { instance, accounts } = useMsal();
 
@@ -27,9 +24,9 @@ const useAppQuery = <TData extends {}, TError = unknown>({
     account: accounts[0],
   };
 
-  queryOptions = {
-    ...queryOptions,
-    queryFn: async () => {
+  return useReactMutation({
+    mutationKey: [mutationKey, params],
+    mutationFn: async (formData: FormData) => {
       var accessToken = null;
 
       try {
@@ -42,18 +39,21 @@ const useAppQuery = <TData extends {}, TError = unknown>({
         }
       }
 
-      const response = await axios.get<TData>(`${Config.ApiUrl}${path}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        params: params,
-      });
+      const response = await axios.post<TData>(
+        `${Config.ApiUrl}${path}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json; charset=utf8',
+          },
+          params: params,
+        }
+      );
 
       return response.data;
     },
-  } as UseQueryOptions<TData, TError>;
-
-  return useReactQuery({ ...queryOptions });
+  });
 };
 
-export default useAppQuery;
+export default useAppMutation;

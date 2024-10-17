@@ -95,6 +95,7 @@ public class UserAccountStateService : IUserAccountStateService
             {
                 userDetailsHasChanged = true;
                 user.RoleId = tenantOwnerRole!.Id;
+                user.Role = tenantOwnerRole;
             }
 
             userContext.Tenant = tenant;
@@ -113,7 +114,9 @@ public class UserAccountStateService : IUserAccountStateService
         }
         else
         {
+            userDetailsHasChanged = user.RoleId != newUserRole!.Id;
             user.RoleId = newUserRole!.Id;
+            user.Role = newUserRole;
             userContext.Role = newUserRole;
         }
 
