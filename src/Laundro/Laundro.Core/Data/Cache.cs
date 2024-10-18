@@ -13,8 +13,11 @@ public class Cache : ICache
     {
         _cache = cache;
     }
-
+#if DEBUG
+    private static TimeSpan DefaultAbsoluteExpirationFromNow => TimeSpan.FromSeconds(30);
+# else
     private static TimeSpan DefaultAbsoluteExpirationFromNow => TimeSpan.FromMinutes(5);
+# endif
 
     private static JsonSerializerOptions CacheSerializerOptions { get; } = new()
     {
