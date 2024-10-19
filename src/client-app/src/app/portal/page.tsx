@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { Modal, Space, Text } from '@mantine/core';
@@ -14,14 +15,23 @@ import { useAppSelector } from '@/state/hooks';
 import OnboardingForm from './onboarding/onboardingForm';
 
 export default function PortalPage() {
+  const router = useRouter();
   const isMobile = useMediaQuery('(max-width: 50em)');
   const [isNeedToOnBoardTheUser, setIsNeedToOnBoardTheUser] = useState(false);
   const userTenantGuid = useAppSelector(selectUserTenantGuid);
   const userIsNewUser = useAppSelector(isCurrentUserIsNewUser);
 
   useEffect(() => {
-    setIsNeedToOnBoardTheUser(userTenantGuid === null && userIsNewUser);
+    setIsNeedToOnBoardTheUser(
+      typeof userTenantGuid === 'undefined' && userIsNewUser
+    );
   }, [userTenantGuid, userIsNewUser]);
+
+  useEffect(() => {
+    if (!isNeedToOnBoardTheUser && typeof userTenantGuid !== 'undefined') {
+      router.push(`/portal/${userTenantGuid}`);
+    }
+  }, [router, isNeedToOnBoardTheUser, userTenantGuid]);
 
   return (
     <>
