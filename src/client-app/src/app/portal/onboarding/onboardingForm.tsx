@@ -1,7 +1,6 @@
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { Button, Checkbox, Group, TextInput } from '@mantine/core';
+import { Button, Group, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
@@ -12,7 +11,6 @@ interface OnboardingFormValues {
 }
 
 export default function OnboardingForm() {
-  var router = useRouter();
   var notification = useAppNotification();
   const { mutate, isError, isSuccess, error, isPending, data } =
     useAppMutation<{
@@ -33,7 +31,7 @@ export default function OnboardingForm() {
       notification.notifySuccess('Successfully submit onboarding form');
 
       setTimeout(() => {
-        router.push(`/portal/${data.tenant.tenantGuid}`);
+        location.reload();
       }, 500);
     }
   }, [isSuccess, notification]);

@@ -1,15 +1,15 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 
-import counterReducer from '@/features/counter/counterSlice';
+import portalReducer from '@/app/portal/portalSlice';
 import userContextReducer from '@/features/userContext/userContextSlice';
 
 // Code reference: https://redux.js.org/tutorials/essentials/part-2-app-structure
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     userContext: userContextReducer,
+    portalState: portalReducer,
   },
 });
 
