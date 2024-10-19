@@ -13,12 +13,10 @@ import { ThemeToggle } from './themeToggle';
 
 interface PortalShellProps {
   children: React.ReactNode;
-  isDesktopView?: boolean;
 }
 
 export function PortalShell({
   children,
-  isDesktopView = true,
 }: PortalShellProps): React.ReactElement {
   const [opened, { toggle }] = useDisclosure();
 
@@ -28,7 +26,7 @@ export function PortalShell({
       navbar={{
         width: 300,
         breakpoint: 'sm',
-        collapsed: { desktop: isDesktopView, mobile: !opened },
+        collapsed: { mobile: !opened },
       }}
       padding="md"
     >
@@ -38,14 +36,6 @@ export function PortalShell({
           <Group justify="space-between" style={{ flex: 1 }}>
             <MantineLogo size={30} />
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <UnstyledButton className={classes.control}>Home</UnstyledButton>
-              <UnstyledButton className={classes.control}>Blog</UnstyledButton>
-              <UnstyledButton className={classes.control}>
-                Contacts
-              </UnstyledButton>
-              <UnstyledButton className={classes.control}>
-                Support
-              </UnstyledButton>
               <ThemeToggle />
               <AuthButton />
             </Group>

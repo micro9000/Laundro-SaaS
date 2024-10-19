@@ -8,7 +8,6 @@ import { useMsal } from '@azure/msal-react';
 import {
   populateUserContextThunkAsync,
   selectUserContextStatus,
-  selectUserTenantGuid,
 } from '@/features/userContext/userContextSlice';
 import { useAppNotification } from '@/infrastructure/hooks';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -23,7 +22,6 @@ export default function UserContextProvider({
   const { instance: msalInstance, accounts } = useMsal();
   var dispatch = useAppDispatch();
   var userContextLoadingStatus = useAppSelector(selectUserContextStatus);
-  var userTenantGuid = useAppSelector(selectUserTenantGuid);
 
   useEffect(() => {
     dispatch(populateUserContextThunkAsync());
@@ -32,43 +30,17 @@ export default function UserContextProvider({
   useEffect(() => {
     msalInstance.handleRedirectPromise().then((response) => {
       if (response && response.account) {
-        if (typeof userTenantGuid !== 'undefined' && userTenantGuid !== null) {
-          router.replace('/portal');
-        } else {
-          router.replace('/onboarding');
-        }
+        router.replace('/portal');
       }
     });
     const account = msalInstance.getActiveAccount();
     if (account) {
-      if (typeof userTenantGuid !== 'undefined' && userTenantGuid !== null) {
-        router.replace('/portal');
-      } else {
-        router.replace('/onboarding');
-      }
+      router.replace('/portal');
     } else {
       // If the user is not signed in, initiate the login process
       // msalInstance.initialize();
     }
-  }, [router, msalInstance, userTenantGuid, userContextLoadingStatus]);
-
-  // var { data, isLoading, isError } = useAppQuery<UserContext>({
-  //   path: '/user-context-state',
-  //   queryOptions: {
-  //     queryKey: ['user-context-state'],
-  //   },
-  // });
-
-  // var mutateTenant = useAppMutation({
-  //   mutationKey: 'create-tenant',
-  //   path: '/tenant/create',
-  // });
-
-  // useEffect(() => {
-  //   var formData = new FormData();
-  //   formData.append('name', 'test');
-  //   mutateTenant.mutate(formData);
-  // }, []);
+  }, [router, msalInstance]);
 
   useEffect(() => {
     if (userContextLoadingStatus == 'failed' && accounts.length > 0) {

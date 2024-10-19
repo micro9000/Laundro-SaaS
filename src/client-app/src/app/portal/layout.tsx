@@ -10,7 +10,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <PortalShell isDesktopView={false}>
+    <PortalShell>
       <AuthenticatedTemplate>{children}</AuthenticatedTemplate>
     </PortalShell>
   );
