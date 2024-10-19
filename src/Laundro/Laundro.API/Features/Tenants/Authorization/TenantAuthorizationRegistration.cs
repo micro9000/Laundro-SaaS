@@ -1,7 +1,8 @@
-﻿using Laundro.API.Authorization.Tenants.Create;
+﻿using Laundro.API.Authorization;
+using Laundro.API.Features.Tenants.Authorization.Create;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Laundro.API.Authorization.Tenants;
+namespace Laundro.API.Features.Tenants.Authorization;
 
 public static class TenantAuthorizationRegistration
 {
@@ -17,6 +18,6 @@ public static class TenantAuthorizationRegistration
         options.AddPolicy(PolicyName.CanCreateTenant, policyBuilder =>
             policyBuilder.AddRequirements(
                 new HasCorrectRoleToCreateNewTeanant()
-                ));
+            ));
     }
 }
