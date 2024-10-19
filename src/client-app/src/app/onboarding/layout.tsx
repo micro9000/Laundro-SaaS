@@ -2,7 +2,7 @@
 
 import { AuthenticatedTemplate } from '@azure/msal-react';
 
-import { ApplicationShell } from '@/app/components/appShell/appShell';
+import { PortalShell } from '../components/portalShell/portalShell';
 
 export default function OnboardingLayout({
   children,
@@ -10,8 +10,8 @@ export default function OnboardingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ApplicationShell>
+    <PortalShell>
       <AuthenticatedTemplate>{children}</AuthenticatedTemplate>
-    </ApplicationShell>
+    </PortalShell>
   );
 }

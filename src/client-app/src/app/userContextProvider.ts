@@ -1,17 +1,16 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
+
+import { useMsal } from '@azure/msal-react';
 
 import {
   populateUserContextThunkAsync,
   selectUserContextStatus,
+  selectUserTenantGuid,
 } from '@/features/userContext/userContextSlice';
-import {
-  useAppMutation,
-  useAppNotification,
-  useAppQuery,
-} from '@/infrastructure/hooks';
-import { UserContext } from '@/models/userContext';
+import { useAppNotification } from '@/infrastructure/hooks';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
 export default function UserContextProvider({
@@ -19,32 +18,39 @@ export default function UserContextProvider({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
   const { notifyError } = useAppNotification();
-  // const { instance, accounts, inProgress } = useMsal();
+  const { instance: msalInstance, accounts } = useMsal();
   var dispatch = useAppDispatch();
   var userContextLoadingStatus = useAppSelector(selectUserContextStatus);
+  var userTenantGuid = useAppSelector(selectUserTenantGuid);
 
   useEffect(() => {
     dispatch(populateUserContextThunkAsync());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   msalInstance.handleRedirectPromise().then((response) => {
-  //     if (response && response.account) {
-  //       // User is authenticated, you can proceed to  app
-  //       navigate('/Dashboard', { replace: true });
-  //     }
-  //   });
-  //   // Check if the user is already signed in
-  //   const account = msalInstance.getActiveAccount();
-  //   if (account) {
-  //     // User is already signed in, you can proceed to  app
-  //     navigate('/Dashboard', { replace: true });
-  //   } else {
-  //     // If the user is not signed in, initiate the login process
-  //     msalInstance.initialize();
-  //   }
-  // }, []);
+  useEffect(() => {
+    msalInstance.handleRedirectPromise().then((response) => {
+      if (response && response.account) {
+        if (typeof userTenantGuid !== 'undefined' && userTenantGuid !== null) {
+          router.replace('/portal');
+        } else {
+          router.replace('/onboarding');
+        }
+      }
+    });
+    const account = msalInstance.getActiveAccount();
+    if (account) {
+      if (typeof userTenantGuid !== 'undefined' && userTenantGuid !== null) {
+        router.replace('/portal');
+      } else {
+        router.replace('/onboarding');
+      }
+    } else {
+      // If the user is not signed in, initiate the login process
+      // msalInstance.initialize();
+    }
+  }, [router, msalInstance, userTenantGuid, userContextLoadingStatus]);
 
   // var { data, isLoading, isError } = useAppQuery<UserContext>({
   //   path: '/user-context-state',
@@ -53,25 +59,25 @@ export default function UserContextProvider({
   //   },
   // });
 
-  var mutateTenant = useAppMutation({
-    mutationKey: 'create-tenant',
-    path: '/tenant/create',
-  });
+  // var mutateTenant = useAppMutation({
+  //   mutationKey: 'create-tenant',
+  //   path: '/tenant/create',
+  // });
+
+  // useEffect(() => {
+  //   var formData = new FormData();
+  //   formData.append('name', 'test');
+  //   mutateTenant.mutate(formData);
+  // }, []);
 
   useEffect(() => {
-    var formData = new FormData();
-    formData.append('name', 'test');
-    mutateTenant.mutate(formData);
-  }, []);
-
-  useEffect(() => {
-    if (userContextLoadingStatus == 'failed') {
+    if (userContextLoadingStatus == 'failed' && accounts.length > 0) {
       notifyError(
         'Failed to load user context',
         'Unable to load user context due to internal server error'
       );
     }
-  }, [userContextLoadingStatus, notifyError]);
+  }, [userContextLoadingStatus, notifyError, accounts.length]);
 
   return children;
 }

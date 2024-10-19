@@ -2,7 +2,7 @@
 
 import { AuthenticatedTemplate } from '@azure/msal-react';
 
-import { ApplicationShell } from '../components/appShell/appShell';
+import { PortalShell } from '../components/portalShell/portalShell';
 
 export default function RootLayout({
   children,
@@ -10,8 +10,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ApplicationShell isDesktopView={false}>
+    <PortalShell isDesktopView={false}>
       <AuthenticatedTemplate>{children}</AuthenticatedTemplate>
-    </ApplicationShell>
+    </PortalShell>
   );
 }
