@@ -53,16 +53,16 @@ export default function UserContextProvider({
   //   },
   // });
 
-  // var mutateTenant = useAppMutation({
-  //   mutationKey: 'create-tenant',
-  //   path: '/tenant/create',
-  // });
+  var mutateTenant = useAppMutation({
+    mutationKey: 'create-tenant',
+    path: '/tenant/create',
+  });
 
-  // useEffect(() => {
-  //   var formData = new FormData();
-  //   formData.append('companyName', 'test');
-  //   mutateTenant.mutate(formData);
-  // }, []);
+  useEffect(() => {
+    var formData = new FormData();
+    formData.append('name', 'test');
+    mutateTenant.mutate(formData);
+  }, []);
 
   useEffect(() => {
     if (userContextLoadingStatus == 'failed') {

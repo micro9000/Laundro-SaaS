@@ -5,8 +5,9 @@ import { Tenant } from './tenant';
 export interface UserContext {
   userId: number;
   email: string;
-  tenant?: Tenant;
+  tenantName?: string;
+  tenantGuid: string;
   isTenantOwner?: boolean;
-  role?: Role;
+  roleSystemKey?: string;
   stores?: Store[];
 }

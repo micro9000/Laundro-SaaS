@@ -64,7 +64,8 @@ public class AuthenticationTestFixture : SharedTestFixture
         {
             OwnerId = userTenantOwner.Id,
             CreatedAt = new DateTime(2024, 10, 6),
-            CompanyName = "test",
+            TenantName = "test",
+            TenantGuid = Guid.NewGuid(),
             IsActive = true
         });
         dbContext.SaveChanges();

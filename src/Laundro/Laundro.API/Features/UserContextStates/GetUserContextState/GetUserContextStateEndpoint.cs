@@ -9,9 +9,11 @@ public sealed class UserContextResponse
 {
     public int UserId { get; set; }
     public string? Email { get; set; }
-    public Entities.Tenant? Tenant { get; set; }
+    public string? TenantName { get; set; }
+    public string? TenantGuid { get; set; }
+
     public bool IsTenantOwner { get; set; }
-    public Entities.Role? Role { get; set; }
+    public string? RoleSystemKey { get; set; }
     public List<Entities.Store>? Stores { get; set; }
 }
 
@@ -21,8 +23,9 @@ internal sealed class UserContextMapper : ResponseMapper<UserContextResponse, Us
     {
         UserId = e.UserId,
         Email = e.Email,
-        Tenant = e.Tenant,
-        Role = e.Role,
+        TenantName = e.Tenant?.TenantName,
+        TenantGuid = e.Tenant?.TenantGuid.ToString(),
+        RoleSystemKey = e.Role?.SystemKey,
         Stores = e.Stores,
         IsTenantOwner = e.IsTenantOwner
     };

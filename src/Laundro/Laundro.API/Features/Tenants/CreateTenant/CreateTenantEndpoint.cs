@@ -44,7 +44,8 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
         var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
-            CompanyName = request.CompanyName,
+            TenantName = request.Name,
+            TenantGuid = Guid.NewGuid(), // TODO: Upgrade to Guid.CreateVersion7() once we upgrade to .NET 9
             CreatedAt = _clock.Now.ToDateTimeUtc()
         };
 
@@ -94,7 +95,7 @@ internal class CreateTenantValidator : Validator<CreateTenantRequest>
 {
     public CreateTenantValidator()
     {
-        RuleFor(x => x.CompanyName)
+        RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Campany Name is required")
             .MinimumLength(3).WithMessage("Your Campany name is too short!");
     }
@@ -102,7 +103,7 @@ internal class CreateTenantValidator : Validator<CreateTenantRequest>
 
 internal sealed class CreateTenantRequest
 {
-    public string? CompanyName { get; set; }
+    public string? Name { get; set; }
 }
 
 internal sealed class CreateTenantResponse

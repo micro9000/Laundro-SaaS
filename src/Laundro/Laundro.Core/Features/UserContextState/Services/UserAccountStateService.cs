@@ -70,6 +70,7 @@ public class UserAccountStateService : IUserAccountStateService
             return newUserAccountState;
         }
 
+        user.Role = null; // Preventing an update query
         var tenant = await _userTenantRepository.GetCachedTenantByOwner(user.Id);
         var storesByUser = await _userStoresRepository.GetCachedStoresByUser(user.Id);
 
@@ -95,7 +96,6 @@ public class UserAccountStateService : IUserAccountStateService
             {
                 userDetailsHasChanged = true;
                 user.RoleId = tenantOwnerRole!.Id;
-                user.Role = tenantOwnerRole;
             }
 
             userContext.Tenant = tenant;
@@ -116,7 +116,6 @@ public class UserAccountStateService : IUserAccountStateService
         {
             userDetailsHasChanged = user.RoleId != newUserRole!.Id;
             user.RoleId = newUserRole!.Id;
-            user.Role = newUserRole;
             userContext.Role = newUserRole;
         }
 

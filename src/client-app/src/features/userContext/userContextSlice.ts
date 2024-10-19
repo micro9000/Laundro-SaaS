@@ -43,8 +43,10 @@ export const selectUserContext = (state: RootState) =>
   state.userContext.userContext;
 export const selectUserContextStatus = (state: RootState) =>
   state.userContext.status;
-export const selectUserTenant = (state: RootState) =>
-  state.userContext.userContext?.tenant;
+export const selectUserTenantName = (state: RootState) =>
+  state.userContext.userContext?.tenantName;
+export const selectUserTenantGuid = (state: RootState) =>
+  state.userContext.userContext?.tenantGuid;
 
 export const populateUserContextThunkAsync = createAsyncThunk(
   'userContext/fetchUserContext',

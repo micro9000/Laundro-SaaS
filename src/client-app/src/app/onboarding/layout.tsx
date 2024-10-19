@@ -4,7 +4,7 @@ import { AuthenticatedTemplate } from '@azure/msal-react';
 
 import { ApplicationShell } from '@/app/components/appShell/appShell';
 
-export default function RootLayout({
+export default function OnboardingLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
