@@ -14,6 +14,7 @@
     <None Remove="SchemaScripts\DropProgrammabilityObjects.sql" />
     <None Remove="Scripts\Script0001 - Initial Tables.sql" />
     <None Remove="Scripts\Script0002 - Add DistributedCache table.sql" />
+    <None Remove="Scripts\Script0003 - New Columns in Tenants And Stores.sql" />
     <None Remove="Seed\Roles.sql" />
   </ItemGroup>
 
@@ -22,6 +23,7 @@
     <EmbeddedResource Include="SchemaScripts\DropProgrammabilityObjects.sql" />
     <EmbeddedResource Include="Scripts\Script0001 - Initial Tables.sql" />
     <EmbeddedResource Include="Scripts\Script0002 - Add DistributedCache table.sql" />
+    <EmbeddedResource Include="Scripts\Script0003 - New Columns in Tenants And Stores.sql" />
     <EmbeddedResource Include="Seed\Roles.sql" />
   </ItemGroup>
 

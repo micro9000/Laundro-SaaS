@@ -44,9 +44,22 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
         var newTenant = new Tenant
         {
             OwnerId = currentUser!.UserId,
-            TenantName = request.Name,
+            TenantName = request.TenantName,
+            CompanyAddress = request.CompanyAddress,
+            WebsiteUrl = request.WebsiteUrl,
+            BusinessRegistrationNumber = request.BusinessRegistrationNumber,
+            PrimaryContactName = request.PrimaryContactName,
+            ContactEmail = request.ContactEmail,
+            PhoneNumber = request.PhoneNumber,
             TenantGuid = Guid.NewGuid(), // TODO: Upgrade to Guid.CreateVersion7() once we upgrade to .NET 9
             CreatedAt = _clock.Now.ToDateTimeUtc()
+        };
+
+        var initialStore = new Store
+        {
+            Name = request.StoreName,
+            Location = request.StoreLocation,
+            Tenant = newTenant
         };
 
         var validationResponse = await CanCreateValidate(newTenant);
@@ -60,7 +73,7 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
 
         ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
 
-        _dbContext.Tenants.Add(newTenant);
+        await _dbContext.AddAsync(initialStore);
         await _dbContext.SaveChangesAsync();
 
         // TODO: try to use FastEndpoints In-Process Event Bus Pattern (Pub/Sub) feature
@@ -95,15 +108,51 @@ internal class CreateTenantValidator : Validator<CreateTenantRequest>
 {
     public CreateTenantValidator()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Campany Name is required")
-            .MinimumLength(3).WithMessage("Your Campany name is too short!");
+        RuleFor(x => x.TenantName)
+            .NotEmpty().WithMessage("Tenant/Campany Name is required")
+            .MinimumLength(3).WithMessage("Your Tenant/Campany name is too short!");
+
+        RuleFor(x => x.CompanyAddress)
+            .NotEmpty().WithMessage("Campany Address is required")
+            .MinimumLength(3).WithMessage("Your Campany Address is too short!");
+
+        RuleFor(x => x.PrimaryContactName)
+            .NotEmpty().WithMessage("Primary Contact Name is required")
+            .MinimumLength(3).WithMessage("Your Primary Contact Name is too short!");
+
+        RuleFor(x => x.ContactEmail)
+            .NotEmpty().WithMessage("Contact Email is required")
+            .MinimumLength(3).WithMessage("Your Contact Email is too short!")
+            .EmailAddress();
+
+        RuleFor(x => x.PhoneNumber)
+            .NotEmpty().WithMessage("Contact Email is required")
+            .MinimumLength(11).MaximumLength(12);
+
+        RuleFor(x => x.StoreName)
+            .NotEmpty().WithMessage("Initial Store Name is required")
+            .MinimumLength(3).WithMessage("Your Initial Store Name is too short!");
+
+        RuleFor(x => x.StoreLocation)
+            .NotEmpty().WithMessage("Initial Store Location is required")
+            .MinimumLength(3).WithMessage("Your Initial Store Location is too short!");
     }
 }
 
 internal sealed class CreateTenantRequest
 {
-    public string? Name { get; set; }
+    // Tenant Info
+    public string? TenantName { get; set; }
+    public string? CompanyAddress { get; set; }
+    public string? WebsiteUrl { get; set; }
+    public string? BusinessRegistrationNumber { get; set; }
+    public string? PrimaryContactName { get; set; }
+    public string? ContactEmail { get; set; }
+    public string? PhoneNumber { get; set; }
+
+    // Store Info
+    public string? StoreName { get; set; }
+    public string? StoreLocation { get; set; }
 }
 
 internal sealed class CreateTenantResponse

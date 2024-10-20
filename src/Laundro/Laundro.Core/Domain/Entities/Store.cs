@@ -2,6 +2,7 @@
 public class Store : Entity
 {
     public string? Name { get; set; }
+    public string? Location { get; set; }
 
     public int TenantId { get; set; }
     public Tenant? Tenant { get; set; }

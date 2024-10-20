@@ -13,14 +13,14 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly LaundroDbContext _dbContext;
     private readonly IClockService _clock;
-    private readonly UserStoresRepository _userStoresRepository;
+    private readonly IUserStoresRepository _userStoresRepository;
     private readonly ILogger<CreateStoreEndpoint> _logger;
 
     public CreateStoreEndpoint(
         ICurrentUserAccessor currentUserAccessor, 
         LaundroDbContext dbContext,
         IClockService clock,
-        UserStoresRepository userStoresRepository,
+        IUserStoresRepository userStoresRepository,
         ILogger<CreateStoreEndpoint> logger)
     {
         _currentUserAccessor = currentUserAccessor;
