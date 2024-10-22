@@ -12,6 +12,24 @@ interface useQueryParams<TData extends {}, TError = unknown> {
   params?: any;
 }
 
+interface AppError {
+  statuCode: number;
+  message: string;
+  errors: {
+    [property: string]: [];
+  };
+}
+
+axios.interceptors.response.use(
+  (res) => {
+    return res;
+  },
+  (err) => {
+    console.log(err);
+    return Promise.reject(err?.response?.data as AppError);
+  }
+);
+
 const useAppMutation = <TData extends {}, TError = unknown>({
   mutationKey,
   path,
@@ -26,6 +44,7 @@ const useAppMutation = <TData extends {}, TError = unknown>({
 
   return useReactMutation({
     mutationKey: [mutationKey, params],
+    onError: (err: AppError) => err,
     mutationFn: async (formData: FormData) => {
       var accessToken = null;
 

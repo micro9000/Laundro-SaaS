@@ -9,15 +9,3 @@ export interface OnboardingFormValues {
   storeName: string;
   storeLocation: string;
 }
-
-interface FormInputProperty {
-  label: string;
-  description: string;
-}
-
-export const FormInputProperties = {
-  tenantName: {
-    label: 'Tenant Name',
-    description: 'Your company name',
-  } as FormInputProperty,
-};

@@ -73,7 +73,7 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
 
         ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
 
-        await _dbContext.AddAsync(initialStore);
+        _dbContext.Update(initialStore);
         await _dbContext.SaveChangesAsync();
 
         // TODO: try to use FastEndpoints In-Process Event Bus Pattern (Pub/Sub) feature

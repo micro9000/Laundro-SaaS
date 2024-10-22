@@ -33,9 +33,12 @@ export default function OnboardingFormIndex({
       mutationKey: 'tenant/create',
     });
 
+  console.log(data);
+  console.log(error);
   useEffect(() => {
-    if (isError) {
-      notification.notifyError(error.name, error.message);
+    if (isError && error) {
+      console.log(error.errors);
+      notification.notifyError(error.statuCode.toString(), error.message);
     }
   }, [isError, error, notification]);
 
@@ -76,19 +79,48 @@ export default function OnboardingFormIndex({
     },
   });
 
-  console.log(form.getValues());
-  console.log(form.errors);
-
   const onFormSubmit = (values: OnboardingFormValues) => {
     var formData = new FormData();
     formData.append(
       nameof<OnboardingFormValues>('tenantName'),
       values.tenantName
     );
+    formData.append(
+      nameof<OnboardingFormValues>('companyAddress'),
+      values.companyAddress
+    );
+    formData.append(
+      nameof<OnboardingFormValues>('websiteUrl'),
+      values.websiteUrl ?? ''
+    );
+    formData.append(
+      nameof<OnboardingFormValues>('businessRegistrationNumber'),
+      values.businessRegistrationNumber ?? ''
+    );
+
+    formData.append(
+      nameof<OnboardingFormValues>('primaryContactName'),
+      values.primaryContactName
+    );
+    formData.append(
+      nameof<OnboardingFormValues>('contactEmail'),
+      values.contactEmail
+    );
+    formData.append(
+      nameof<OnboardingFormValues>('phoneNumber'),
+      values.phoneNumber
+    );
+    formData.append(
+      nameof<OnboardingFormValues>('storeName'),
+      values.storeName
+    );
+    formData.append(
+      nameof<OnboardingFormValues>('storeLocation'),
+      values.storeLocation
+    );
     mutate(formData);
   };
   const numberOfOnboardingFormTabs = 3;
-  console.log(activeForm);
   const nextStep = () => {
     if (activeForm === numberOfOnboardingFormTabs - 1) {
       // manually validate the form on the last form (Before verification)

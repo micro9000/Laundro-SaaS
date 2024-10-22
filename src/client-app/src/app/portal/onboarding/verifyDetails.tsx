@@ -38,11 +38,40 @@ export default function VerifyDetails({
             <Table.Td>Tenant Name</Table.Td>
             <Table.Td>{formValues.tenantName}</Table.Td>
           </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Company Address</Table.Td>
+            <Table.Td>{formValues.companyAddress}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Website Url</Table.Td>
+            <Table.Td>{formValues.websiteUrl}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Business Registration Number</Table.Td>
+            <Table.Td>{formValues.businessRegistrationNumber}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Primary Contact Name</Table.Td>
+            <Table.Td>{formValues.primaryContactName}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Contact Email</Table.Td>
+            <Table.Td>{formValues.contactEmail}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Phone Number</Table.Td>
+            <Table.Td>{formValues.phoneNumber}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Store Name</Table.Td>
+            <Table.Td>{formValues.storeName}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Store Location</Table.Td>
+            <Table.Td>{formValues.storeLocation}</Table.Td>
+          </Table.Tr>
         </Table.Tbody>
       </Table>
-
-      <Divider my="md" />
-      <h3>Store Info</h3>
     </>
   );
 }
