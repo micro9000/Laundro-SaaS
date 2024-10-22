@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react';
 
-import { Button, Group, Modal, Space, Stepper, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  LoadingOverlay,
+  Modal,
+  Space,
+  Stepper,
+  Text,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMediaQuery } from '@mantine/hooks';
-import { current } from '@reduxjs/toolkit';
+import { isEmpty } from 'lodash';
 
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
+import { AppError } from '@/infrastructure/hooks/useAppMutation';
 import { Tenant } from '@/models/tenant';
 import { nameof } from '@/utilities';
 
@@ -23,6 +33,8 @@ export default function OnboardingFormIndex({
 }: OnboardingFormIndexProps) {
   const isMobile = useMediaQuery('(max-width: 50em)');
   const [activeForm, setActiveForm] = useState(0);
+  const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] =
+    useState<boolean>(false);
 
   var notification = useAppNotification();
   const { mutate, isError, isSuccess, error, isPending, data } =
@@ -33,12 +45,17 @@ export default function OnboardingFormIndex({
       mutationKey: 'tenant/create',
     });
 
-  console.log(data);
-  console.log(error);
+  useEffect(() => {
+    setIsLoadingOverlayVisible(isPending);
+  }, [isPending]);
+
   useEffect(() => {
     if (isError && error) {
-      console.log(error.errors);
-      notification.notifyError(error.statuCode.toString(), error.message);
+      var validationErrors = error?.response?.data as AppError;
+      notification.notifyError(
+        validationErrors.statuCode?.toString(),
+        validationErrors.message
+      );
     }
   }, [isError, error, notification]);
 
@@ -135,6 +152,17 @@ export default function OnboardingFormIndex({
   const prevStep = () =>
     setActiveForm((current) => (current > 0 ? current - 1 : current));
 
+  var validationErrors = (error?.response?.data as AppError)?.errors;
+
+  var errorsToDisplay: { [property: string]: string | undefined } = {};
+  if (validationErrors) {
+    Object.keys(validationErrors).forEach((key) => {
+      var validationErr = validationErrors[key]?.at(0);
+      errorsToDisplay[key] = validationErr;
+    });
+    console.log(errorsToDisplay);
+  }
+
   return (
     <>
       <Modal.Root
@@ -153,6 +181,12 @@ export default function OnboardingFormIndex({
             <Modal.CloseButton />
           </Modal.Header>
           <Modal.Body>
+            <LoadingOverlay
+              visible={isLoadingOverlayVisible}
+              zIndex={1000}
+              overlayProps={{ radius: 'sm', blur: 2 }}
+            />
+
             <form onSubmit={form.onSubmit(onFormSubmit)}>
               <Stepper
                 iconSize={28}
@@ -184,7 +218,9 @@ export default function OnboardingFormIndex({
                 <Stepper.Completed>
                   <VerifyDetails
                     formValues={form.getValues()}
-                    formErrors={form.errors}
+                    formErrors={
+                      !isEmpty(form.errors) ? form.errors : errorsToDisplay
+                    }
                   />
 
                   <Group justify="center" mt="md">
