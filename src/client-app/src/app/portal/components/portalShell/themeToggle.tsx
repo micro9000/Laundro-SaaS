@@ -1,16 +1,19 @@
-import {
-  ActionIcon,
-  Popover,
-  Text,
-  useMantineColorScheme,
-} from '@mantine/core';
+'use client';
+
+import { useEffect, useState } from 'react';
+
+import { ActionIcon, Tooltip, useMantineColorScheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconMoon, IconSun } from '@tabler/icons-react';
 
 export const ThemeToggle = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [opened, { close, open }] = useDisclosure(false);
-  const { colorScheme, setColorScheme, clearColorScheme } =
-    useMantineColorScheme();
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
+
+  useEffect(() => {
+    setIsDarkMode(colorScheme === 'dark');
+  }, [colorScheme]);
 
   const toggleColorTheme = () => {
     if (colorScheme === 'dark') setColorScheme('light');
@@ -21,37 +24,27 @@ export const ThemeToggle = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  const isDarkMode = colorScheme === 'dark';
-
   return (
-    <Popover
-      width={200}
-      position="bottom"
-      withArrow
-      shadow="md"
+    <Tooltip
+      label={`${capitalizeFirstLetter(colorScheme)} mode`}
       opened={opened}
     >
-      <Popover.Target>
-        <ActionIcon
-          variant="default"
-          color="teal"
-          size="lg"
-          radius="md"
-          aria-label="Settings"
-          onMouseEnter={open}
-          onMouseLeave={close}
-          onClick={toggleColorTheme}
-        >
-          {isDarkMode ? (
-            <IconSun style={{ width: '70%', height: '70%' }} stroke={1.5} />
-          ) : (
-            <IconMoon style={{ width: '70%', height: '70%' }} stroke={1.5} />
-          )}
-        </ActionIcon>
-      </Popover.Target>
-      <Popover.Dropdown style={{ pointerEvents: 'none' }}>
-        <Text size="sm">{capitalizeFirstLetter(colorScheme)} mode</Text>
-      </Popover.Dropdown>
-    </Popover>
+      <ActionIcon
+        variant="default"
+        color="teal"
+        size="lg"
+        radius="md"
+        aria-label="Settings"
+        onMouseEnter={open}
+        onMouseLeave={close}
+        onClick={toggleColorTheme}
+      >
+        {isDarkMode ? (
+          <IconSun style={{ width: '70%', height: '70%' }} stroke={1.5} />
+        ) : (
+          <IconMoon style={{ width: '70%', height: '70%' }} stroke={1.5} />
+        )}
+      </ActionIcon>
+    </Tooltip>
   );
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React from 'react';
 
 import { AuthenticationResult, EventType } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
@@ -23,8 +23,6 @@ const theme = createTheme({
 const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  //get initialize msalInstance
-
   msalInstance.initialize();
   const activeAccount = msalInstance.getActiveAccount();
 

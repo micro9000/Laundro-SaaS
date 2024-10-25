@@ -1,8 +1,10 @@
-import { Tenant } from './tenant';
+import Tenant from './tenant';
 
-export interface Store {
+interface Store {
   id: number;
   name: string;
   tenantId: number;
   tenant: Tenant;
 }
+
+export default Store;

@@ -16,7 +16,7 @@ import { isEmpty } from 'lodash';
 
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { AppError } from '@/infrastructure/hooks/useAppMutation';
-import { Tenant } from '@/models/tenant';
+import { Tenant } from '@/models';
 import { useAppDispatch } from '@/state/hooks';
 import { nameof } from '@/utilities';
 
