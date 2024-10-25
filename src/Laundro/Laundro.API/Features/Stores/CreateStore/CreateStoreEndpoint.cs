@@ -51,7 +51,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
         var newStore = new Store
         {
             Name = request.Name,
-            CreatedAt = _clock.Now.ToDateTimeUtc(),
+            CreatedAt = _clock.Now,
             TenantId = (int)tenantId!
         };
 
