@@ -1,9 +1,10 @@
 import {
-  Chip,
   Combobox,
   Group,
   Input,
   InputBase,
+  Stack,
+  Text,
   useCombobox,
 } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
@@ -11,12 +12,11 @@ import { IconCheck } from '@tabler/icons-react';
 import {
   selectCurrentSelectedStore,
   selectStores,
-  selectUserTenantName,
   setCurrentSelectedStore,
 } from '@/features/userContext/userContextSlice';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
 
-export function TenantAndStoreIndicator() {
+export function StoreSwitch() {
   const dispatch = useAppDispatch();
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -28,7 +28,6 @@ export function TenantAndStoreIndicator() {
       }
     },
   });
-  const tenantName = useAppSelector(selectUserTenantName);
   const currentStore = useAppSelector(selectCurrentSelectedStore);
   const stores = useAppSelector(selectStores);
 
@@ -54,25 +53,15 @@ export function TenantAndStoreIndicator() {
   };
 
   return (
-    <>
-      <Chip
-        defaultChecked
-        color="cyan"
-        variant="outline"
-        size="md"
-        checked={true}
-      >
-        Tenant: {tenantName}
-      </Chip>
-
+    <Stack align="stretch" justify="flex-end" gap="xs">
+      <Text>Change Store</Text>
       <Combobox
         store={combobox}
         width={250}
         resetSelectionOnOptionHover
         onOptionSubmit={(val) => {
           changeStore(Number(val));
-          // combobox.closeDropdown();
-
+          combobox.closeDropdown();
           combobox.updateSelectedOptionIndex('active');
         }}
       >
@@ -95,6 +84,6 @@ export function TenantAndStoreIndicator() {
           <Combobox.Options>{storeOptions}</Combobox.Options>
         </Combobox.Dropdown>
       </Combobox>
-    </>
+    </Stack>
   );
 }
