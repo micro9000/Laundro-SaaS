@@ -5,5 +5,5 @@ public class Role
     public string? Name { get; set; }
     public string? SystemKey { get; set; }
 
-    public ICollection<StoreUser> StoreUser { get; set; } = [];
+    public ICollection<StoreUser>? StoreUser { get; set; } = null;
 }
