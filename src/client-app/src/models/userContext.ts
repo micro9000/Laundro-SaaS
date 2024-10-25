@@ -1,8 +1,8 @@
-import { Role } from './role';
-import { Store } from './store';
-import { Tenant } from './tenant';
+import Role from './role';
+import Store from './store';
+import Tenant from './tenant';
 
-export interface UserContext {
+interface UserContext {
   userId: number;
   email: string;
   tenantName?: string;
@@ -11,3 +11,5 @@ export interface UserContext {
   roleSystemKey?: string;
   stores?: Store[];
 }
+
+export default UserContext;
