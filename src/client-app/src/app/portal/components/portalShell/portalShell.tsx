@@ -15,9 +15,8 @@ import {
 } from '@tabler/icons-react';
 
 import { AuthButton } from '@/app/components/authenticationButtons';
-import { selectUserTenantName } from '@/features/userContext/userContextSlice';
-import { useAppSelector } from '@/state/hooks';
 
+import { TenantAndStoreIndicator } from './tenantAndStoreIndicator';
 import { ThemeToggle } from './themeToggle';
 
 interface PortalShellProps {
@@ -29,7 +28,6 @@ export function PortalShell({
 }: PortalShellProps): React.ReactElement {
   const pathname = usePathname();
   const [opened, { toggle }] = useDisclosure();
-  const tenantName = useAppSelector(selectUserTenantName);
 
   return (
     <AppShell
@@ -46,8 +44,8 @@ export function PortalShell({
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
             <MantineLogo size={30} />
-            <Group ml="xl" gap={0} visibleFrom="sm">
-              <Badge color="cyan">Tenant: {tenantName}</Badge>
+            <Group ml="xl" gap="md" visibleFrom="sm">
+              <TenantAndStoreIndicator />
               <ThemeToggle />
               <AuthButton />
             </Group>

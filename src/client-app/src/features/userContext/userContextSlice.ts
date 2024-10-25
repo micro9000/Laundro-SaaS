@@ -3,14 +3,15 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 import { UserRoles } from '@/constants';
-import { UserContext } from '@/models/userContext';
-import type { AppThunk, RootState } from '@/state/store';
+import { Store, UserContext } from '@/models';
+import type { RootState } from '@/state/store';
 
 import { fetchUserContext } from './userContextQueryApi';
 
 export interface UserContextState {
   userContext?: UserContext | null;
   status: 'idle' | 'loading' | 'failed';
+  currentSelectedStore?: Store;
 }
 
 const initialState: UserContextState = {
@@ -21,16 +22,24 @@ const initialState: UserContextState = {
 export const userContextSlice = createSlice({
   name: 'userContext',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentSelectedStore: (state, action: PayloadAction<Store>) => {
+      state.currentSelectedStore = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(populateUserContextThunkAsync.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(populateUserContextThunkAsync.fulfilled, (state, action) => {
-        state.userContext = action.payload;
-        state.status = 'idle';
-      })
+      .addCase(
+        populateUserContextThunkAsync.fulfilled,
+        (state, action: PayloadAction<UserContext>) => {
+          state.userContext = action.payload;
+          state.currentSelectedStore = action.payload?.stores?.at(0);
+          state.status = 'idle';
+        }
+      )
       .addCase(populateUserContextThunkAsync.rejected, (state) => {
         state.status = 'failed';
       });
@@ -38,8 +47,9 @@ export const userContextSlice = createSlice({
 });
 
 export default userContextSlice.reducer;
+export const { setCurrentSelectedStore } = userContextSlice.actions;
 
-// Selectors
+// Tenant level Selectors
 export const selectUserContext = (state: RootState) =>
   state.userContext.userContext;
 export const selectUserContextStatus = (state: RootState) =>
@@ -48,6 +58,13 @@ export const selectUserTenantName = (state: RootState) =>
   state.userContext.userContext?.tenantName;
 export const selectUserTenantGuid = (state: RootState) =>
   state.userContext.userContext?.tenantGuid;
+
+export const selectStores = (state: RootState) =>
+  state.userContext.userContext?.stores;
+
+// Current selected store selectors
+export const selectCurrentSelectedStore = (state: RootState) =>
+  state.userContext.currentSelectedStore;
 
 // Current User Role selectors
 export const isCurrentUserIsNewUser = (state: RootState): boolean =>
