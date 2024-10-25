@@ -71,7 +71,7 @@ public class RoleLookup : IRoleLookup
         var roles = await _cache.GetOrCreateAsync("Laundro.User.Roles", async c =>
         {
             c.SlidingExpiration = TimeSpan.FromMinutes(15);
-            return await _context.Roles.ToListAsync();
+            return await _context.Roles.AsNoTracking().ToListAsync();
         });
 
         return roles;

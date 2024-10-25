@@ -54,7 +54,7 @@ public class UserAccountStateService : IUserAccountStateService
                 Email = userEmail,
                 Name = userName,
                 RoleId = newUserRole!.Id,
-                CreatedAt = _clock.DateTimeUtc
+                CreatedAt = _clock.Now
             };
 
             _dbContext.Users.Add(newUser);
