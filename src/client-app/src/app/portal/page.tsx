@@ -8,7 +8,7 @@ import {
 } from '@/features/userContext/userContextSlice';
 import { useAppSelector } from '@/state/hooks';
 
-import OnboardingFormIndex from './onboarding';
+import OnboardingForm from './onboarding';
 
 export default function PortalPage() {
   const userTenantGuid = useAppSelector(selectUserTenantGuid);
@@ -25,7 +25,7 @@ export default function PortalPage() {
 
   return (
     <>
-      <OnboardingFormIndex isNeedToOnBoardTheUser={isNeedToOnBoardTheUser} />
+      <OnboardingForm isNeedToOnBoardTheUser={isNeedToOnBoardTheUser} />
 
       <h1>Portal Home page</h1>
     </>

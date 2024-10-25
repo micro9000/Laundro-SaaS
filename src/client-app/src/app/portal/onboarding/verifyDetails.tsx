@@ -16,7 +16,6 @@ export default function VerifyDetails({
   formValues,
   formErrors,
 }: VerifyDetailsProps) {
-  console.log(formErrors);
   return (
     <>
       {!isEmpty(formErrors) && (

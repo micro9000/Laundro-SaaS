@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AuthenticationResult, EventType } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
@@ -24,8 +24,8 @@ const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   //get initialize msalInstance
-  msalInstance.initialize();
 
+  msalInstance.initialize();
   const activeAccount = msalInstance.getActiveAccount();
 
   if (!activeAccount) {
@@ -51,12 +51,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <AuthorizationProvider instance={msalInstance}>
         <ReduxProvider store={store}>
           <QueryClientProvider client={queryClient}>
-            <UserContextProvider>
-              <MantineProvider defaultColorScheme="dark" theme={theme}>
+            <MantineProvider defaultColorScheme="dark" theme={theme}>
+              <UserContextProvider>
                 <Notifications />
                 {children}
-              </MantineProvider>
-            </UserContextProvider>
+              </UserContextProvider>
+            </MantineProvider>
           </QueryClientProvider>
         </ReduxProvider>
       </AuthorizationProvider>

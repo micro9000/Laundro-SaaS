@@ -1,7 +1,6 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 
-import portalReducer from '@/app/portal/portalSlice';
 import userContextReducer from '@/features/userContext/userContextSlice';
 
 // Code reference: https://redux.js.org/tutorials/essentials/part-2-app-structure
@@ -9,7 +8,6 @@ import userContextReducer from '@/features/userContext/userContextSlice';
 export const store = configureStore({
   reducer: {
     userContext: userContextReducer,
-    portalState: portalReducer,
   },
 });
 

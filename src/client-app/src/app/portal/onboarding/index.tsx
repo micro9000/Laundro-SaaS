@@ -17,6 +17,7 @@ import { isEmpty } from 'lodash';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { AppError } from '@/infrastructure/hooks/useAppMutation';
 import { Tenant } from '@/models/tenant';
+import { useAppDispatch } from '@/state/hooks';
 import { nameof } from '@/utilities';
 
 import { OnboardingFormValues } from './onboardingFormValues';
@@ -28,26 +29,20 @@ interface OnboardingFormIndexProps {
   isNeedToOnBoardTheUser: boolean;
 }
 
-export default function OnboardingFormIndex({
+export default function OnboardingForm({
   isNeedToOnBoardTheUser,
 }: OnboardingFormIndexProps) {
+  var dispatch = useAppDispatch();
   const isMobile = useMediaQuery('(max-width: 50em)');
   const [activeForm, setActiveForm] = useState(0);
-  const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] =
-    useState<boolean>(false);
 
   var notification = useAppNotification();
-  const { mutate, isError, isSuccess, error, isPending, data } =
-    useAppMutation<{
-      tenant: Tenant;
-    }>({
-      path: '/tenant/create',
-      mutationKey: 'tenant/create',
-    });
-
-  useEffect(() => {
-    setIsLoadingOverlayVisible(isPending);
-  }, [isPending]);
+  const { mutate, isError, isSuccess, error, isPending } = useAppMutation<{
+    tenant: Tenant;
+  }>({
+    path: '/tenant/create',
+    mutationKey: 'tenant/create',
+  });
 
   useEffect(() => {
     if (isError && error) {
@@ -165,6 +160,11 @@ export default function OnboardingFormIndex({
 
   return (
     <>
+      <LoadingOverlay
+        visible={isPending}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+      />
       <Modal.Root
         opened={isNeedToOnBoardTheUser}
         onClose={() => {}}
@@ -181,12 +181,6 @@ export default function OnboardingFormIndex({
             <Modal.CloseButton />
           </Modal.Header>
           <Modal.Body>
-            <LoadingOverlay
-              visible={isLoadingOverlayVisible}
-              zIndex={1000}
-              overlayProps={{ radius: 'sm', blur: 2 }}
-            />
-
             <form onSubmit={form.onSubmit(onFormSubmit)}>
               <Stepper
                 iconSize={28}
@@ -224,7 +218,11 @@ export default function OnboardingFormIndex({
                   />
 
                   <Group justify="center" mt="md">
-                    <Button variant="default" onClick={prevStep}>
+                    <Button
+                      variant="default"
+                      onClick={prevStep}
+                      disabled={isPending}
+                    >
                       Back
                     </Button>
                     <Button type="submit" disabled={isPending}>

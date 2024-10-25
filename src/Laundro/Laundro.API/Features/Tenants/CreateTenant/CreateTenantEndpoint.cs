@@ -70,15 +70,6 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
                         TenantGuid = Guid.NewGuid(), // TODO: Upgrade to Guid.CreateVersion7() once we upgrade to .NET 9
                         CreatedAt = _clock.Now,
                     };
-                    await _dbContext.Tenants.AddAsync(newTenant);
-
-                    var initialStore = new Store
-                    {
-                        Name = request.StoreName,
-                        Location = request.StoreLocation,
-                        Tenant = newTenant,
-                        CreatedAt = _clock.Now,
-                    };
 
                     var validationResponse = await CanCreateValidate(newTenant);
                     if (!validationResponse.IsSatisfied)
@@ -88,6 +79,14 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
                             AddError(errMsg);
                         }
                     }
+
+                    var initialStore = new Store
+                    {
+                        Name = request.StoreName,
+                        Location = request.StoreLocation,
+                        Tenant = newTenant,
+                        CreatedAt = _clock.Now,
+                    };
 
                     ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
 

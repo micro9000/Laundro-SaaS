@@ -1,13 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useMsal } from '@azure/msal-react';
+import { LoadingOverlay } from '@mantine/core';
 
 import {
   populateUserContextThunkAsync,
   selectUserContextStatus,
+  selectUserTenantGuid,
 } from '@/features/userContext/userContextSlice';
 import { useAppNotification } from '@/infrastructure/hooks';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
@@ -22,6 +24,9 @@ export default function UserContextProvider({
   const { instance: msalInstance, accounts } = useMsal();
   var dispatch = useAppDispatch();
   var userContextLoadingStatus = useAppSelector(selectUserContextStatus);
+  var userTenantGuid = useAppSelector(selectUserTenantGuid);
+  const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] =
+    useState<boolean>(true);
 
   useEffect(() => {
     dispatch(populateUserContextThunkAsync());
@@ -49,7 +54,35 @@ export default function UserContextProvider({
         'Unable to load user context due to internal server error'
       );
     }
-  }, [userContextLoadingStatus, notifyError, accounts.length]);
+    if (userContextLoadingStatus === 'idle' && accounts.length > 0) {
+      setIsLoadingOverlayVisible(false);
+    } else {
+      setIsLoadingOverlayVisible(true);
+    }
+  }, [
+    userContextLoadingStatus,
+    notifyError,
+    dispatch,
+    accounts.length,
+    userTenantGuid,
+  ]);
 
-  return children;
+  // useEffect(() => {
+  //   if (!userTenantGuid) {
+  //     if (userTenantGuid == && userContextLoadingStatus !== 'idle' && accounts.length > 0) {
+  //       dispatch(setLoadingOverlayVisible());
+  //     }
+  //   }
+  // }, [dispatch, accounts.length, userContextLoadingStatus, userTenantGuid]);
+
+  return (
+    <>
+      <LoadingOverlay
+        visible={isLoadingOverlayVisible}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+      />
+      {children}
+    </>
+  );
 }
