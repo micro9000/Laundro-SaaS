@@ -33,10 +33,7 @@ export const AuthorizationProvider = ({
     defaultAuthorizationContext
   );
 
-  const TmpRolesRequired: string[] = useMemo(
-    () => [UserRoles.BusinessOwner],
-    []
-  );
+  const TmpRolesRequired: string[] = useMemo(() => [UserRoles.new_user], []);
 
   const UpdateContextValue = useCallback(() => {
     var accounts = instance.getAllAccounts();
