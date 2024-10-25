@@ -1,10 +1,11 @@
 ﻿namespace Laundro.Core.Domain.Entities;
 public class Store : Entity
 {
-    public string Name { get; set; } = string.Empty;
+    public string? Name { get; set; }
+    public string? Location { get; set; }
 
     public int TenantId { get; set; }
     public Tenant? Tenant { get; set; }
 
-    public ICollection<StoreUser> StoreUser { get; set; } = [];
+    public ICollection<StoreUser>? StoreUser { get; set; } = null;
 }

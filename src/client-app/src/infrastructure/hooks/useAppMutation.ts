@@ -1,7 +1,7 @@
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { useMutation as useReactMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import { loginRequest } from '../auth/authConfig';
 import { Config } from '../config';
@@ -11,6 +11,23 @@ interface useQueryParams<TData extends {}, TError = unknown> {
   path: string;
   params?: any;
 }
+
+export interface AppError {
+  statuCode: number;
+  message: string;
+  errors: {
+    [property: string]: [];
+  };
+}
+
+// axios.interceptors.response.use(
+//   (res) => {
+//     return res;
+//   },
+//   (err) => {
+//     return Promise.reject(err?.response?.data as AppError);
+//   }
+// );
 
 const useAppMutation = <TData extends {}, TError = unknown>({
   mutationKey,
@@ -26,6 +43,7 @@ const useAppMutation = <TData extends {}, TError = unknown>({
 
   return useReactMutation({
     mutationKey: [mutationKey, params],
+    onError: (err: AxiosError) => err,
     mutationFn: async (formData: FormData) => {
       var accessToken = null;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Laundro.API.Authorization.Tenants.Create;
+namespace Laundro.API.Features.Tenants.Authorization.Create;
 
 public class HasCorrectRoleToCreateNewTeanant : IAuthorizationRequirement
 {

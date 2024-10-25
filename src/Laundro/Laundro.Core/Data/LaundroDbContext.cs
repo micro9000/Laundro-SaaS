@@ -9,7 +9,6 @@ public class LaundroDbContext : SystemBaseDbContext
     {
         
     }
-    public DbSet<ToDo> ToDos { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Tenant> Tenants { get; set; }

@@ -2,6 +2,7 @@
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Lookups;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
 
 namespace Laundro.UnitTests.Core.Authentication;
 public class AuthenticationTestFixture : SharedTestFixture
@@ -63,7 +64,7 @@ public class AuthenticationTestFixture : SharedTestFixture
         dbContext.Tenants.Add(new Tenant
         {
             OwnerId = userTenantOwner.Id,
-            CreatedAt = new DateTime(2024, 10, 6),
+            CreatedAt = Instant.FromDateTimeUtc(DateTime.SpecifyKind(new DateTime(2024, 10, 6), DateTimeKind.Utc)),
             TenantName = "test",
             TenantGuid = Guid.NewGuid(),
             IsActive = true
@@ -78,14 +79,14 @@ public class AuthenticationTestFixture : SharedTestFixture
             {
                 TenantId = tenant.Id,
                 Name = TestContextData.firstStore,
-                CreatedAt = new DateTime(2024, 10, 6),
+                CreatedAt = Instant.FromDateTimeUtc(DateTime.SpecifyKind(new DateTime(2024, 10, 6), DateTimeKind.Utc)),
                 IsActive = true
             },
             new Store
             {
                 TenantId = tenant.Id,
                 Name = TestContextData.secondStore,
-                CreatedAt = new DateTime(2024, 10, 6),
+                CreatedAt = Instant.FromDateTimeUtc(DateTime.SpecifyKind(new DateTime(2024, 10, 6), DateTimeKind.Utc)),
                 IsActive = true
             }
         });

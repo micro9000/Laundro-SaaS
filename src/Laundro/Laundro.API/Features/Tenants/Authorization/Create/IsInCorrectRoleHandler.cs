@@ -1,13 +1,14 @@
-﻿using Laundro.Core.Constants;
+﻿using Laundro.API.Authorization;
+using Laundro.Core.Constants;
 using Laundro.Core.Features.UserContextState.Models;
 using Laundro.Core.Features.UserContextState.Services;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Laundro.API.Authorization.Tenants.Create;
+namespace Laundro.API.Features.Tenants.Authorization.Create;
 
 public class IsInCorrectRoleHandler : UserAuthorizationHandler<HasCorrectRoleToCreateNewTeanant>
 {
-    public IsInCorrectRoleHandler(ICurrentUserAccessor currentUserAccessor) : base(currentUserAccessor){}
+    public IsInCorrectRoleHandler(ICurrentUserAccessor currentUserAccessor) : base(currentUserAccessor) { }
 
     private static readonly string[] _validRoles = new string[]
     {
@@ -22,8 +23,8 @@ public class IsInCorrectRoleHandler : UserAuthorizationHandler<HasCorrectRoleToC
             context.Succeed(requirement);
             return Task.CompletedTask;
         }
-        context.Fail(new AuthorizationFailureReason(this, 
-            $"{user?.Role?.SystemKey} is not allowed create new tenant. The user can only create new tenant if they don't have existing tenant"));
+        context.Fail(new AuthorizationFailureReason(this,
+            $"{user?.Role?.SystemKey} is not allowed create new tenant."));
         return Task.CompletedTask;
     }
 }

@@ -6,5 +6,5 @@ public class User : Entity
     public int RoleId { get; set; }
     public Role? Role { get; set; }
 
-    public ICollection<StoreUser> StoreUser { get; set; } = [];
+    public ICollection<StoreUser>? StoreUser { get; set; } = null;
 }

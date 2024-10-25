@@ -3,27 +3,27 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../state/store';
 
 export interface PortalState {
-  currentPage: string;
+  activeStore: string;
 }
 
 const initialState: PortalState = {
-  currentPage: '/portal',
+  activeStore: '/portal',
 };
 
 export const portalSlice = createSlice({
   name: 'portalState',
   initialState,
   reducers: {
-    setActivePage: (state, action: PayloadAction<string>) => {
-      state.currentPage = action.payload;
+    setActiveStore: (state, action: PayloadAction<string>) => {
+      state.activeStore = action.payload;
     },
   },
 });
 
-export const { setActivePage } = portalSlice.actions;
+export const { setActiveStore } = portalSlice.actions;
 
 // Export the slice reducer for use in the store configuration
 export default portalSlice.reducer;
 
 export const selectActivePage = (state: RootState) =>
-  state.portalState.currentPage;
+  state.portalState.activeStore;
