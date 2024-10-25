@@ -12,7 +12,7 @@ internal class Migrator
             .WithExecutionTimeout(TimeSpan.FromMinutes(3))
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), s => s.StartsWith("Laundro.DatabaseMigration.Scripts"))
             .LogToConsole()
-            .WithTransactionPerScript()
+            //.WithTransactionPerScript()
             .Build();
         return upgrader.PerformUpgrade();
     }
