@@ -3,5 +3,5 @@
 public static class PolicyName
 {
     public const string CanCreateTenant = "CanCreateTenant";
-    public const string CanCreateStore = "CanCreateStore";
+    public const string CanCreateUpdateRetrieveAllStore = "CanCreateUpdateRetrieveAllStore";
 }

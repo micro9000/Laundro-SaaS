@@ -33,37 +33,48 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
     public override void Configure()
     {
         Post("api/store/create");
-        Policies(PolicyName.CanCreateStore);
+        Policies(PolicyName.CanCreateUpdateRetrieveAllStore);
     }
 
     public override async Task HandleAsync(CreateStoreRequest request, CancellationToken c)
     {
-        var currentUser = _currentUserAccessor.GetCurrentUser();
-        var tenantId = currentUser?.Tenant?.Id;
-
-        if (tenantId == null)
+        try
         {
-            AddError("Unable to proceed creating your store due to internal server error");
-            _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
+            var currentUser = _currentUserAccessor.GetCurrentUser();
+            var tenantId = currentUser?.Tenant?.Id;
+
+            if (tenantId == null)
+            {
+                AddError("Unable to proceed creating your store due to internal server error");
+                _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
+            }
+            ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
+
+            var newStore = new Store
+            {
+                Name = request.Name,
+                CreatedAt = _clock.Now,
+                TenantId = (int)tenantId!
+            };
+
+            _dbContext.Stores.Add(newStore);
+            await _dbContext.SaveChangesAsync();
+
+            await _userStoresRepository.RefreshAndGetCachedStoresByTenant(currentUser!.UserId);
+
+            await SendAsync(new()
+            {
+                Store = newStore
+            });
         }
+        catch (Exception ex)
+        {
+            AddError("Unable to fetch all stores due to internal server error");
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+
         ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
-
-        var newStore = new Store
-        {
-            Name = request.Name,
-            CreatedAt = _clock.Now,
-            TenantId = (int)tenantId!
-        };
-
-        _dbContext.Stores.Add(newStore);
-        await _dbContext.SaveChangesAsync();
-
-        await _userStoresRepository.RefreshAndGetCachedStoresByTenant(currentUser!.UserId);
-
-        await SendAsync(new()
-        {
-            Store = newStore
-        });
     }
 }
 
@@ -80,6 +91,7 @@ internal class CreateStoreValidator : Validator<CreateStoreRequest>
 internal sealed class CreateStoreRequest
 {
     public string? Name { get; set; }
+    public string? Location { get; set; }
 }
 
 internal sealed class CreateStoreResponse
