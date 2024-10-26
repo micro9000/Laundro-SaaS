@@ -12,23 +12,6 @@ interface useQueryParams<TData extends {}, TError = unknown> {
   params?: any;
 }
 
-export interface AppError {
-  statuCode: number;
-  message: string;
-  errors: {
-    [property: string]: [];
-  };
-}
-
-// axios.interceptors.response.use(
-//   (res) => {
-//     return res;
-//   },
-//   (err) => {
-//     return Promise.reject(err?.response?.data as AppError);
-//   }
-// );
-
 const useAppMutation = <TData extends {}, TError = unknown>({
   mutationKey,
   path,

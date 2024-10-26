@@ -14,8 +14,8 @@ import { useForm } from '@mantine/form';
 import { useMediaQuery } from '@mantine/hooks';
 import { isEmpty } from 'lodash';
 
+import { AppValidationError } from '@/infrastructure/exceptions';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
-import { AppError } from '@/infrastructure/hooks/useAppMutation';
 import { Tenant } from '@/models';
 import { useAppDispatch } from '@/state/hooks';
 import { nameof } from '@/utilities';
@@ -46,7 +46,7 @@ export default function OnboardingForm({
 
   useEffect(() => {
     if (isError && error) {
-      var validationErrors = error?.response?.data as AppError;
+      var validationErrors = error?.response?.data as AppValidationError;
       notification.notifyError(
         validationErrors.statuCode?.toString(),
         validationErrors.message
@@ -147,7 +147,7 @@ export default function OnboardingForm({
   const prevStep = () =>
     setActiveForm((current) => (current > 0 ? current - 1 : current));
 
-  var validationErrors = (error?.response?.data as AppError)?.errors;
+  var validationErrors = (error?.response?.data as AppValidationError)?.errors;
 
   var errorsToDisplay: { [property: string]: string | undefined } = {};
   if (validationErrors) {
