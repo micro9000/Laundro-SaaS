@@ -67,14 +67,6 @@ export default function UserContextProvider({
     userTenantGuid,
   ]);
 
-  // useEffect(() => {
-  //   if (!userTenantGuid) {
-  //     if (userTenantGuid == && userContextLoadingStatus !== 'idle' && accounts.length > 0) {
-  //       dispatch(setLoadingOverlayVisible());
-  //     }
-  //   }
-  // }, [dispatch, accounts.length, userContextLoadingStatus, userTenantGuid]);
-
   return (
     <>
       <LoadingOverlay
