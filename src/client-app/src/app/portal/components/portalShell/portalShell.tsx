@@ -25,9 +25,9 @@ import { AuthButton } from '@/app/components/authenticationButtons';
 import { selectCurrentSelectedStore } from '@/features/userContext/userContextSlice';
 import { useAppSelector } from '@/state/hooks';
 
+import ThemeToggle from '../themeToggle';
 import { StoreSwitch } from './storeSwitch';
 import { TenantIndicator } from './tenantIndicator';
-import { ThemeToggle } from './themeToggle';
 
 interface PortalShellProps {
   children: React.ReactNode;
