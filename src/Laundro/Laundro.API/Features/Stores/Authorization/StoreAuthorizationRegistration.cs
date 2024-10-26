@@ -1,5 +1,5 @@
 ﻿using Laundro.API.Authorization;
-using Laundro.API.Features.Stores.Authorization.Create;
+using Laundro.API.Features.Stores.Authorization.CreateUpdateGetAll;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Laundro.API.Features.Stores.Authorization;
@@ -15,7 +15,7 @@ public static class StoreAuthorizationRegistration
 
     public static void AddStoreAuthorizationOptions (this AuthorizationOptions options)
     {
-        options.AddPolicy(PolicyName.CanCreateStore, policyBuilder =>
+        options.AddPolicy(PolicyName.CanCreateUpdateRetrieveAllStore, policyBuilder =>
             policyBuilder.AddRequirements(
                 new HasTenantOwnerRoleToCreateStore()
             ));

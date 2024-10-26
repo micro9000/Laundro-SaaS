@@ -25,9 +25,10 @@ import { AuthButton } from '@/app/components/authenticationButtons';
 import { selectCurrentSelectedStore } from '@/features/userContext/userContextSlice';
 import { useAppSelector } from '@/state/hooks';
 
+import PortalBreadcrumb from '../breadcrumb';
+import ThemeToggle from '../themeToggle';
 import { StoreSwitch } from './storeSwitch';
 import { TenantIndicator } from './tenantIndicator';
-import { ThemeToggle } from './themeToggle';
 
 interface PortalShellProps {
   children: React.ReactNode;
@@ -133,7 +134,10 @@ export function PortalShell({
           <StoreSwitch />
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main>
+        <PortalBreadcrumb />
+        {children}
+      </AppShell.Main>
     </AppShell>
   );
 }
