@@ -1,16 +1,12 @@
 ﻿using Laundro.Core.Storage;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Laundro.Core.Features.Stores.ProfileStorage;
 
 public interface IStoreProfileImagesStorage
 {
-    Task EnsureTenantContainerExists(string tenantGuidId);
+    Task EnsureTenantContainerExists(Guid tenantGuid);
+    Task<string> Store(Guid tenantGuid, InputFileStorageInformation fileInfo, byte[] fileContent);
 }
 
 public class StoreProfileImagesStorage : IStoreProfileImagesStorage
@@ -24,8 +20,19 @@ public class StoreProfileImagesStorage : IStoreProfileImagesStorage
         _logger = logger;
     }
 
-    public async Task EnsureTenantContainerExists(string tenantGuidId)
+    public async Task EnsureTenantContainerExists(Guid tenantGuid)
     {
-        await _blobServiceClient.EnsureContainerExists($"tenant-{tenantGuidId}");
+        await _blobServiceClient.EnsureContainerExists(GetContainerName(tenantGuid.ToString()));
     }
+
+    public async Task<string> Store(Guid tenantGuid, InputFileStorageInformation fileInfo, byte[] fileContent)
+    {
+        var path = FilePaths.GenerateStoreProfileFilePath(fileInfo);
+
+        await _blobServiceClient.Store(GetContainerName(tenantGuid.ToString()), path, fileContent);
+
+        return path;
+    }
+
+    private string GetContainerName(string tenantGuid) => $"tenant-{tenantGuid}";
 }

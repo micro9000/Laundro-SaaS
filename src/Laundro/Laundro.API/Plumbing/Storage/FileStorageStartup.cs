@@ -26,7 +26,7 @@ public class FileStorageStartup : IStartupService
 
         foreach(var tenant in tenants)
         {
-            await _storeProfileImagesStorage.EnsureTenantContainerExists(tenant.TenantGuid.ToString());
+            await _storeProfileImagesStorage.EnsureTenantContainerExists(tenant.TenantGuid);
         }
     }
 }
