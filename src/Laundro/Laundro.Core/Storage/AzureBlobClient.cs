@@ -5,7 +5,7 @@ using Azure.Storage.Blobs.Specialized;
 using Microsoft.Extensions.Logging;
 using System.IO;
 
-namespace Laundro.Core.BlobStorage;
+namespace Laundro.Core.Storage;
 public class AzureBlobClient : IAzureBlobClient
 {
     private readonly BlobServiceClient _blobServiceClient;

@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs.Models;
 
-namespace Laundro.Core.BlobStorage;
+namespace Laundro.Core.Storage;
 public interface IAzureBlobClient
 {
     Task Store(string containerName, string path, Stream fileStream);

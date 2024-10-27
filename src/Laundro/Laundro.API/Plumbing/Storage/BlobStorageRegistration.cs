@@ -1,8 +1,9 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
-using Laundro.Core.BlobStorage;
+using Laundro.Core.Features.Stores.ProfileStorage;
+using Laundro.Core.Storage;
 
-namespace Laundro.API.Plumbing.BlobStorage;
+namespace Laundro.API.Plumbing.Storage;
 
 public static class BlobStorageRegistration
 {
@@ -18,6 +19,12 @@ public static class BlobStorageRegistration
 
         services.AddScoped(_ => BlobServiceClientFactory(blobStorageConnectionString!, managedIdentityClientId));
         services.AddScoped<IAzureBlobClient, AzureBlobClient>();
+
+        services.AddTransient<IStoreProfileImagesStorage, StoreProfileImagesStorage>();
+
+        services.AddTransient<IStartupService, FileStorageStartup>();
+
+        // TODO: Add storage health checks here
 
         return services;
     }
