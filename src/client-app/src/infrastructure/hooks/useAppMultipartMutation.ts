@@ -13,7 +13,7 @@ interface useQueryParams<TData extends {}, TError = unknown> {
   progressCallBack?: (progressEvent: AxiosProgressEvent) => void;
 }
 
-const useAppMutation = <TData extends {}, TError = unknown>({
+const useAppMultipartMutation = <TData extends {}, TError = unknown>({
   mutationKey,
   path,
   params,
@@ -63,4 +63,4 @@ const useAppMutation = <TData extends {}, TError = unknown>({
   });
 };
 
-export default useAppMutation;
+export default useAppMultipartMutation;

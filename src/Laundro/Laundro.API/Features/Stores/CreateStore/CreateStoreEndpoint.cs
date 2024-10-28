@@ -70,6 +70,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                     var newStore = new Store
                     {
                         Name = request.Name,
+                        Location = request.Location,
                         CreatedAt = _clock.Now,
                         TenantId = (int)tenantId!
                     };
@@ -106,7 +107,8 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                             {
                                 StoreId = newStore.Id,
                                 Url = imageFileUrl,
-                                ContentType = file?.ContentType
+                                ContentType = file?.ContentType,
+                                CreatedAt = _clock.Now
                             });
                         }
                     }
