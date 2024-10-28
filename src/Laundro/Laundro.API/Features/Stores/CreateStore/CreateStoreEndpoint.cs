@@ -7,6 +7,8 @@ using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Features.UserContextState.Services;
 using Laundro.Core.NodaTime;
 using Laundro.Core.Storage;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Laundro.API.Features.Stores.CreateStore;
 
@@ -44,72 +46,90 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
     public override async Task HandleAsync(CreateStoreRequest request, CancellationToken c)
     {
-        try
+
+        var currentUser = _currentUserAccessor.GetCurrentUser();
+
+        var strategy = _dbContext.Database.CreateExecutionStrategy();
+
+        await strategy.ExecuteAsync(async () =>
         {
-            var currentUser = _currentUserAccessor.GetCurrentUser();
-            var tenantId = currentUser?.Tenant?.Id;
-            var tenantGuid = currentUser?.Tenant?.TenantGuid;
-
-            if (tenantId == null || tenantGuid == null)
+            await using (var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Snapshot, c))
             {
-                AddError("Unable to proceed creating your store due to internal server error");
-                _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
-            }
-
-            if (request.StoreImage is not null)
-            {
-                var imageFileValidationResult = ValidateFile(request.StoreImage);
-                if (imageFileValidationResult.ErrorOccured)
+                try
                 {
-                    AddError(imageFileValidationResult.ErrorMessage);
-                    _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
+                    var tenantId = currentUser?.Tenant?.Id;
+                    var tenantGuid = currentUser?.Tenant?.TenantGuid;
+
+                    if (tenantId == null || tenantGuid == null)
+                    {
+                        AddError("Unable to proceed creating your store due to internal server error");
+                        _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
+                        ThrowIfAnyErrors(); // Fail fast
+                    }
+
+                    var newStore = new Store
+                    {
+                        Name = request.Name,
+                        CreatedAt = _clock.Now,
+                        TenantId = (int)tenantId!
+                    };
+
+                    _dbContext.Stores.Add(newStore);
+                    await _dbContext.SaveChangesAsync();
+
+                    // TODO: remove this
+                    await _storeProfileImagesStorage.EnsureTenantContainerExists((Guid)tenantGuid!);
+
+                    if (request.StoreImages is not null && request.StoreImages.Any())
+                    {
+                        foreach (var file in request.StoreImages)
+                        {
+                            var imageFileValidationResult = ValidateFile(file);
+                            if (imageFileValidationResult.ErrorOccured)
+                            {
+                                AddError(imageFileValidationResult.ErrorMessage);
+                                _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
+                                ThrowIfAnyErrors(); // Fail fast
+                            }
+
+                            var fileContent = GetFileContent(file);
+                            var imageFileUrl = await _storeProfileImagesStorage.Store(
+                                (Guid)tenantGuid!,
+                                new InputFileStorageInformation
+                                {
+                                    Id = Guid.NewGuid(),
+                                    FileName = file?.FileName,
+                                    DateUploaded = _clock.Now
+                                }, fileContent);
+
+                            _dbContext.StoreImages.Add(new StoreImage
+                            {
+                                StoreId = newStore.Id,
+                                Url = imageFileUrl,
+                                ContentType = file?.ContentType
+                            });
+                        }
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    await _userStoresRepository.RefreshAndGetCachedStoresByTenant(currentUser!.UserId);
+
+                    await SendAsync(new()
+                    {
+                        Store = newStore
+                    });
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    AddError("Unable to fetch all stores due to internal server error");
+                    _logger.LogError(ex, ex.Message);
+                    throw;
                 }
             }
-
-            ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
-
-            await _storeProfileImagesStorage.EnsureTenantContainerExists((Guid)tenantGuid!);
-            string? imageFileUrl = null;
-            string? imageFileContentType = null;
-            if (request.StoreImage is not null)
-            {
-                imageFileContentType = request.StoreImage.ContentType;
-                var fileContent = GetFileContent(request.StoreImage);
-                imageFileUrl = await _storeProfileImagesStorage.Store(
-                (Guid)tenantGuid!,
-                new InputFileStorageInformation
-                {
-                    Id = Guid.NewGuid(),
-                    FileName = request.StoreImage?.FileName,
-                    DateUploaded = _clock.Now
-                }, fileContent);
-            }
-
-            var newStore = new Store
-            {
-                Name = request.Name,
-                CreatedAt = _clock.Now,
-                TenantId = (int)tenantId!,
-                ProfileImageUrl = imageFileUrl,
-                ProfileImageContentType = imageFileContentType
-            };
-
-            _dbContext.Stores.Add(newStore);
-            await _dbContext.SaveChangesAsync();
-
-            await _userStoresRepository.RefreshAndGetCachedStoresByTenant(currentUser!.UserId);
-
-            await SendAsync(new()
-            {
-                Store = newStore
-            });
-        }
-        catch (Exception ex)
-        {
-            AddError("Unable to fetch all stores due to internal server error");
-            _logger.LogError(ex, ex.Message);
-            throw;
-        }
+        });
 
         ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
     }
@@ -162,7 +182,7 @@ internal sealed class CreateStoreRequest
 {
     public string? Name { get; set; }
     public string? Location { get; set; }
-    public IFormFile? StoreImage { get; set; }
+    public List<IFormFile>? StoreImages { get; set; }
 }
 
 internal sealed class CreateStoreResponse

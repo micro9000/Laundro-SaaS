@@ -7,8 +7,7 @@ public class Store : Entity
     public int TenantId { get; set; }
     public Tenant? Tenant { get; set; }
 
-    public string? ProfileImageUrl { get; set; }
-    public string? ProfileImageContentType { get; set; }
+    public ICollection<StoreImage>? Images { get; set; }
 
     public ICollection<StoreUser>? StoreUser { get; set; } = null;
 }
