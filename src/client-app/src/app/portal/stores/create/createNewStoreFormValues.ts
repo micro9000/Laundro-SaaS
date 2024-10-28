@@ -1,4 +1,4 @@
 export interface CreateNewStoreFormValues {
-  storeName: string;
-  storeLocation: string;
+  name: string;
+  location: string;
 }

@@ -2,9 +2,11 @@ using Laundro.API.Authentication;
 using Laundro.API.Authorization;
 using Laundro.API.Infrastructure.Exceptions;
 using Laundro.API.Plumbing;
+using Laundro.API.Plumbing.Storage;
 using Laundro.API.Plumbing.Database;
 using Laundro.Core.BusinessRequirementsValidators;
 using Serilog;
+using Laundro.API;
 
 Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
 
@@ -26,11 +28,14 @@ try
     // Application components
     builder.Services.AddDatabaseStorage(builder.Configuration);
     builder.Services.AddCaching(builder.Configuration);
+    builder.Services.AddBlobStorage(builder.Configuration);
     builder.Services.AddRepositories();
     builder.Services.AddLaundroAzureADAuthentication(builder.Configuration);
     builder.Services.AddLaundroAuthorization(builder.Configuration);
 
     builder.Services.AddBusinessRequirementsValidators();
+
+    builder.Services.AddHostedService<StartupRunner>();
 
     var app = builder.Build();
     app.UseSerilogLogging();
