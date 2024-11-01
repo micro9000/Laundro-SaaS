@@ -7,6 +7,7 @@ using Serilog;
 using Laundro.API;
 using Laundro.API.Storage;
 using Laundro.API.Database;
+using System.Text.Json.Serialization;
 
 Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
 
@@ -36,6 +37,8 @@ try
     builder.Services.AddBusinessRequirementsValidators();
 
     builder.Services.AddHostedService<StartupRunner>();
+    builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options 
+        => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
     var app = builder.Build();
     app.UseSerilogLogging();

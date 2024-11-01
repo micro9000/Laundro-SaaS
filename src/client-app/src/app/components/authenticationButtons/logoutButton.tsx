@@ -95,7 +95,7 @@ export function LogoutButton() {
             <IconSettings style={{ width: rem(14), height: rem(14) }} />
           }
         >
-          Settings
+          Tenant Settings
         </Menu.Item>
 
         <Menu.Item

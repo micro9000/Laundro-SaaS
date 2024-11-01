@@ -10,3 +10,8 @@ export const StoreEndpoints = {
   create: '/store/create',
   getAll: '/store/getall',
 };
+
+export const EmployeeEndpoints = {
+  register: '/employee/register',
+  getAll: '/employee/getall',
+};

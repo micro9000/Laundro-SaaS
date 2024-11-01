@@ -8,5 +8,7 @@ public class User : Entity
 
     public int? CreatedInTenantId { get; set; }
 
-    public ICollection<StoreUser>? StoreUser { get; set; } = null;
+    // These should not be nullable
+    // To avoid this error: CS8620 - Argument cannot be used for parameter due to differences in the nullability of reference types.
+    public ICollection<StoreUser> StoreUser { get; set; } = new List<StoreUser>();
 }

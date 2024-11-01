@@ -72,9 +72,9 @@ export function PortalShell({
             size="sm"
           />
           <Group justify="space-between" style={{ flex: 1 }}>
-            <MantineLogo size={30} />
+            {/* <MantineLogo size={30} /> */}
+            <TenantIndicator />
             <Group ml="xl" gap="md" visibleFrom="sm">
-              <TenantIndicator />
               <ThemeToggle />
               <AuthButton />
             </Group>
@@ -114,9 +114,9 @@ export function PortalShell({
             active={pathname === '/portal/stores'}
           />
           <NavLink
-            href="/portal/users"
+            href="/portal/employees"
             component={Link}
-            label="Users"
+            label="Employees"
             leftSection={<IconUserEdit size="1rem" stroke={1.5} />}
             rightSection={
               <IconChevronRight
@@ -126,7 +126,7 @@ export function PortalShell({
               />
             }
             variant="filled"
-            active={pathname === '/portal/users'}
+            active={pathname === '/portal/employees'}
           />
         </AppShell.Section>
 

@@ -41,6 +41,7 @@ internal class GetAllEmployeesEndpoint : EndpointWithoutRequest<GetAllEmployeesR
             if (tenantId != null)
             {
                 employees = await _dbContext.Users
+                    .Include(u => u.StoreUser).ThenInclude(su => su.Role)
                     .Where(s => s.CreatedInTenantId == tenantId)
                     .ToListAsync(ct);
             }

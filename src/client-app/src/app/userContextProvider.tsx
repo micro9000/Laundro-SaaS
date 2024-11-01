@@ -43,6 +43,7 @@ export default function UserContextProvider({
       router.replace('/portal');
     } else {
       // If the user is not signed in, initiate the login process
+      // this is currently not supported, let the user click the login button
       // msalInstance.initialize();
     }
   }, [router, msalInstance]);
