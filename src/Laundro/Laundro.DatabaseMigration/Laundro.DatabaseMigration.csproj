@@ -17,6 +17,7 @@
     <None Remove="Scripts\Script0003 - New Columns in Tenants And Stores.sql" />
     <None Remove="Scripts\Script0004 - Turn on Snapshop trans level.sql" />
     <None Remove="Scripts\Script0005 - Store Images table.sql" />
+    <None Remove="Scripts\Script0006 - New Column in Users.sql" />
     <None Remove="Seed\Roles.sql" />
   </ItemGroup>
 
@@ -28,6 +29,7 @@
     <EmbeddedResource Include="Scripts\Script0003 - New Columns in Tenants And Stores.sql" />
     <EmbeddedResource Include="Scripts\Script0004 - Turn on Snapshop trans level.sql" />
     <EmbeddedResource Include="Scripts\Script0005 - Store Images table.sql" />
+    <EmbeddedResource Include="Scripts\Script0006 - New Column in Users.sql" />
     <EmbeddedResource Include="Seed\Roles.sql" />
   </ItemGroup>
 
