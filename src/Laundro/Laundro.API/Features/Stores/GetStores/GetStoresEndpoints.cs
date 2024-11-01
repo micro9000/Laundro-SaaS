@@ -42,7 +42,7 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
                 stores = await _dbContext.Stores
                     .Include(s => s.StoreUser)
                     .Where(s => s.TenantId == tenantId)
-                    .ToListAsync();
+                    .ToListAsync(ct);
             }
         }
         catch (Exception ex)
@@ -59,10 +59,4 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
             Stores = stores
         });
     }
-}
-
-
-internal sealed class GetStoresResponse
-{
-    public IEnumerable<Store>? Stores { get; set; }
 }
