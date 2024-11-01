@@ -1,18 +1,20 @@
-﻿using Laundro.Core.Storage;
+﻿using Laundro.Core.Constants;
+using Laundro.Core.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Laundro.Core.Features.Stores.ProfileStorage;
 
 public interface IStoreProfileImagesStorage
 {
-    Task EnsureTenantContainerExists(Guid tenantGuid);
-    Task<string> Store(Guid tenantGuid, InputFileStorageInformation fileInfo, byte[] fileContent);
+    Task EnsureTenantContainerExists();
+    Task<string> Store(InputFileStorageInformation fileInfo, byte[] fileContent);
 }
 
 public class StoreProfileImagesStorage : IStoreProfileImagesStorage
 {
     private readonly IAzureBlobClient _blobServiceClient;
     private readonly ILogger<StoreProfileImagesStorage> _logger;
+    private const string _containerName = TenantStorageConstants.TenantFilesContainer;
 
     public StoreProfileImagesStorage(IAzureBlobClient blobServiceClient, ILogger<StoreProfileImagesStorage> logger)
     {
@@ -20,19 +22,18 @@ public class StoreProfileImagesStorage : IStoreProfileImagesStorage
         _logger = logger;
     }
 
-    public async Task EnsureTenantContainerExists(Guid tenantGuid)
+    public async Task EnsureTenantContainerExists()
     {
-        await _blobServiceClient.EnsureContainerExists(GetContainerName(tenantGuid.ToString()));
+        await _blobServiceClient.EnsureContainerExists(_containerName);
     }
 
-    public async Task<string> Store(Guid tenantGuid, InputFileStorageInformation fileInfo, byte[] fileContent)
+    public async Task<string> Store(InputFileStorageInformation fileInfo, byte[] fileContent)
     {
         var path = FilePaths.GenerateStoreProfileFilePath(fileInfo);
 
-        await _blobServiceClient.Store(GetContainerName(tenantGuid.ToString()), path, fileContent);
+        await _blobServiceClient.Store(_containerName, path, fileContent);
 
         return path;
     }
 
-    private string GetContainerName(string tenantGuid) => $"tenant-{tenantGuid}";
 }
