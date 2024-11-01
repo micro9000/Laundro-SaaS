@@ -1,8 +1,9 @@
 import axios from 'axios';
 
+import { UserContextEndpoints } from '@/constants/apiEndpoints';
 import { getToken } from '@/infrastructure/auth/msal';
 import { Config } from '@/infrastructure/config';
-import { UserContext } from '@/models/userContext';
+import UserContext from '@/models/userContext';
 
 // A mock function to mimic making an async request for data
 export const fetchUserContext = async (): Promise<{
@@ -12,7 +13,7 @@ export const fetchUserContext = async (): Promise<{
 
   if (accessToken !== null) {
     const response = await axios.get<UserContext>(
-      `${Config.ApiUrl}/user-context-state`,
+      `${Config.ApiUrl}${UserContextEndpoints.get}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

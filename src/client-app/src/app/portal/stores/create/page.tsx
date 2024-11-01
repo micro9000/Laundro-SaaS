@@ -16,7 +16,8 @@ import {
 import { FileRejection } from '@mantine/dropzone';
 import { useForm } from '@mantine/form';
 
-import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
+import { StoreEndpoints } from '@/constants/apiEndpoints';
+import { useAppNotification } from '@/infrastructure/hooks';
 import useAppMultipartMutation from '@/infrastructure/hooks/useAppMultipartMutation';
 import { Store } from '@/models';
 import { nameof } from '@/utilities';
@@ -32,7 +33,7 @@ export default function Page() {
     useAppMultipartMutation<{
       store: Store;
     }>({
-      path: '/store/create',
+      path: StoreEndpoints.create,
       mutationKey: 'create-new-store',
     });
 

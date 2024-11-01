@@ -6,7 +6,7 @@ using Laundro.Core.Lookups;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace Laundro.API.Plumbing.Database;
+namespace Laundro.API.Database;
 
 public static class DataStorageRegistration
 {

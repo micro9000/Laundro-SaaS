@@ -3,7 +3,8 @@
 namespace Laundro.Core.Storage;
 public class InputFileStorageInformation
 {
-    public Guid Id { get; set; }
-    public string? FileName { get; set; }
-    public Instant DateUploaded { get; set; }
+    public required Guid Id { get; set; }
+    public required Guid TenantGuid { get; set; }
+    public required string? FileName { get; set; }
+    public required Instant DateUploaded { get; set; }
 }

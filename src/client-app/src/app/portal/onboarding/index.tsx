@@ -14,6 +14,7 @@ import { useForm } from '@mantine/form';
 import { useMediaQuery } from '@mantine/hooks';
 import { isEmpty } from 'lodash';
 
+import { TenantEndpoints } from '@/constants/apiEndpoints';
 import { AppValidationError } from '@/infrastructure/exceptions';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Tenant } from '@/models';
@@ -40,8 +41,8 @@ export default function OnboardingForm({
   const { mutate, isError, isSuccess, error, isPending } = useAppMutation<{
     tenant: Tenant;
   }>({
-    path: '/tenant/create',
-    mutationKey: 'tenant/create',
+    path: TenantEndpoints.create,
+    mutationKey: 'create-new-tenant',
   });
 
   useEffect(() => {

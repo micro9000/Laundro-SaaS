@@ -3,7 +3,7 @@ using Azure.Storage.Blobs;
 using Laundro.Core.Features.Stores.ProfileStorage;
 using Laundro.Core.Storage;
 
-namespace Laundro.API.Plumbing.Storage;
+namespace Laundro.API.Storage;
 
 public static class BlobStorageRegistration
 {

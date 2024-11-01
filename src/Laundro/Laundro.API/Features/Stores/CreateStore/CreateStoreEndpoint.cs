@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
+using Laundro.Core.Constants;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.Stores.ProfileStorage;
@@ -78,9 +79,6 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                     _dbContext.Stores.Add(newStore);
                     await _dbContext.SaveChangesAsync();
 
-                    // TODO: remove this
-                    await _storeProfileImagesStorage.EnsureTenantContainerExists((Guid)tenantGuid!);
-
                     if (request.StoreImages is not null && request.StoreImages.Any())
                     {
                         foreach (var file in request.StoreImages)
@@ -95,10 +93,10 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
                             var fileContent = GetFileContent(file);
                             var imageFileUrl = await _storeProfileImagesStorage.Store(
-                                (Guid)tenantGuid!,
                                 new InputFileStorageInformation
                                 {
                                     Id = Guid.NewGuid(),
+                                    TenantGuid = (Guid) tenantGuid!,
                                     FileName = file?.FileName,
                                     DateUploaded = _clock.Now
                                 }, fileContent);
