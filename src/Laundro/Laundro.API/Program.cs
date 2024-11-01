@@ -2,11 +2,11 @@ using Laundro.API.Authentication;
 using Laundro.API.Authorization;
 using Laundro.API.Infrastructure.Exceptions;
 using Laundro.API.Plumbing;
-using Laundro.API.Plumbing.Storage;
-using Laundro.API.Plumbing.Database;
 using Laundro.Core.BusinessRequirementsValidators;
 using Serilog;
 using Laundro.API;
+using Laundro.API.Storage;
+using Laundro.API.Database;
 
 Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
 
