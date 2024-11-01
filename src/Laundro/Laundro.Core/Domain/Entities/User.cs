@@ -6,5 +6,7 @@ public class User : Entity
     public int RoleId { get; set; }
     public Role? Role { get; set; } = null;
 
+    public int? CreatedInTenantId { get; set; }
+
     public ICollection<StoreUser>? StoreUser { get; set; } = null;
 }
