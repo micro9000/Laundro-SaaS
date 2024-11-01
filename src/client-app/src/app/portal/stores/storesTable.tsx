@@ -6,6 +6,7 @@ import { Button, Group, Table } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 import { AxiosError } from 'axios';
 
+import { StoreEndpoints } from '@/constants/apiEndpoints';
 import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppNotification, useAppQuery } from '@/infrastructure/hooks';
 import { Store } from '@/models';
@@ -15,7 +16,7 @@ export default function StoresTable() {
   const notification = useAppNotification();
 
   const { data, isLoading, isError, error } = useAppQuery<{ stores: Store[] }>({
-    path: '/store/getall',
+    path: StoreEndpoints.getAll,
     queryOptions: {
       queryKey: ['get-all-stores'],
     },
