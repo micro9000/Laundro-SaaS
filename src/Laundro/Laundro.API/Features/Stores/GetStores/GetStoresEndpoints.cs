@@ -26,7 +26,7 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
     public override void Configure()
     {
         Get("api/store/getall");
-        Policies(PolicyName.CanCreateUpdateRetrieveAllStore);
+        Policies(PolicyName.IsTenantOwner);
     }
 
     public override async Task HandleAsync(CancellationToken ct)
