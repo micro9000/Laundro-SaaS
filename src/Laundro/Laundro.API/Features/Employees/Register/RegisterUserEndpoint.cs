@@ -51,6 +51,13 @@ internal class RegisterUserEndpoint : Endpoint<RegisterUserRequest, RegisterUser
 
         if (user != null)
         {
+            if (user.IsActive)
+            {
+                AddError($"An account with the email {user.Email} already exists");
+                _logger.LogError("Tenant owner is trying to add new user with the same employee email");
+                ThrowIfAnyErrors();
+            }
+
             user.Name = request.Name;
             user.RoleId = tenantEmployeeRole!.Id;
             if (!user.IsActive)
@@ -75,7 +82,7 @@ internal class RegisterUserEndpoint : Endpoint<RegisterUserRequest, RegisterUser
 
         await SendAsync(new()
         {
-            User = user
+            Employee = user
         });
     }
 }

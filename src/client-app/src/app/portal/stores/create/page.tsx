@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import {
@@ -17,8 +18,10 @@ import { FileRejection } from '@mantine/dropzone';
 import { useForm } from '@mantine/form';
 
 import { StoreEndpoints } from '@/constants/apiEndpoints';
-import { useAppNotification } from '@/infrastructure/hooks';
-import useAppMultipartMutation from '@/infrastructure/hooks/useAppMultipartMutation';
+import {
+  useAppMultipartMutation,
+  useAppNotification,
+} from '@/infrastructure/hooks';
 import { Store } from '@/models';
 import { nameof } from '@/utilities';
 
@@ -26,6 +29,7 @@ import { CreateNewStoreFileDropzone } from './createNewStoreFileDropzone';
 import { CreateNewStoreFormValues } from './createNewStoreFormValues';
 
 export default function Page() {
+  const router = useRouter();
   const notification = useAppNotification();
   const [storeImages, setStoreImages] = useState<File[] | null>(null);
 
@@ -38,18 +42,23 @@ export default function Page() {
     });
 
   useEffect(() => {
-    console.log(isError, error);
-  }, [isError, error]);
+    if (isError) {
+      notification.notifyError(
+        'Unable to save new store details',
+        error.message
+      );
+    }
+  }, [isError, error, notification]);
 
   useEffect(() => {
     if (isSuccess) {
       notification.notifySuccess('Successfully created new store');
 
       setTimeout(() => {
-        location.reload();
+        router.push('/portal/stores');
       }, 500);
     }
-  }, [isSuccess, notification]);
+  }, [isSuccess, notification, router]);
 
   const uploadImages = (images: File[]) => {
     setStoreImages(images);
