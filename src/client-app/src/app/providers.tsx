@@ -13,7 +13,6 @@ import { store } from '@/state/store';
 
 import { msalInstance } from '../infrastructure/auth/authConfig';
 import { AuthorizationProvider } from '../infrastructure/auth/authorizationProvider';
-import UserContextProvider from './userContextProvider';
 
 const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
@@ -50,10 +49,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <ReduxProvider store={store}>
           <QueryClientProvider client={queryClient}>
             <MantineProvider defaultColorScheme="dark" theme={theme}>
-              <UserContextProvider>
-                <Notifications />
-                {children}
-              </UserContextProvider>
+              <Notifications />
+              {children}
             </MantineProvider>
           </QueryClientProvider>
         </ReduxProvider>

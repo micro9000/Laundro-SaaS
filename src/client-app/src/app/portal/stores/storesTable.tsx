@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { Button, Group, Table } from '@mantine/core';
-import { IconSettings } from '@tabler/icons-react';
+import { ActionIcon, Group, Table } from '@mantine/core';
+import { IconAdjustments } from '@tabler/icons-react';
 import { AxiosError } from 'axios';
 
 import { StoreEndpoints } from '@/constants/apiEndpoints';
@@ -41,23 +41,26 @@ export default function StoresTable() {
 
   const rows = stores?.map((store) => (
     <Table.Tr key={store.id}>
-      <Table.Td>{store.name}</Table.Td>
-      <Table.Td>{store.location}</Table.Td>
       <Table.Td>
-        <Group>
-          <Button leftSection={<IconSettings size={14} />} variant="subtle">
-            Manage
-          </Button>
+        <Group justify="center">
+          <ActionIcon variant="default" aria-label="Settings">
+            <IconAdjustments
+              style={{ width: '70%', height: '70%' }}
+              stroke={1.5}
+            />
+          </ActionIcon>
         </Group>
       </Table.Td>
+      <Table.Td>{store.name}</Table.Td>
+      <Table.Td>{store.location}</Table.Td>
     </Table.Tr>
   ));
 
   const ths = (
     <Table.Tr>
+      <Table.Th>Actions</Table.Th>
       <Table.Th>Name</Table.Th>
       <Table.Th>Location</Table.Th>
-      <Table.Th>Action</Table.Th>
     </Table.Tr>
   );
 

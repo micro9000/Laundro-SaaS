@@ -10,7 +10,7 @@ import { fetchUserContext } from './userContextQueryApi';
 
 export interface UserContextState {
   userContext?: UserContext | null;
-  status: 'idle' | 'loading' | 'failed';
+  status: 'idle' | 'loading' | 'failed' | 'empty';
   currentSelectedStore?: Store;
 }
 
@@ -34,10 +34,19 @@ export const userContextSlice = createSlice({
       })
       .addCase(
         populateUserContextThunkAsync.fulfilled,
-        (state, action: PayloadAction<UserContext>) => {
-          state.userContext = action.payload;
-          state.currentSelectedStore = action.payload?.stores?.at(0);
-          state.status = 'idle';
+        (state, action: PayloadAction<UserContext | undefined>) => {
+          if (
+            typeof action.payload === 'undefined' ||
+            action.payload === null
+          ) {
+            state.userContext = null;
+            state.currentSelectedStore = undefined;
+            state.status = 'empty';
+          } else {
+            state.userContext = action.payload;
+            state.currentSelectedStore = action.payload?.stores?.at(0);
+            state.status = 'idle';
+          }
         }
       )
       .addCase(populateUserContextThunkAsync.rejected, (state) => {
@@ -51,32 +60,32 @@ export const { setCurrentSelectedStore } = userContextSlice.actions;
 
 // Tenant level Selectors
 export const selectUserContext = (state: RootState) =>
-  state.userContext.userContext;
+  state.userContext?.userContext;
 export const selectUserContextStatus = (state: RootState) =>
-  state.userContext.status;
+  state.userContext?.status;
 export const selectUserTenantName = (state: RootState) =>
-  state.userContext.userContext?.tenantName;
+  state.userContext?.userContext?.tenantName;
 export const selectUserTenantGuid = (state: RootState) =>
-  state.userContext.userContext?.tenantGuid;
+  state.userContext?.userContext?.tenantGuid;
 
 export const selectStores = (state: RootState) =>
-  state.userContext.userContext?.stores;
+  state.userContext?.userContext?.stores;
 
 // Current selected store selectors
 export const selectCurrentSelectedStore = (state: RootState) =>
-  state.userContext.currentSelectedStore;
+  state.userContext?.currentSelectedStore;
 
 // Current User Role selectors
 export const isCurrentUserIsNewUser = (state: RootState): boolean =>
-  state.userContext.userContext?.roleSystemKey === UserRoles.new_user;
+  state.userContext?.userContext?.roleSystemKey === UserRoles.new_user;
 export const isCurrentUserIsTenantOwner = (state: RootState): boolean =>
-  state.userContext.userContext?.roleSystemKey === UserRoles.tenant_owner;
+  state.userContext?.userContext?.roleSystemKey === UserRoles.tenant_owner;
 export const isCurrentUserIsTenantEmployee = (state: RootState): boolean =>
-  state.userContext.userContext?.roleSystemKey === UserRoles.tenant_employee;
+  state.userContext?.userContext?.roleSystemKey === UserRoles.tenant_employee;
 export const isCurrentUserIsStoreManager = (state: RootState): boolean =>
-  state.userContext.userContext?.roleSystemKey === UserRoles.store_manager;
+  state.userContext?.userContext?.roleSystemKey === UserRoles.store_manager;
 export const isCurrentUserIsStoreStaff = (state: RootState): boolean =>
-  state.userContext.userContext?.roleSystemKey === UserRoles.store_staff;
+  state.userContext?.userContext?.roleSystemKey === UserRoles.store_staff;
 
 export const populateUserContextThunkAsync = createAsyncThunk(
   'userContext/fetchUserContext',

@@ -7,11 +7,12 @@ import React, {
 } from 'react';
 
 import {
+  AccountInfo,
+  AuthenticationResult,
   EventMessage,
   EventType,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { has as hasProperty } from 'lodash';
 
 import { UserRoles } from '@/constants';
 
@@ -33,32 +34,39 @@ export const AuthorizationProvider = ({
     defaultAuthorizationContext
   );
 
-  const TmpRolesRequired: string[] = useMemo(() => [UserRoles.new_user], []);
+  useEffect(() => {
+    const callbackId = instance.addEventCallback(async (event) => {
+      if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
+        const payload = event.payload as AuthenticationResult;
+        const account = payload.account;
 
-  const UpdateContextValue = useCallback(() => {
-    var accounts = instance.getAllAccounts();
-    var currentAccount = accounts[0];
-    var currentRole: string | undefined =
-      currentAccount?.idTokenClaims?.roles?.at(0);
+        if (account) {
+          setContextValue({
+            userName: account?.name,
+            userEmail: account?.username,
+          } as IAuthorizationContext);
+        }
+      }
+    });
 
-    setContextValue({
-      userName: currentAccount?.name,
-      userEmail: currentAccount?.username,
-      hasAnyRole: hasProperty(TmpRolesRequired, currentRole ?? ''),
-    } as IAuthorizationContext);
-  }, [instance, TmpRolesRequired]);
-
-  instance.addEventCallback((message: EventMessage) => {
-    if (message.eventType === EventType.LOGIN_SUCCESS) {
-      UpdateContextValue();
-    }
+    return () => {
+      if (callbackId) {
+        instance.removeEventCallback(callbackId);
+      }
+    };
   });
 
-  var activeAccount = instance.getActiveAccount();
-
   useEffect(() => {
-    UpdateContextValue();
-  }, [UpdateContextValue, activeAccount?.username]);
+    var accounts = instance.getAllAccounts();
+    var currentAccount = accounts[0];
+
+    if (instance && accounts.length > 0 && currentAccount) {
+      setContextValue({
+        userName: currentAccount?.name,
+        userEmail: currentAccount?.username,
+      } as IAuthorizationContext);
+    }
+  }, [instance]);
 
   return (
     <AuthorizationContext.Provider value={contextValue}>
