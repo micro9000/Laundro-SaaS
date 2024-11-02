@@ -16,6 +16,7 @@ export default function PortalPage() {
   const [isNeedToOnBoardTheUser, setIsNeedToOnBoardTheUser] = useState(false);
 
   useEffect(() => {
+    console.log(userTenantGuid, userIsNewUser);
     setIsNeedToOnBoardTheUser(
       (typeof userTenantGuid === 'undefined' || userTenantGuid === null) &&
         userIsNewUser

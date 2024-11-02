@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
-using Laundro.Core.Constants;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.Stores.ProfileStorage;
@@ -41,7 +40,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
     public override void Configure()
     {
         Post("api/store/create");
-        Policies(PolicyName.CanCreateUpdateRetrieveAllStore);
+        Policies(PolicyName.IsTenantOwner);
         AllowFileUploads();
     }
 
@@ -166,26 +165,4 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
         file.CopyTo(ms);
         return ms.ToArray();
     }
-}
-
-internal class CreateStoreValidator : Validator<CreateStoreRequest>
-{
-    public CreateStoreValidator()
-    {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Store Name is required")
-            .MinimumLength(3).WithMessage("Your Store name is too short!");
-    }
-}
-
-internal sealed class CreateStoreRequest
-{
-    public string? Name { get; set; }
-    public string? Location { get; set; }
-    public List<IFormFile>? StoreImages { get; set; }
-}
-
-internal sealed class CreateStoreResponse
-{
-    public Store? Store { get; set; }
 }

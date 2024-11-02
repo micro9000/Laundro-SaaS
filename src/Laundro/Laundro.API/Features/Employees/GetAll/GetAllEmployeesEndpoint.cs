@@ -5,18 +5,18 @@ using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.API.Features.Stores.GetStores;
+namespace Laundro.API.Features.Employees.GetAll;
 
-internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
+internal class GetAllEmployeesEndpoint : EndpointWithoutRequest<GetAllEmployeesResponse>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly LaundroDbContext _dbContext;
-    private readonly ILogger<GetStoresEndpoints> _logger;
+    private readonly ILogger<GetAllEmployeesEndpoint> _logger;
 
-    public GetStoresEndpoints(
-        ICurrentUserAccessor currentUserAccessor, 
-        LaundroDbContext dbContext, 
-        ILogger<GetStoresEndpoints> logger)
+    public GetAllEmployeesEndpoint(
+        ICurrentUserAccessor currentUserAccessor,
+        LaundroDbContext dbContext,
+        ILogger<GetAllEmployeesEndpoint> logger)
     {
         _currentUserAccessor = currentUserAccessor;
         _dbContext = dbContext;
@@ -25,23 +25,24 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
 
     public override void Configure()
     {
-        Get("api/store/getall");
+        Get("api/employee/getall");
         Policies(PolicyName.IsTenantOwner);
     }
 
+    // I'm not expecting thousands of employees in Laundry business
+    // so it is okay to return all employees
     public override async Task HandleAsync(CancellationToken ct)
     {
-        IEnumerable<Store> stores = Enumerable.Empty<Store>();
-        
+        IEnumerable<User> employees = Enumerable.Empty<User>();
+
         try
         {
             var tenantId = _currentUserAccessor.GetCurrentUser()?.Tenant?.Id;
-
             if (tenantId != null)
             {
-                stores = await _dbContext.Stores
-                    .Include(s => s.StoreUser)
-                    .Where(s => s.TenantId == tenantId)
+                employees = await _dbContext.Users
+                    .Include(u => u.StoreUser).ThenInclude(su => su.Role)
+                    .Where(s => s.CreatedInTenantId == tenantId)
                     .ToListAsync(ct);
             }
         }
@@ -52,11 +53,9 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
             throw;
         }
 
-        ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
-
-        await SendAsync(new GetStoresResponse
+        await SendAsync(new GetAllEmployeesResponse
         {
-            Stores = stores
+            Employees = employees
         });
     }
 }

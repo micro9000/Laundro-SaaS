@@ -8,15 +8,7 @@ export function TenantIndicator() {
 
   return (
     <>
-      <Chip
-        defaultChecked
-        color="cyan"
-        variant="outline"
-        size="md"
-        checked={true}
-      >
-        Tenant: {tenantName}
-      </Chip>
+      <Text>Laundro | {tenantName} | Portal</Text>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { AuthenticationResult, EventType } from '@azure/msal-browser';
 
 import { Config } from '../config';
-import { loginRequest, msalInstance } from './authConfig';
+import { basePath, loginRequest, msalInstance } from './authConfig';
 import { getCurrentToken } from './tokenFetcher';
 
 export async function getToken() {
@@ -24,13 +24,18 @@ export const handleLogin = () => {
 
 export const handleLogout = () => {
   if (Config.SignInFlow === 'popup') {
-    msalInstance.logoutPopup().catch((e: any) => {
+    const logoutRequest = {
+      account: msalInstance.getActiveAccount(),
+      postLogoutRedirectUri: basePath,
+      mainWindowRedirectUri: basePath,
+    };
+    msalInstance.logoutPopup(logoutRequest).catch((e: any) => {
       console.error(`logoutPopup failed: ${e}`);
     });
   } else if (Config.SignInFlow === 'redirect') {
     const logoutRequest = {
       account: msalInstance.getActiveAccount(),
-      postLogoutRedirectUri: '/',
+      postLogoutRedirectUri: basePath,
     };
     msalInstance.logoutRedirect(logoutRequest).catch((e) => {
       console.error(`logoutRedirect failed: ${e}`);

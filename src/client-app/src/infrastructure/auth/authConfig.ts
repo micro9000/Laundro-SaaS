@@ -2,12 +2,14 @@ import { LogLevel, PublicClientApplication } from '@azure/msal-browser';
 
 import { Config } from '../config';
 
+export var basePath = `${location.protocol}//${location.host}/`;
+
 export const msalConfig = {
   auth: {
     clientId: Config.Auth.ClientId, // This is the ONLY mandatory field that you need to supply.
     authority: Config.Auth.Authority, // Replace the placeholder with your tenant subdomain
-    redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
-    postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
+    redirectUri: basePath, // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+    postLogoutRedirectUri: basePath, // Indicates the page to navigate after logout.
     navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
   },
   cache: {
