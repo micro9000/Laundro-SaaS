@@ -4,6 +4,7 @@ using Laundro.Core.Features.UserContextState.Models;
 using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Lookups;
 using Laundro.Core.NodaTime;
+using Laundro.Core.Utilities;
 
 namespace Laundro.Core.Features.UserContextState.Services;
 
@@ -20,6 +21,7 @@ public class UserAccountStateService : IUserAccountStateService
     private readonly IUserTenantRepository _userTenantRepository;
     private readonly IUserStoresRepository _userStoresRepository;
     private readonly IRoleLookup _roleLookup;
+    private readonly IIdObfuscator _idObfuscator;
 
     public UserAccountStateService(
         IClockService clock,
@@ -27,7 +29,8 @@ public class UserAccountStateService : IUserAccountStateService
         IUserInfoRepository userInfoRepository,
         IUserTenantRepository userTenantRepository,
         IUserStoresRepository userStoresRepository,
-        IRoleLookup roleLookup
+        IRoleLookup roleLookup,
+        IIdObfuscator idObfuscator
     )
     {
         _clock = clock;
@@ -36,6 +39,7 @@ public class UserAccountStateService : IUserAccountStateService
         _userTenantRepository = userTenantRepository;
         _userStoresRepository = userStoresRepository;
         _roleLookup = roleLookup;
+        _idObfuscator = idObfuscator;
     }
 
     public async Task<UserAccountState> GetAndUpsertCurrentUserAccountState(string userEmail, string userName)
@@ -98,6 +102,14 @@ public class UserAccountStateService : IUserAccountStateService
                 user.RoleId = tenantOwnerRole!.Id;
             }
 
+            if (storesByTenant is not null && storesByTenant.Any()) {
+                foreach (var store in storesByTenant)
+                {
+                    // Generate obfuscated id
+                    store.ObfuscatedId = _idObfuscator.Encode(store.Id);
+                }
+            }
+
             userContext.Tenant = tenant;
             userContext.Role = tenantOwnerRole;
             userContext.IsTenantOwner = true;
@@ -107,7 +119,16 @@ public class UserAccountStateService : IUserAccountStateService
         {
             // Changing Employee Role is not necessary, as a tenant owner, you choose to assign employee role
 
-            var associatedTenantOfTheStore = storesByUser.First().Tenant;
+            if (storesByUser is not null && storesByUser.Any())
+            {
+                foreach (var store in storesByUser)
+                {
+                    // Generate obfuscated id
+                    store.ObfuscatedId = _idObfuscator.Encode(store.Id);
+                }
+            }
+
+            var associatedTenantOfTheStore = storesByUser?.First().Tenant;
             userContext.Tenant = associatedTenantOfTheStore;
             userContext.Role = tenantEmployeeRole;
             userContext.Stores = storesByUser;

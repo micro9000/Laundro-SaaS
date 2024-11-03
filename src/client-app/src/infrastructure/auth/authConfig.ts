@@ -2,7 +2,7 @@ import { LogLevel, PublicClientApplication } from '@azure/msal-browser';
 
 import { Config } from '../config';
 
-export var basePath = `${location.protocol}//${location.host}/`;
+export var basePath = `${window.location.protocol}//${window.location.host}/`;
 
 export const msalConfig = {
   auth: {

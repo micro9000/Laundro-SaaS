@@ -1,4 +1,6 @@
-﻿namespace Laundro.Core.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Laundro.Core.Domain.Entities;
 public class Store : Entity
 {
     public string? Name { get; set; }
@@ -12,4 +14,7 @@ public class Store : Entity
     // These should not be nullable
     // To avoid this error: CS8620 - Argument cannot be used for parameter due to differences in the nullability of reference types.
     public ICollection<StoreUser> StoreUser { get; set; } = new List<StoreUser>();
+
+    [NotMapped]
+    public string? ObfuscatedId { get; set; }
 }

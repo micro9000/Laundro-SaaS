@@ -1,13 +1,6 @@
-import {
-  Badge,
-  Button,
-  Card,
-  Group,
-  Image,
-  Rating,
-  Space,
-  Text,
-} from '@mantine/core';
+import Link from 'next/link';
+
+import { Button, Card, Group, Rating, Space, Text } from '@mantine/core';
 import { IconSettingsFilled } from '@tabler/icons-react';
 
 import { Store } from '@/models';
@@ -44,6 +37,10 @@ export default function StoreCard({ store }: StoreCardPromps) {
           mt="md"
           radius="md"
           leftSection={<IconSettingsFilled size={14} />}
+          component={Link}
+          href={{
+            pathname: `/portal/stores/${store.obfuscatedId}`,
+          }}
         >
           Manage
         </Button>

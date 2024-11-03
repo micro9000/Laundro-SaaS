@@ -8,6 +8,7 @@ using Laundro.API;
 using Laundro.API.Storage;
 using Laundro.API.Database;
 using System.Text.Json.Serialization;
+using Laundro.Core.Utilities;
 
 Log.Logger = ConfigureSerilogLogging.BootstrapLogger;
 
@@ -27,6 +28,7 @@ try
     builder.Services.AddCustomNodaTimeClock();
 
     // Application components
+    builder.Services.AddScoped<IIdObfuscator, IdObfuscator>();
     builder.Services.AddDatabaseStorage(builder.Configuration);
     builder.Services.AddCaching(builder.Configuration);
     builder.Services.AddBlobStorage(builder.Configuration);

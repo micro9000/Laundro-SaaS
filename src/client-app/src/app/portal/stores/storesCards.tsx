@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { ActionIcon, Badge, Grid, Group, Table } from '@mantine/core';
-import { IconAdjustments, IconUsersGroup } from '@tabler/icons-react';
+import { Badge, Grid } from '@mantine/core';
 import { AxiosError } from 'axios';
 
 import { RoleEndpoints, StoreEndpoints } from '@/constants/apiEndpoints';
@@ -13,7 +12,7 @@ import { useAppNotification, useAppQuery } from '@/infrastructure/hooks';
 import { Role, Store, StoreUser } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 
-import StoreCard from './components/storeCard';
+import StoreCard from './_components/storeCard';
 
 export default function StoresCards() {
   const userHasTenant = useAppSelector(hasTenant);

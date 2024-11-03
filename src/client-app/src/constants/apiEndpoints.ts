@@ -13,6 +13,7 @@ export const TenantEndpoints = {
 export const StoreEndpoints = {
   create: '/store/create-new-store',
   getAll: '/store/get-all-stores',
+  get: '/store/get-store',
 };
 
 export const EmployeeEndpoints = {

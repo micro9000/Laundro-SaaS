@@ -10,7 +10,7 @@ import {
 } from '@/features/userContext/userContextSlice';
 import { useAppSelector } from '@/state/hooks';
 
-import { PortalShell } from './components/portalShell/portalShell';
+import { PortalShell } from './_components/portalShell/portalShell';
 import OnboardingForm from './onboarding';
 
 export default function RootLayout({
@@ -23,7 +23,6 @@ export default function RootLayout({
   const [isNeedToOnBoardTheUser, setIsNeedToOnBoardTheUser] = useState(false);
 
   useEffect(() => {
-    console.log(userTenantGuid, userIsNewUser);
     setIsNeedToOnBoardTheUser(
       (typeof userTenantGuid === 'undefined' || userTenantGuid === null) &&
         userIsNewUser
