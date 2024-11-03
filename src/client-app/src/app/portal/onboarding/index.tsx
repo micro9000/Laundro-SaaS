@@ -176,9 +176,7 @@ export default function OnboardingForm({
         <Modal.Overlay backgroundOpacity={0.55} blur={3} />
         <Modal.Content>
           <Modal.Header>
-            <Modal.Title>
-              <h3>Onboarding</h3>
-            </Modal.Title>
+            <Modal.Title>Onboarding</Modal.Title>
             <Modal.CloseButton />
           </Modal.Header>
           <Modal.Body>
@@ -193,9 +191,8 @@ export default function OnboardingForm({
                     To get started, you will need to create a tenant. This will
                     set up your workspace and allow you to access all the
                     features. Simply follow the prompts to create your tenant,
-                    and you will be on your way to using the system!{' '}
-                    <Space h="sm" /> If you have any questions, feel free to
-                    reach out for assistance.
+                    and you will be on your way to using the system! If you have
+                    any questions, feel free to reach out for assistance.
                   </Text>
                 </Stepper.Step>
                 <Stepper.Step

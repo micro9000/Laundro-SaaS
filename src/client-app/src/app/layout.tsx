@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import '@mantine/carousel/styles.css';
 import { ColorSchemeScript } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';

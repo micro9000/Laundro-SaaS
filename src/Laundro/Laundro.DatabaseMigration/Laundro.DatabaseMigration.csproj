@@ -19,6 +19,8 @@
     <None Remove="Scripts\Script0005 - Store Images table.sql" />
     <None Remove="Scripts\Script0006 - New Column in Users.sql" />
     <None Remove="Scripts\Script0007 - User-Email Collation CI.sql" />
+    <None Remove="Scripts\Script0008 - Role Level.sql" />
+    <None Remove="Scripts\Script0009 - StoreImage Filename column.sql" />
     <None Remove="Seed\Roles.sql" />
   </ItemGroup>
 
@@ -32,6 +34,8 @@
     <EmbeddedResource Include="Scripts\Script0005 - Store Images table.sql" />
     <EmbeddedResource Include="Scripts\Script0006 - New Column in Users.sql" />
     <EmbeddedResource Include="Scripts\Script0007 - User-Email Collation CI.sql" />
+    <EmbeddedResource Include="Scripts\Script0008 - Role Level.sql" />
+    <EmbeddedResource Include="Scripts\Script0009 - StoreImage Filename column.sql" />
     <EmbeddedResource Include="Seed\Roles.sql" />
   </ItemGroup>
 

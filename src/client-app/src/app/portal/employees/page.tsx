@@ -16,11 +16,14 @@ import { IconAdjustments, IconLogs, IconPlus } from '@tabler/icons-react';
 import { AxiosError } from 'axios';
 
 import { EmployeeEndpoints } from '@/constants/apiEndpoints';
+import { hasTenant } from '@/features/userContext/userContextSlice';
 import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppNotification, useAppQuery } from '@/infrastructure/hooks';
 import { StoreUser, User } from '@/models';
+import { useAppSelector } from '@/state/hooks';
 
 export default function Page() {
+  const userHasTenant = useAppSelector(hasTenant);
   const notification = useAppNotification();
 
   const [employees, setEmployees] = useState<User[]>();
@@ -31,11 +34,12 @@ export default function Page() {
     path: EmployeeEndpoints.getAll,
     queryOptions: {
       queryKey: ['get-all-employees'],
+      enabled: userHasTenant,
     },
   });
 
   useEffect(() => {
-    if (isError && error) {
+    if (isError && error && userHasTenant) {
       var generalError = (error as AxiosError).response
         ?.data as AppGeneralError;
       notification.notifyError(
@@ -43,7 +47,7 @@ export default function Page() {
         generalError.errors?.generalErrors?.join(',')
       );
     }
-  }, [isError, error, notification]);
+  }, [isError, error, notification, userHasTenant]);
 
   useEffect(() => {
     if (

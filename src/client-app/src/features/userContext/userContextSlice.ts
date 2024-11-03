@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import { UserRoles } from '@/constants';
+import { StoreLevelUserRoles, TenantLevelUserRoles } from '@/constants';
 import { Store, UserContext } from '@/models';
 import type { RootState } from '@/state/store';
 
@@ -68,6 +68,10 @@ export const selectUserTenantName = (state: RootState) =>
 export const selectUserTenantGuid = (state: RootState) =>
   state.userContext?.userContext?.tenantGuid;
 
+export const hasTenant = (state: RootState) =>
+  typeof state.userContext?.userContext?.tenantGuid !== 'undefined' &&
+  state.userContext?.userContext?.tenantGuid !== null;
+
 export const selectStores = (state: RootState) =>
   state.userContext?.userContext?.stores;
 
@@ -77,15 +81,16 @@ export const selectCurrentSelectedStore = (state: RootState) =>
 
 // Current User Role selectors
 export const isCurrentUserIsNewUser = (state: RootState): boolean =>
-  state.userContext?.userContext?.roleSystemKey === UserRoles.new_user;
-export const isCurrentUserIsTenantOwner = (state: RootState): boolean =>
-  state.userContext?.userContext?.roleSystemKey === UserRoles.tenant_owner;
-export const isCurrentUserIsTenantEmployee = (state: RootState): boolean =>
-  state.userContext?.userContext?.roleSystemKey === UserRoles.tenant_employee;
-export const isCurrentUserIsStoreManager = (state: RootState): boolean =>
-  state.userContext?.userContext?.roleSystemKey === UserRoles.store_manager;
-export const isCurrentUserIsStoreStaff = (state: RootState): boolean =>
-  state.userContext?.userContext?.roleSystemKey === UserRoles.store_staff;
+  state.userContext?.userContext?.roleSystemKey ===
+  TenantLevelUserRoles.new_user;
+// export const isCurrentUserIsTenantOwner = (state: RootState): boolean =>
+//   state.userContext?.userContext?.roleSystemKey === UserRoles.tenant_owner;
+// export const isCurrentUserIsTenantEmployee = (state: RootState): boolean =>
+//   state.userContext?.userContext?.roleSystemKey === UserRoles.tenant_employee;
+// export const isCurrentUserIsStoreManager = (state: RootState): boolean =>
+//   state.userContext?.userContext?.roleSystemKey === UserRoles.store_manager;
+// export const isCurrentUserIsStoreStaff = (state: RootState): boolean =>
+//   state.userContext?.userContext?.roleSystemKey === UserRoles.store_staff;
 
 export const populateUserContextThunkAsync = createAsyncThunk(
   'userContext/fetchUserContext',

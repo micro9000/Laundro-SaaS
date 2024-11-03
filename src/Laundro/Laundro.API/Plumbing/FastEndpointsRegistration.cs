@@ -12,12 +12,6 @@ public static class FastEndpointsRegistration
         this IServiceCollection services)
     {
         services.AddFastEndpoints()
-            .ConfigureHttpJsonOptions(o =>
-            {
-                o.SerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                o.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                o.SerializerOptions.WriteIndented = true;
-            })
             .SwaggerDocument(o =>
             {
                 o.DocumentSettings = s =>
@@ -32,7 +26,13 @@ public static class FastEndpointsRegistration
     public static IApplicationBuilder UseFastEndpointsConfigs(this IApplicationBuilder app)
     {
         //app.UseDefaultExceptionHandler(); // Let's use the global exception handlers in Infrastructure dir for now
-        app.UseFastEndpoints().UseSwaggerGen();
+        app.UseFastEndpoints(c =>
+        {
+            c.Endpoints.RoutePrefix = "api";
+            c.Serializer.Options.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+            c.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            c.Serializer.Options.WriteIndented = true;
+        }).UseSwaggerGen();
 
         return app;
     }

@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import React from 'react';
 
-import { Button, Container, Group, Space, Table } from '@mantine/core';
+import { Button, Container, Group, Space } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
-import StoresTable from './storesTable';
+import StoresCards from './storesCards';
 
 export default function Page() {
   return (
@@ -22,7 +22,7 @@ export default function Page() {
         </Button>
       </Group>
       <Space h="md" />
-      <StoresTable />
+      <StoresCards />
     </Container>
   );
 }
