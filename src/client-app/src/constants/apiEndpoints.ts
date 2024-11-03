@@ -1,5 +1,5 @@
 export const RoleEndpoints = {
-  getAll: '/role/getall',
+  getAll: '/role/get-all-roles',
 };
 
 export const UserContextEndpoints = {
@@ -7,15 +7,15 @@ export const UserContextEndpoints = {
 };
 
 export const TenantEndpoints = {
-  create: '/tenant/create',
+  create: '/tenant/create-new-tenant',
 };
 
 export const StoreEndpoints = {
-  create: '/store/create',
-  getAll: '/store/getall',
+  create: '/store/create-new-store',
+  getAll: '/store/get-all-stores',
 };
 
 export const EmployeeEndpoints = {
   register: '/employee/register',
-  getAll: '/employee/getall',
+  getAll: '/employee/get-all-employees',
 };

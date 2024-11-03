@@ -141,7 +141,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
             return (ErrorOccured: true, ErrorMessage: "No file added");
         }
 
-        var imageExtensions = new List<string>() { ".png", ".jpeg", ".svg" };
+        var imageExtensions = new List<string>() { ".png", ".jpeg", ".jpg", ".svg" };
         var fileIsImage = imageExtensions.Contains(Path.GetExtension(file.FileName), StringComparer.OrdinalIgnoreCase);
 
         if (!fileIsImage)

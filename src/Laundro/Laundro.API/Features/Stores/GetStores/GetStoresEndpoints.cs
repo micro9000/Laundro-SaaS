@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using Azure.Core;
+using FastEndpoints;
 using Laundro.API.Authorization;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
@@ -37,11 +38,13 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
         try
         {
             var tenantId = _currentUserAccessor.GetCurrentUser()?.Tenant?.Id;
+            _logger.LogInformation("Retrieving all stores for tenant {tenantId}", tenantId);
 
             if (tenantId != null)
             {
                 stores = await _dbContext.Stores
                     .Include(s => s.StoreUser).ThenInclude(su => su.User)
+                    .Include(s => s.Images)
                     .Where(s => s.TenantId == tenantId)
                     .ToListAsync(ct);
             }
