@@ -45,7 +45,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
         AllowFileUploads();
     }
 
-    public override async Task HandleAsync(CreateStoreRequest request, CancellationToken c)
+    public override async Task HandleAsync(CreateStoreRequest request, CancellationToken ct)
     {
 
         var currentUser = _currentUserAccessor.GetCurrentUser();
@@ -54,7 +54,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
         await strategy.ExecuteAsync(async () =>
         {
-            await using (var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Snapshot, c))
+            await using (var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Snapshot, ct))
             {
                 try
                 {

@@ -16,7 +16,6 @@ import StoreCard from './_components/storeCard';
 
 export default function StoresCards() {
   const userHasTenant = useAppSelector(hasTenant);
-  const [userRoles, setUserRoles] = useState<Role[]>();
   const [stores, setStores] = useState<Store[]>();
   const notification = useAppNotification();
 
@@ -53,40 +52,6 @@ export default function StoresCards() {
       setStores(getStoresData.stores);
     }
   }, [getStoresData, getStoresIsLoading]);
-
-  const {
-    data: getRolesData,
-    isLoading: getRolesIsLoading,
-    isError: getRolesIsError,
-    error: getRolesError,
-  } = useAppQuery<{ roles: Role[] }>({
-    path: RoleEndpoints.getAll,
-    queryOptions: {
-      queryKey: ['get-all-roles'],
-      enabled: userHasTenant,
-    },
-  });
-
-  useEffect(() => {
-    if (getRolesIsError && getRolesError && userHasTenant) {
-      var generalError = (getRolesError as AxiosError).response
-        ?.data as AppGeneralError;
-      notification.notifyError(
-        'Unable to load roles',
-        generalError.errors?.generalErrors?.join(',')
-      );
-    }
-  }, [getRolesIsError, getRolesError, notification, userHasTenant]);
-
-  useEffect(() => {
-    if (
-      getRolesData !== null &&
-      getRolesData?.roles !== undefined &&
-      getRolesData.roles.length > 0
-    ) {
-      setUserRoles(getRolesData.roles);
-    }
-  }, [getRolesData, getRolesIsLoading]);
 
   const employees = (storeUsers?: StoreUser[]) => {
     return storeUsers?.map((su) => (

@@ -56,6 +56,7 @@ internal class GetStoreEndpoint : Endpoint<GetStoreEndpointRequest, GetStoreEndp
                 .Include(s => s.Tenant)
                 .Include(s => s.Images)
                 .Include(s => s.StoreUser).ThenInclude(ss => ss.User)
+                .Include(s => s.StoreUser).ThenInclude(ss => ss.Role)
                 .FirstOrDefaultAsync(store => store.Id == decodedStoredId
                 && store.TenantId == tenantId);
 

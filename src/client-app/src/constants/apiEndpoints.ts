@@ -14,6 +14,7 @@ export const StoreEndpoints = {
   create: '/store/create-new-store',
   getAll: '/store/get-all-stores',
   get: '/store/get-store',
+  assignEmployee: '/store/assign-employee',
 };
 
 export const EmployeeEndpoints = {

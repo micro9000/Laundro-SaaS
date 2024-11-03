@@ -44,7 +44,7 @@ export default function Page({
       ObfuscatedStoreId: obfuscatedId,
     },
     queryOptions: {
-      queryKey: ['get-stores', obfuscatedId],
+      queryKey: ['get-store-details-by-id', { storeId: obfuscatedId }],
       enabled: obfuscatedId !== null,
     },
   });
