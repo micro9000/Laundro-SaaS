@@ -41,7 +41,8 @@ internal class CreateTenantEndpoint : Endpoint<CreateTenantRequest, CreateTenant
 
     public override void Configure()
     {
-        Post("api/tenant/create");
+        Post("create-new-tenant");
+        Group<TenantGroup>();
         Policies(PolicyName.CanCreateTenant);
     }
 

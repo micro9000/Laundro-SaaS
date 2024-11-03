@@ -41,7 +41,8 @@ internal sealed class GetUserContextStateEndpoint : EndpointWithoutRequest<UserC
     }
     public override void Configure()
     {
-        Get("api/user-context-state/get");
+        Get("get");
+        Group<UserContextStateGroup>();
     }
 
     public override async Task HandleAsync(CancellationToken c)

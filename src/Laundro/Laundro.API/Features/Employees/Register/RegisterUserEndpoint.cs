@@ -33,7 +33,8 @@ internal class RegisterUserEndpoint : Endpoint<RegisterUserRequest, RegisterUser
 
     public override void Configure()
     {
-        Post("api/employee/register");
+        Post("register");
+        Group<EmployeeGroup>();
         Policies(PolicyName.IsTenantOwner);
     }
 

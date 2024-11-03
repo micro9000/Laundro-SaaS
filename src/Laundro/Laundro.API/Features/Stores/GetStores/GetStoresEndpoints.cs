@@ -25,7 +25,8 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
 
     public override void Configure()
     {
-        Get("api/store/getall");
+        Get("get-all-stores");
+        Group<StoreGroup>();
         Policies(PolicyName.IsTenantOwner);
     }
 

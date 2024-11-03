@@ -39,7 +39,8 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
     public override void Configure()
     {
-        Post("api/store/create");
+        Post("create-new-store");
+        Group<StoreGroup>();
         Policies(PolicyName.IsTenantOwner);
         AllowFileUploads();
     }

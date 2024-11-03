@@ -19,7 +19,8 @@ internal class GetRolesEndpoint : EndpointWithoutRequest<GetRolesResponse>
     }
     public override void Configure()
     {
-        Get("api/role/getall");
+        Get("get-all-roles");
+        Group<RoleGroup>();
     }
 
     public override async Task HandleAsync(CancellationToken ct)

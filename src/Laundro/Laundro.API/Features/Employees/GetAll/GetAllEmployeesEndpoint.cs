@@ -25,7 +25,8 @@ internal class GetAllEmployeesEndpoint : EndpointWithoutRequest<GetAllEmployeesR
 
     public override void Configure()
     {
-        Get("api/employee/getall");
+        Get("get-all-employees");
+        Group<EmployeeGroup>();
         Policies(PolicyName.IsTenantOwner);
     }
 

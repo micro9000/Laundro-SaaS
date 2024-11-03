@@ -8,6 +8,7 @@ public interface IStoreProfileImagesStorage
 {
     Task EnsureTenantContainerExists();
     Task<string> Store(InputFileStorageInformation fileInfo, byte[] fileContent);
+    Task<Stream> GetStoreImage(string path, CancellationToken ct);
 }
 
 public class StoreProfileImagesStorage : IStoreProfileImagesStorage
@@ -34,6 +35,12 @@ public class StoreProfileImagesStorage : IStoreProfileImagesStorage
         await _blobServiceClient.Store(_containerName, path, fileContent);
 
         return path;
+    }
+
+    public async Task<Stream> GetStoreImage(string path, CancellationToken ct)
+    {
+        var stream = await _blobServiceClient.ReadContent(_containerName, path, ct);
+        return stream;
     }
 
 }
