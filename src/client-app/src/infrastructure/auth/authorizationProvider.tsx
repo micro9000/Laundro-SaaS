@@ -1,20 +1,10 @@
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 
 import {
-  AccountInfo,
   AuthenticationResult,
-  EventMessage,
   EventType,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-
-import { UserRoles } from '@/constants';
 
 import {
   AuthorizationContext,

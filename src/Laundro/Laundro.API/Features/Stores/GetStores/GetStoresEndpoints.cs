@@ -40,7 +40,7 @@ internal class GetStoresEndpoints : EndpointWithoutRequest<GetStoresResponse>
             if (tenantId != null)
             {
                 stores = await _dbContext.Stores
-                    .Include(s => s.StoreUser)
+                    .Include(s => s.StoreUser).ThenInclude(su => su.User)
                     .Where(s => s.TenantId == tenantId)
                     .ToListAsync(ct);
             }

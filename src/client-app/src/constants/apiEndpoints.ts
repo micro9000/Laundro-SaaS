@@ -1,3 +1,7 @@
+export const RoleEndpoints = {
+  getAll: '/role/getall',
+};
+
 export const UserContextEndpoints = {
   get: '/user-context-state/get',
 };
