@@ -7,7 +7,7 @@ using Laundro.Core.Features.UserContextState.Services;
 using Laundro.Core.NodaTime;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.API.Features.Stores.AssignEmployee;
+namespace Laundro.API.Features.Stores.EmployeeAssignment;
 
 internal class AssignEmployeeEndpoint : Endpoint<AssignEmployeeRequest>
 {
@@ -86,9 +86,8 @@ internal class AssignEmployeeEndpoint : Endpoint<AssignEmployeeRequest>
                 });
 
                 await _dbContext.SaveChangesAsync();
-                await this.SendStatusCode(201);
-            }
 
+            }
         }
         catch(Exception ex)
         {
@@ -96,7 +95,7 @@ internal class AssignEmployeeEndpoint : Endpoint<AssignEmployeeRequest>
             _logger.LogError(ex, ex.Message);
             throw;
         }
-        ThrowIfAnyErrors();
+        await this.SendStatusCode(201);
     }
 }
 

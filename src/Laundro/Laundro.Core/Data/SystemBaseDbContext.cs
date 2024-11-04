@@ -12,7 +12,7 @@ public class SystemBaseDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         ConfigureManyToManyRelationships(modelBuilder);
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Where(t => typeof(Entity).IsAssignableFrom(t.ClrType)))
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Where(t => typeof(ISoftDeletable).IsAssignableFrom(t.ClrType)))
         {
             entityType.AddISoftDeleteQueryFilter();
         }

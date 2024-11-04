@@ -38,8 +38,6 @@ internal class GetStoreEndpoint : Endpoint<GetStoreEndpointRequest, GetStoreEndp
 
     public override async Task HandleAsync(GetStoreEndpointRequest request, CancellationToken ct)
     {
-        Store? store = null;
-
         if (request.ObfuscatedStoreId is null)
         {
             await SendNotFoundAsync();
@@ -47,6 +45,8 @@ internal class GetStoreEndpoint : Endpoint<GetStoreEndpointRequest, GetStoreEndp
 
         try
         {
+            Store? store = null;
+
             var decodedStoredId = _idObfuscator.Decode(request.ObfuscatedStoreId!);
 
             var tenantId = _currentUserAccessor.GetCurrentUser()?.Tenant?.Id;
@@ -57,8 +57,9 @@ internal class GetStoreEndpoint : Endpoint<GetStoreEndpointRequest, GetStoreEndp
                 .Include(s => s.Images)
                 .Include(s => s.StoreUser).ThenInclude(ss => ss.User)
                 .Include(s => s.StoreUser).ThenInclude(ss => ss.Role)
-                .FirstOrDefaultAsync(store => store.Id == decodedStoredId
-                && store.TenantId == tenantId);
+                .FirstOrDefaultAsync(store 
+                => store.Id == decodedStoredId 
+                    && store.TenantId == tenantId);
 
             if (store == null) {
                 await SendNotFoundAsync();
@@ -66,6 +67,10 @@ internal class GetStoreEndpoint : Endpoint<GetStoreEndpointRequest, GetStoreEndp
             else
             {
                 store.ObfuscatedId = _idObfuscator.Encode(store.Id);
+                await SendAsync(new GetStoreEndpointResponse
+                {
+                    Store = store
+                });
             }
         }
         catch (Exception ex)
@@ -76,11 +81,6 @@ internal class GetStoreEndpoint : Endpoint<GetStoreEndpointRequest, GetStoreEndp
         }
 
         ThrowIfAnyErrors();
-
-        await SendAsync(new GetStoreEndpointResponse
-        {
-            Store = store
-        });
     }
 }
 

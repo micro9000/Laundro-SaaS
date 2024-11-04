@@ -1,9 +1,9 @@
-﻿using Laundro.Core.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using NodaTime;
 
 namespace Laundro.Core.Domain.Entities;
 
-public class StoreUser
+public class StoreUser : ISoftDeletable
 {
     // Making Ids as optional here in the entity class, but they are required in the table
     // to remove a EF Core warning that was something like this:
@@ -18,6 +18,7 @@ public class StoreUser
     public Role? Role { get; set; }
 
     public bool IsActive { get; set; }
+    public DateTimeOffset? DeActivatedOn { get; set; }
 }
 
 public static class StoreUserOnModelCreatingExtension

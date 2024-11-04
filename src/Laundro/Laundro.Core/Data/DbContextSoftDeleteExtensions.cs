@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
+using NodaTime;
 
 namespace Laundro.Core.Data;
 public static class DbContextSoftDeleteExtensions
@@ -21,23 +22,24 @@ public static class DbContextSoftDeleteExtensions
     {
         foreach (var entry in changeTracker.Entries())
         {
-            if (entry.Entity is Entity)
+            if (entry.Entity is ISoftDeletable)
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.CurrentValues[nameof(Entity.IsActive)] = true;
+                        entry.CurrentValues[nameof(ISoftDeletable.IsActive)] = true;
                         break;
                     case EntityState.Deleted:
                         entry.State = EntityState.Modified;
-                        entry.CurrentValues[nameof(Entity.IsActive)] = false;
+                        entry.CurrentValues[nameof(ISoftDeletable.IsActive)] = false;
+                        entry.CurrentValues[nameof(ISoftDeletable.DeActivatedOn)] = DateTimeOffset.UtcNow;
                         break;
                 }
             }
         }
     }
 
-    private static LambdaExpression GetIsDeletedFilter<TEntity>() where TEntity : Entity // Entity is a base class of all domain classes
+    private static LambdaExpression GetIsDeletedFilter<TEntity>() where TEntity : ISoftDeletable // Entity is a base class of all domain classes
     {
         Expression<Func<TEntity, bool>> filter = e => e.IsActive;
         return filter;
