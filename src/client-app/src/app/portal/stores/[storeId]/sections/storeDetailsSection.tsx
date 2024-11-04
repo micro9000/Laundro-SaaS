@@ -1,5 +1,4 @@
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -31,7 +30,10 @@ export default function StoreDetailsSection({
   store?: Store | null;
 }) {
   const notification = useAppNotification();
+  const notificationRef = useRef(notification); // to resolve React Hook useEffect has a missing dependency:
   const queryClient = useQueryClient();
+  const queryClientRef = useRef(queryClient);
+
   const [storeCreatedAt, setStoreCreatedAt] = useState<Date | null>(null);
 
   const form = useForm<UpdateStoreDetailsFormValues>({
@@ -72,22 +74,26 @@ export default function StoreDetailsSection({
 
   useEffect(() => {
     if (isSuccess && !isPending) {
-      notification.notifySuccess('Store details has successful updated');
-      queryClient.invalidateQueries({ queryKey: ['get-store-details-by-id'] });
+      notificationRef.current.notifySuccess(
+        'Store details has successful updated'
+      );
+      queryClientRef.current.invalidateQueries({
+        queryKey: ['get-store-details-by-id'],
+      });
     }
-  }, [isSuccess, notification, queryClient, isPending]);
+  }, [isSuccess, isPending]);
 
   useEffect(() => {
     if (isError && error && error instanceof AxiosError) {
       var generalError = (error as AxiosError).response
         ?.data as AppGeneralError;
 
-      notification.notifyError(
+      notificationRef.current.notifyError(
         'Unable to update store',
         generalError.errors?.generalErrors?.join(',')
       );
     }
-  }, [isError, error, notification]);
+  }, [isError, error]);
 
   const onFormSubmit = (values: UpdateStoreDetailsFormValues) => {
     let formData = new FormData();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Box,
@@ -43,11 +43,14 @@ export default function AssignNewEmployeeToStoreForm({
   onSuccess,
 }: AssignNewEmployeeToStoreFormParams) {
   const userHasTenant = useAppSelector(hasTenant);
+
   const notification = useAppNotification();
+  const notificationRef = useRef(notification); // to resolve React Hook useEffect has a missing dependency:
+  const queryClient = useQueryClient();
+  const queryClientRef = useRef(queryClient);
 
   const [employees, setEmployees] = useState<User[]>();
   const [userRoles, setUserRoles] = useState<Role[]>();
-  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useAppQuery<{
     employees: User[];
@@ -63,12 +66,12 @@ export default function AssignNewEmployeeToStoreForm({
     if (isError && error && userHasTenant) {
       var generalError = (error as AxiosError).response
         ?.data as AppGeneralError;
-      notification.notifyError(
+      notificationRef.current.notifyError(
         'Unable to load employees',
         generalError.errors?.generalErrors?.join(',')
       );
     }
-  }, [isError, error, notification, userHasTenant]);
+  }, [isError, error, userHasTenant]);
 
   useEffect(() => {
     if (
@@ -97,12 +100,12 @@ export default function AssignNewEmployeeToStoreForm({
     if (getRolesIsError && getRolesError && userHasTenant) {
       var generalError = (getRolesError as AxiosError).response
         ?.data as AppGeneralError;
-      notification.notifyError(
+      notificationRef.current.notifyError(
         'Unable to load roles',
         generalError.errors?.generalErrors?.join(',')
       );
     }
-  }, [getRolesIsError, getRolesError, notification, userHasTenant]);
+  }, [getRolesIsError, getRolesError, userHasTenant]);
 
   useEffect(() => {
     if (
@@ -128,10 +131,12 @@ export default function AssignNewEmployeeToStoreForm({
   useEffect(() => {
     if (isAssignEmployeeSuccess) {
       onSuccess();
-      notification.notifySuccess('Successfully assign new employee');
-      queryClient.invalidateQueries({ queryKey: ['get-store-details-by-id'] });
+      notificationRef.current.notifySuccess('Successfully assign new employee');
+      queryClientRef.current.invalidateQueries({
+        queryKey: ['get-store-details-by-id'],
+      });
     }
-  }, [isAssignEmployeeSuccess, onSuccess, notification, queryClient]);
+  }, [isAssignEmployeeSuccess, onSuccess]);
 
   useEffect(() => {
     if (
@@ -142,12 +147,12 @@ export default function AssignNewEmployeeToStoreForm({
       var generalError = (assignEmployeeError as AxiosError).response
         ?.data as AppGeneralError;
 
-      notification.notifyError(
+      notificationRef.current.notifyError(
         'Unable to assign employee',
         generalError.errors?.generalErrors?.join(',')
       );
     }
-  }, [isAssignEmployeeError, assignEmployeeError, notification]);
+  }, [isAssignEmployeeError, assignEmployeeError]);
 
   const form = useForm<AssignNewEmployeeFormValues>({
     mode: 'uncontrolled',

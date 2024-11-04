@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   Button,
@@ -24,16 +24,16 @@ import AssignNewEmployeeToStoreForm from './_components/AssignNewEmployeeToStore
 
 export default function EmployeesSection({ store }: { store?: Store | null }) {
   const notification = useAppNotification();
+  const notificationRef = useRef(notification); // to resolve React Hook useEffect has a missing dependency:
   const queryClient = useQueryClient();
-  const [employees, setEmployees] = useState<StoreUser[]>([]);
+  const queryClientRef = useRef(queryClient);
 
+  const [employees, setEmployees] = useState<StoreUser[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
-    if (store && store?.storeUser && store?.storeUser?.length > 0) {
-      setEmployees(store?.storeUser);
-    }
-  }, [store, store?.storeUser]);
+    setEmployees(store?.storeUser ?? []);
+  }, [store, store?.storeUser?.length]);
 
   const {
     mutate: unassignEmployeeMutate,
@@ -48,10 +48,12 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
 
   useEffect(() => {
     if (isUnassignEmployeeSuccess && !isUnassignEmployeePending) {
-      notification.notifySuccess('Successfully un-assign employee');
-      queryClient.invalidateQueries({ queryKey: ['get-store-details-by-id'] });
+      notificationRef?.current.notifySuccess('Successfully un-assign employee');
+      queryClientRef.current.invalidateQueries({
+        queryKey: ['get-store-details-by-id'],
+      });
     }
-  }, [isUnassignEmployeeSuccess, isUnassignEmployeePending, queryClient, notification]);
+  }, [isUnassignEmployeeSuccess, isUnassignEmployeePending]);
 
   useEffect(() => {
     if (
@@ -62,52 +64,64 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
       var generalError = (unAssignEmployeeError as AxiosError).response
         ?.data as AppGeneralError;
 
-      notification.notifyError(
-        'Unable to update store',
+      notificationRef.current.notifyError(
+        'Unable to un-assign employee',
         generalError.errors?.generalErrors?.join(',')
       );
     }
-  }, [isUnassignEmployeeError, unAssignEmployeeError, notification]);
+  }, [isUnassignEmployeeError, unAssignEmployeeError]);
 
-  const onConfirmUnassignEmployee = (userId?: number, roleId?: number) => {
-    let formData = new FormData();
+  const onConfirmUnassignEmployee = useCallback(
+    (userId?: number, roleId?: number) => {
+      let formData = new FormData();
 
-    formData.append('userId', userId?.toString() ?? '0');
-    formData.append('roleId', roleId?.toString() ?? '0');
-    formData.append('storeId', store?.id?.toString() ?? '0');
+      formData.append('userId', userId?.toString() ?? '0');
+      formData.append('roleId', roleId?.toString() ?? '0');
+      formData.append('storeId', store?.id?.toString() ?? '0');
 
-    unassignEmployeeMutate(formData);
-  };
+      unassignEmployeeMutate(formData);
+    },
+    [store?.id, unassignEmployeeMutate]
+  );
 
-  const openDeleteModal = (userId?: number, roleId?: number) =>
-    modals.openConfirmModal({
-      title: 'Unassign employee',
-      centered: true,
-      children: (
-        <Text size="sm">Are you sure you want to unassign this employee?</Text>
-      ),
-      labels: { confirm: 'Continue', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
-      // onCancel: () => console.log('Cancel', userId),
-      onConfirm: () => onConfirmUnassignEmployee(userId, roleId),
-    });
+  const openDeleteModal = useCallback(
+    (userId?: number, roleId?: number) =>
+      modals.openConfirmModal({
+        title: 'Unassign employee',
+        centered: true,
+        children: (
+          <Text size="sm">
+            Are you sure you want to unassign this employee?
+          </Text>
+        ),
+        labels: { confirm: 'Continue', cancel: 'Cancel' },
+        confirmProps: { color: 'red' },
+        // onCancel: () => console.log('Cancel', userId),
+        onConfirm: () => onConfirmUnassignEmployee(userId, roleId),
+      }),
+    [onConfirmUnassignEmployee]
+  );
 
-  const rows = employees?.map((emp) => (
-    <Table.Tr key={emp.userId}>
-      <Table.Td>{emp.user?.email}</Table.Td>
-      <Table.Td>{emp.user?.name}</Table.Td>
-      <Table.Td>{emp.role?.name}</Table.Td>
-      <Table.Td>
-        <Button
-          leftSection={<IconTrashX size={14} />}
-          onClick={() => openDeleteModal(emp.userId, emp.roleId)}
-          variant="subtle"
-        >
-          Unassign
-        </Button>
-      </Table.Td>
-    </Table.Tr>
-  ));
+  const rows = useMemo(
+    () =>
+      employees?.map((emp) => (
+        <Table.Tr key={emp.userId}>
+          <Table.Td>{emp.user?.email}</Table.Td>
+          <Table.Td>{emp.user?.name}</Table.Td>
+          <Table.Td>{emp.role?.name}</Table.Td>
+          <Table.Td>
+            <Button
+              leftSection={<IconTrashX size={14} />}
+              onClick={() => openDeleteModal(emp.userId, emp.roleId)}
+              variant="subtle"
+            >
+              Unassign
+            </Button>
+          </Table.Td>
+        </Table.Tr>
+      )),
+    [employees, openDeleteModal]
+  );
 
   return (
     <>
