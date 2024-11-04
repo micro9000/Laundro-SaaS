@@ -27,10 +27,11 @@ import {
   IconUserEdit,
 } from '@tabler/icons-react';
 
-import { AuthButton } from '@/app/components/authenticationButtons';
+import { AuthButton } from '@/app/_components/authenticationButtons';
 import {
   populateUserContextThunkAsync,
   selectCurrentSelectedStore,
+  selectStores,
   selectUserContextStatus,
 } from '@/features/userContext/userContextSlice';
 import { loginRequest } from '@/infrastructure/auth/authConfig';
@@ -56,6 +57,7 @@ export function PortalShell({
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const currentStore = useAppSelector(selectCurrentSelectedStore);
+  const stores = useAppSelector(selectStores);
   const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] =
     useState<boolean>(true);
   var userContextLoadingStatus = useAppSelector(selectUserContextStatus);
@@ -102,11 +104,11 @@ export function PortalShell({
 
   return (
     <>
-      {/* <LoadingOverlay
+      <LoadingOverlay
         visible={isLoadingOverlayVisible}
         zIndex={1000}
         overlayProps={{ radius: 'sm', blur: 2 }}
-      /> */}
+      />
       <AppShell
         header={{ height: 60 }}
         navbar={{
@@ -158,8 +160,6 @@ export function PortalShell({
               active={pathname === '/portal'}
             />
             <NavLink
-              href="/portal/stores"
-              component={Link}
               label="Stores"
               leftSection={<IconBuildingStore size="1rem" stroke={1.5} />}
               rightSection={
@@ -170,8 +170,27 @@ export function PortalShell({
                 />
               }
               variant="filled"
-              active={pathname === '/portal/stores'}
-            />
+              // active={pathname === '/portal/stores'}
+              defaultOpened
+            >
+              <NavLink
+                label="All"
+                href="/portal/stores"
+                component={Link}
+                active={pathname === '/portal/stores'}
+              />
+              {stores?.map((s) => (
+                <NavLink
+                  key={s.id}
+                  label={s.name}
+                  href={{
+                    pathname: `/portal/stores/${s.obfuscatedId}`,
+                  }}
+                  component={Link}
+                  active={pathname === `/portal/stores/${s.obfuscatedId}`}
+                />
+              ))}
+            </NavLink>
             <NavLink
               href="/portal/employees"
               component={Link}

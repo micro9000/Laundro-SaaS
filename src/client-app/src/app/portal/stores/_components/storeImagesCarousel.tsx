@@ -6,36 +6,42 @@ import { StoreImage } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 
 interface StoreImagesCarouselProps {
-  storeImages: StoreImage[];
+  storeImages?: StoreImage[];
+  height?: number;
+  width?: string;
+  fit?: React.CSSProperties['objectFit'];
 }
 
 export default function StoreImageCarousel({
   storeImages,
+  height = 200,
+  width = 'auto',
+  fit = 'contain',
 }: StoreImagesCarouselProps) {
   const tenantGuid = useAppSelector(selectUserTenantGuid);
 
-  if (storeImages.length === 0) {
+  if (storeImages && storeImages.length === 0) {
     return (
       <Image
         src={null}
-        height={200}
-        width="auto"
-        fit="contain"
+        height={height}
+        width={width}
+        fit={fit}
         alt="Norway"
         fallbackSrc="https://placehold.co/600x400?text=Placeholder"
       />
     );
   }
 
-  if (storeImages.length === 1) {
+  if (storeImages && storeImages.length === 1) {
     let image = storeImages.at(0);
     return (
       <Image
         src={`https://localhost:7177/api/store/get-image-content/${tenantGuid}/${image?.storeId}/${image?.id}`}
-        height={200}
-        width="auto"
-        fit="contain"
-        alt="Norway"
+        height={height}
+        width={width}
+        fit={fit}
+        alt={image?.filename}
         fallbackSrc="https://placehold.co/600x400?text=Placeholder"
       />
     );
@@ -43,15 +49,15 @@ export default function StoreImageCarousel({
 
   return (
     <>
-      <Carousel withIndicators height={200}>
-        {storeImages.map((image) => (
+      <Carousel withIndicators height={height}>
+        {storeImages?.map((image) => (
           <Carousel.Slide key={image.id}>
             <Image
               src={`https://localhost:7177/api/store/get-image-content/${tenantGuid}/${image.storeId}/${image.id}`}
-              height={200}
-              width="auto"
-              fit="contain"
-              alt="Norway"
+              height={height}
+              width={width}
+              fit={fit}
+              alt={image?.filename}
               fallbackSrc="https://placehold.co/600x400?text=Placeholder"
             />
           </Carousel.Slide>

@@ -35,7 +35,6 @@ export default function Page() {
   });
 
   useEffect(() => {
-    console.log(error);
     if (isError && error && error instanceof AxiosError) {
       var generalError = (error as AxiosError).response
         ?.data as AppGeneralError;

@@ -7,6 +7,7 @@ using Laundro.Core.Features.UserContextState.Repositories;
 using Laundro.Core.Features.UserContextState.Services;
 using Laundro.Core.Lookups;
 using Laundro.Core.NodaTime;
+using Laundro.Core.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
@@ -38,7 +39,8 @@ public partial class UserAccountStateServiceTests : IDisposable
             userInfoRepo,
             userTenantRepo,
             userStoresRepo,
-            roleLookup);
+            roleLookup,
+            new IdObfuscator());
     }
 
     public void Dispose()

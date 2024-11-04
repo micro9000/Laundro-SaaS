@@ -2,22 +2,20 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { ActionIcon, Badge, Grid, Group, Table } from '@mantine/core';
-import { IconAdjustments, IconUsersGroup } from '@tabler/icons-react';
+import { Grid } from '@mantine/core';
 import { AxiosError } from 'axios';
 
-import { RoleEndpoints, StoreEndpoints } from '@/constants/apiEndpoints';
+import { StoreEndpoints } from '@/constants/apiEndpoints';
 import { hasTenant } from '@/features/userContext/userContextSlice';
 import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppNotification, useAppQuery } from '@/infrastructure/hooks';
-import { Role, Store, StoreUser } from '@/models';
+import { Store } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 
-import StoreCard from './components/storeCard';
+import StoreCard from './_components/storeCard';
 
 export default function StoresCards() {
   const userHasTenant = useAppSelector(hasTenant);
-  const [userRoles, setUserRoles] = useState<Role[]>();
   const [stores, setStores] = useState<Store[]>();
   const notification = useAppNotification();
 
@@ -54,46 +52,6 @@ export default function StoresCards() {
       setStores(getStoresData.stores);
     }
   }, [getStoresData, getStoresIsLoading]);
-
-  const {
-    data: getRolesData,
-    isLoading: getRolesIsLoading,
-    isError: getRolesIsError,
-    error: getRolesError,
-  } = useAppQuery<{ roles: Role[] }>({
-    path: RoleEndpoints.getAll,
-    queryOptions: {
-      queryKey: ['get-all-roles'],
-      enabled: userHasTenant,
-    },
-  });
-
-  useEffect(() => {
-    if (getRolesIsError && getRolesError && userHasTenant) {
-      var generalError = (getRolesError as AxiosError).response
-        ?.data as AppGeneralError;
-      notification.notifyError(
-        'Unable to load roles',
-        generalError.errors?.generalErrors?.join(',')
-      );
-    }
-  }, [getRolesIsError, getRolesError, notification, userHasTenant]);
-
-  useEffect(() => {
-    if (
-      getRolesData !== null &&
-      getRolesData?.roles !== undefined &&
-      getRolesData.roles.length > 0
-    ) {
-      setUserRoles(getRolesData.roles);
-    }
-  }, [getRolesData, getRolesIsLoading]);
-
-  const employees = (storeUsers?: StoreUser[]) => {
-    return storeUsers?.map((su) => (
-      <Badge key={su.userId}>{su.user?.name}</Badge>
-    ));
-  };
 
   return (
     <>

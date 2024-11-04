@@ -5,6 +5,7 @@ import React from 'react';
 import { AuthenticationResult, EventType } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 import { MantineProvider, createTheme } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -49,8 +50,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <ReduxProvider store={store}>
           <QueryClientProvider client={queryClient}>
             <MantineProvider defaultColorScheme="dark" theme={theme}>
-              <Notifications />
-              {children}
+              <ModalsProvider>
+                <Notifications />
+                {children}
+              </ModalsProvider>
             </MantineProvider>
           </QueryClientProvider>
         </ReduxProvider>
