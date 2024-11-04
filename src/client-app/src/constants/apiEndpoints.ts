@@ -12,6 +12,7 @@ export const TenantEndpoints = {
 
 export const StoreEndpoints = {
   create: '/store/create-new-store',
+  update: '/store/update-store',
   getAll: '/store/get-all-stores',
   get: '/store/get-store',
   assignEmployee: '/store/assign-employee',

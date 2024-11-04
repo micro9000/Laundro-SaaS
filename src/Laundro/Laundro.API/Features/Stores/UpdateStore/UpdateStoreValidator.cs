@@ -1,11 +1,14 @@
 ﻿using FastEndpoints;
 
-namespace Laundro.API.Features.Stores.CreateStore;
+namespace Laundro.API.Features.Stores.UpdateStore;
 
-internal class CreateStoreValidator : Validator<CreateStoreRequest>
+internal class UpdateStoreValidator : Validator<UpdateStoreRequest>
 {
-    public CreateStoreValidator()
+    public UpdateStoreValidator()
     {
+        RuleFor(x => x.StoreId)
+            .GreaterThan(0).WithMessage("Invalid store id");
+
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Store Name is required")
             .MinimumLength(3).WithMessage("Your Store name is too short!");

@@ -63,9 +63,8 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
                     if (tenantId == null || tenantGuid == null)
                     {
-                        AddError("Unable to proceed creating your store due to internal server error");
                         _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
-                        ThrowIfAnyErrors(); // Fail fast
+                        ThrowError("Unable to proceed creating your store due to internal server error");
                     }
 
                     var newStore = new Store
@@ -86,9 +85,8 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                             var imageFileValidationResult = ValidateFile(file);
                             if (imageFileValidationResult.ErrorOccured)
                             {
-                                AddError(imageFileValidationResult.ErrorMessage);
                                 _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
-                                ThrowIfAnyErrors(); // Fail fast
+                                ThrowError(imageFileValidationResult.ErrorMessage);
                             }
 
                             var fileContent = GetFileContent(file);
@@ -124,7 +122,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    AddError("Unable to fetch all stores due to internal server error");
+                    AddError("Unable to create new store due to internal server error");
                     _logger.LogError(ex, ex.Message);
                     throw;
                 }
