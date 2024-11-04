@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
 using NodaTime;
+using Laundro.Core.NodaTime;
 
 namespace Laundro.Core.Data;
 public static class DbContextSoftDeleteExtensions
@@ -18,7 +19,7 @@ public static class DbContextSoftDeleteExtensions
         entityData.SetQueryFilter((LambdaExpression)filter!);
     }
 
-    public static void ApplySoftDeleteOverride(this ChangeTracker changeTracker)
+    public static void ApplySoftDeleteOverride(this ChangeTracker changeTracker, IClockService clock)
     {
         foreach (var entry in changeTracker.Entries())
         {
@@ -32,7 +33,7 @@ public static class DbContextSoftDeleteExtensions
                     case EntityState.Deleted:
                         entry.State = EntityState.Modified;
                         entry.CurrentValues[nameof(ISoftDeletable.IsActive)] = false;
-                        entry.CurrentValues[nameof(ISoftDeletable.DeActivatedOn)] = DateTimeOffset.UtcNow;
+                        entry.CurrentValues[nameof(ISoftDeletable.DeActivatedOn)] = clock.Now;
                         break;
                 }
             }

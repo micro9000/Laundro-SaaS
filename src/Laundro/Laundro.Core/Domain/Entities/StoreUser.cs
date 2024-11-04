@@ -18,7 +18,7 @@ public class StoreUser : ISoftDeletable
     public Role? Role { get; set; }
 
     public bool IsActive { get; set; }
-    public DateTimeOffset? DeActivatedOn { get; set; }
+    public Instant? DeActivatedOn { get; set; }
 }
 
 public static class StoreUserOnModelCreatingExtension

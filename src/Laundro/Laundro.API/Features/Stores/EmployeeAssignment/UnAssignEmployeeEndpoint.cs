@@ -5,6 +5,7 @@ using Laundro.Core.Data;
 using Laundro.Core.Features.UserContextState.Services;
 using Laundro.Core.NodaTime;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 
 namespace Laundro.API.Features.Stores.EmployeeAssignment;
 
@@ -71,7 +72,7 @@ internal class UnAssignEmployeeEndpoint : Endpoint<UnAssignEmployeeRequest>
                     && ss.RoleId == selectedRole!.Id)
                 .ExecuteUpdateAsync(u => 
                     u.SetProperty(ss => ss.IsActive, false)
-                    .SetProperty(ss => ss.DeActivatedOn, DateTimeOffset.UtcNow));
+                    .SetProperty(ss => ss.DeActivatedOn, _clock.Now));
 
             if (updatedCount > 0) {
                 await SendOkAsync(ct);

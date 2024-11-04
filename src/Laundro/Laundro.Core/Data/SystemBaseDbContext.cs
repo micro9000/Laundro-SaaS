@@ -1,11 +1,17 @@
 ﻿using Laundro.Core.Domain.Entities;
+using Laundro.Core.NodaTime;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laundro.Core.Data;
 public class SystemBaseDbContext : DbContext
 {
-    public SystemBaseDbContext(DbContextOptions<LaundroDbContext> options) : base(options) {}
+    private readonly IClockService _clock;
+
+    public SystemBaseDbContext(DbContextOptions<LaundroDbContext> options, IClockService clock) : base(options)
+    {
+        _clock = clock;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +55,6 @@ public class SystemBaseDbContext : DbContext
 
     private void InterceptChanges()
     {
-        ChangeTracker.ApplySoftDeleteOverride();
+        ChangeTracker.ApplySoftDeleteOverride(_clock);
     }
 }

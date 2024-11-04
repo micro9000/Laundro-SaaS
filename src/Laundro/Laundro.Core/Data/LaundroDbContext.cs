@@ -1,11 +1,12 @@
 ﻿using Laundro.Core.Domain.Entities;
+using Laundro.Core.NodaTime;
 using Microsoft.EntityFrameworkCore;
 
 namespace Laundro.Core.Data;
 
 public class LaundroDbContext : SystemBaseDbContext
 {
-    public LaundroDbContext(DbContextOptions<LaundroDbContext> options) : base(options)
+    public LaundroDbContext(DbContextOptions<LaundroDbContext> options, IClockService clock) : base(options, clock)
     {
         
     }
