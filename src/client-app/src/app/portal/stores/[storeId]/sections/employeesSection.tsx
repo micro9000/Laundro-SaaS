@@ -10,13 +10,18 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { IconPlus, IconTrashX } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 
+import { StoreEndpoints } from '@/constants/apiEndpoints';
+import { useAppMutation } from '@/infrastructure/hooks';
 import { Store, StoreUser, User } from '@/models';
 
 import AssignNewEmployeeToStoreForm from './_components/AssignNewEmployeeToStoreForm';
 
 export default function EmployeesSection({ store }: { store?: Store | null }) {
+  const queryClient = useQueryClient();
   const [employees, setEmployees] = useState<StoreUser[]>([]);
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -27,13 +32,57 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
     }
   }, [store, store?.storeUser]);
 
+  const {
+    mutate: unassignEmployeeMutate,
+    isError: isUnassignEmployeeError,
+    isSuccess: isUnassignEmployeeSuccess,
+    error: unAssignEmployeeError,
+    isPending: isUnassignEmployeePending,
+  } = useAppMutation({
+    path: StoreEndpoints.unassignEmployee,
+    mutationKey: 'un-assign-employee-to-store',
+  });
+
+  useEffect(() => {
+    if (isUnassignEmployeeSuccess && !isUnassignEmployeePending) {
+      queryClient.invalidateQueries({ queryKey: ['get-store-details-by-id'] });
+    }
+  }, [isUnassignEmployeeSuccess, isUnassignEmployeePending, queryClient]);
+
+  const onConfirmUnassignEmployee = (userId?: number, roleId?: number) => {
+    let formData = new FormData();
+
+    formData.append('userId', userId?.toString() ?? '0');
+    formData.append('roleId', roleId?.toString() ?? '0');
+    formData.append('storeId', store?.id?.toString() ?? '0');
+
+    unassignEmployeeMutate(formData);
+  };
+
+  const openDeleteModal = (userId?: number, roleId?: number) =>
+    modals.openConfirmModal({
+      title: 'Unassign employee',
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to unassign this employee?</Text>
+      ),
+      labels: { confirm: 'Continue', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      // onCancel: () => console.log('Cancel', userId),
+      onConfirm: () => onConfirmUnassignEmployee(userId, roleId),
+    });
+
   const rows = employees?.map((emp) => (
     <Table.Tr key={emp.userId}>
       <Table.Td>{emp.user?.email}</Table.Td>
       <Table.Td>{emp.user?.name}</Table.Td>
       <Table.Td>{emp.role?.name}</Table.Td>
       <Table.Td>
-        <Button leftSection={<IconTrashX size={14} />} variant="subtle">
+        <Button
+          leftSection={<IconTrashX size={14} />}
+          onClick={() => openDeleteModal(emp.userId, emp.roleId)}
+          variant="subtle"
+        >
           Unassign
         </Button>
       </Table.Td>
@@ -67,7 +116,7 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
         </Group>
         <Space h="md" />
 
-        <Table>
+        <Table withRowBorders>
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Email</Table.Th>

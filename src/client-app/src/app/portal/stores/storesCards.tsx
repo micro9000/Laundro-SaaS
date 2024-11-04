@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { Badge, Grid } from '@mantine/core';
+import { Grid } from '@mantine/core';
 import { AxiosError } from 'axios';
 
-import { RoleEndpoints, StoreEndpoints } from '@/constants/apiEndpoints';
+import { StoreEndpoints } from '@/constants/apiEndpoints';
 import { hasTenant } from '@/features/userContext/userContextSlice';
 import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppNotification, useAppQuery } from '@/infrastructure/hooks';
-import { Role, Store, StoreUser } from '@/models';
+import { Store } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 
 import StoreCard from './_components/storeCard';
@@ -52,12 +52,6 @@ export default function StoresCards() {
       setStores(getStoresData.stores);
     }
   }, [getStoresData, getStoresIsLoading]);
-
-  const employees = (storeUsers?: StoreUser[]) => {
-    return storeUsers?.map((su) => (
-      <Badge key={su.userId}>{su.user?.name}</Badge>
-    ));
-  };
 
   return (
     <>

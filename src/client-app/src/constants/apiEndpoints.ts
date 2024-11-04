@@ -15,6 +15,7 @@ export const StoreEndpoints = {
   getAll: '/store/get-all-stores',
   get: '/store/get-store',
   assignEmployee: '/store/assign-employee',
+  unassignEmployee: '/store/unassign-employee',
 };
 
 export const EmployeeEndpoints = {
