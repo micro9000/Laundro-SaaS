@@ -77,16 +77,29 @@ internal class AssignEmployeeEndpoint : Endpoint<AssignEmployeeRequest>
             }
             else
             {
-                _dbContext.StoreUsers.Add(new StoreUser
+                var inActiveExistingAssignment = await _dbContext.StoreUsers
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(ss => 
+                        ss.UserId == selectedUser!.Id 
+                        && ss.StoreId == selectedStore!.Id
+                        && ss.RoleId == selectedRole!.Id);
+
+                if (inActiveExistingAssignment is not null && !inActiveExistingAssignment.IsActive)
                 {
-                    StoreId = selectedStore?.Id,
-                    RoleId = selectedRole?.Id,
-                    UserId = selectedUser?.Id,
-                    IsActive = true
-                });
-
+                    inActiveExistingAssignment.IsActive = true;
+                    inActiveExistingAssignment.DeActivatedOn = null;
+                }
+                else
+                {
+                    _dbContext.StoreUsers.Add(new StoreUser
+                    {
+                        StoreId = selectedStore?.Id,
+                        RoleId = selectedRole?.Id,
+                        UserId = selectedUser?.Id,
+                        IsActive = true
+                    });
+                }
                 await _dbContext.SaveChangesAsync();
-
             }
         }
         catch(Exception ex)

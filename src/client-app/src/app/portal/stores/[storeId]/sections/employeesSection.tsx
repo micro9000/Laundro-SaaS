@@ -13,14 +13,17 @@ import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconPlus, IconTrashX } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { StoreEndpoints } from '@/constants/apiEndpoints';
-import { useAppMutation } from '@/infrastructure/hooks';
+import { AppGeneralError } from '@/infrastructure/exceptions';
+import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store, StoreUser, User } from '@/models';
 
 import AssignNewEmployeeToStoreForm from './_components/AssignNewEmployeeToStoreForm';
 
 export default function EmployeesSection({ store }: { store?: Store | null }) {
+  const notification = useAppNotification();
   const queryClient = useQueryClient();
   const [employees, setEmployees] = useState<StoreUser[]>([]);
 
@@ -45,9 +48,26 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
 
   useEffect(() => {
     if (isUnassignEmployeeSuccess && !isUnassignEmployeePending) {
+      notification.notifySuccess('Successfully un-assign employee');
       queryClient.invalidateQueries({ queryKey: ['get-store-details-by-id'] });
     }
-  }, [isUnassignEmployeeSuccess, isUnassignEmployeePending, queryClient]);
+  }, [isUnassignEmployeeSuccess, isUnassignEmployeePending, queryClient, notification]);
+
+  useEffect(() => {
+    if (
+      isUnassignEmployeeError &&
+      unAssignEmployeeError &&
+      unAssignEmployeeError instanceof AxiosError
+    ) {
+      var generalError = (unAssignEmployeeError as AxiosError).response
+        ?.data as AppGeneralError;
+
+      notification.notifyError(
+        'Unable to update store',
+        generalError.errors?.generalErrors?.join(',')
+      );
+    }
+  }, [isUnassignEmployeeError, unAssignEmployeeError, notification]);
 
   const onConfirmUnassignEmployee = (userId?: number, roleId?: number) => {
     let formData = new FormData();
