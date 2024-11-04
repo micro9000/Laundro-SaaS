@@ -54,7 +54,7 @@ export function CreateNewStoreFileDropzone(props: Partial<DropzoneProps>) {
               Drag images here or click to select files
             </Text>
             <Text size="sm" c="dimmed" inline mt={7}>
-              Attach as many files as you like, each file should not exceed 5mb
+              Attach as at least 4 images, each file should not exceed 5mb
             </Text>
           </div>
         </Group>

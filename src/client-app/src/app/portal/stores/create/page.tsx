@@ -2,14 +2,16 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
   Container,
   Group,
+  Image,
   LoadingOverlay,
   Paper,
+  SimpleGrid,
   Space,
   Text,
   TextInput,
@@ -30,7 +32,9 @@ import { CreateNewStoreFormValues } from './createNewStoreFormValues';
 
 export default function Page() {
   const router = useRouter();
+  const routerRef = useRef(router);
   const notification = useAppNotification();
+  const notificationRef = useRef(notification);
   const [storeImages, setStoreImages] = useState<File[] | null>(null);
 
   const { mutate, isError, isSuccess, error, isPending } =
@@ -43,35 +47,35 @@ export default function Page() {
 
   useEffect(() => {
     if (isError) {
-      notification.notifyError(
+      notificationRef.current.notifyError(
         'Unable to save new store details',
         error.message
       );
     }
-  }, [isError, error, notification]);
+  }, [isError, error]);
 
   useEffect(() => {
     if (isSuccess) {
-      notification.notifySuccess('Successfully created new store');
+      notificationRef.current.notifySuccess('Successfully created new store');
 
       setTimeout(() => {
-        router.push('/portal/stores');
+        routerRef.current.push('/portal/stores');
       }, 500);
     }
-  }, [isSuccess, notification, router]);
+  }, [isSuccess]);
 
   const uploadImages = (images: File[]) => {
     setStoreImages(images);
   };
 
-  const onRejectFiles = (images: FileRejection[]) => {
+  const onRejectFiles = useCallback((images: FileRejection[]) => {
     var invalidFiles = images.map((i) => i.file.name).join(', ');
     var errors = images.map((i) => i.errors).flat();
-    notification.notifyWarning(`Invalid files: [${invalidFiles}]`);
+    notificationRef.current.notifyWarning(`Invalid files: [${invalidFiles}]`);
     errors.forEach((e) => {
-      notification.notifyError(e.code, e.message);
+      notificationRef.current.notifyError(e.code, e.message);
     });
-  };
+  }, []);
 
   const form = useForm<CreateNewStoreFormValues>({
     mode: 'uncontrolled',
@@ -85,21 +89,35 @@ export default function Page() {
     },
   });
 
-  const onFormSubmit = (values: CreateNewStoreFormValues) => {
-    var formData = new FormData();
+  const onFormSubmit = useCallback(
+    (values: CreateNewStoreFormValues) => {
+      var formData = new FormData();
 
-    if (storeImages !== null && storeImages.length > 0) {
-      storeImages.forEach((f) => formData.append('storeImages', f));
-    }
+      if (storeImages !== null && storeImages.length > 0) {
+        storeImages.forEach((f) => formData.append('storeImages', f));
+      }
 
-    formData.append(nameof<CreateNewStoreFormValues>('name'), values.name);
-    formData.append(
-      nameof<CreateNewStoreFormValues>('location'),
-      values.location
+      formData.append(nameof<CreateNewStoreFormValues>('name'), values.name);
+      formData.append(
+        nameof<CreateNewStoreFormValues>('location'),
+        values.location
+      );
+
+      mutate(formData);
+    },
+    [storeImages]
+  );
+
+  const previews = storeImages?.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        key={index}
+        src={imageUrl}
+        onLoad={() => URL.revokeObjectURL(imageUrl)}
+      />
     );
-
-    mutate(formData);
-  };
+  });
 
   return (
     <>
@@ -132,10 +150,14 @@ export default function Page() {
             <CreateNewStoreFileDropzone
               onDrop={(files) => uploadImages(files)}
               onReject={onRejectFiles}
+              maxFiles={4}
             />
-            <Text>
-              Selected files: {storeImages !== null ? storeImages.length : 0}
-            </Text>
+            <SimpleGrid
+              cols={{ base: 1, sm: 4 }}
+              mt={previews && previews.length > 0 ? 'xl' : 0}
+            >
+              {previews}
+            </SimpleGrid>
 
             <Group justify="right" mt="md">
               <Button
