@@ -9,6 +9,7 @@ using Laundro.Core.NodaTime;
 using Laundro.Core.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.IO;
 
 namespace Laundro.API.Features.Stores.CreateStore;
 
@@ -89,11 +90,15 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                                 ThrowError(imageFileValidationResult.ErrorMessage);
                             }
 
-                            var fileContent = GetFileContent(file);
+                            var imageId = Guid.NewGuid();
+                            var extension = Path.GetExtension(file?.FileName);
+                            var newFileName = $"{imageId}{extension}";
+
+                            var fileContent = GetFileContent(file!);
                             var imageFileUrl = await _storeProfileImagesStorage.Store(
                                 new InputFileStorageInformation
                                 {
-                                    Id = Guid.NewGuid(),
+                                    Id = imageId,
                                     TenantGuid = (Guid) tenantGuid!,
                                     FileName = file?.FileName,
                                     DateUploaded = _clock.Now
@@ -104,7 +109,8 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                                 StoreId = newStore.Id,
                                 Url = imageFileUrl,
                                 ContentType = file?.ContentType,
-                                CreatedAt = _clock.Now
+                                CreatedAt = _clock.Now,
+                                Filename = newFileName
                             });
                         }
                     }

@@ -18,6 +18,8 @@ import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store } from '@/models';
 import { nameof } from '@/utilities';
 
+import { getStoreDetailsById } from '../sharedApiRequestKeys';
+
 interface UpdateStoreDetailsFormValues {
   storeId: string;
   name: string;
@@ -79,7 +81,7 @@ export default function StoreDetailsSection({
         'Store details has successful updated'
       );
       queryClientRef.current.invalidateQueries({
-        queryKey: ['get-store-details-by-id'],
+        queryKey: [getStoreDetailsById],
       });
     }
   }, [isSuccess, isPending]);

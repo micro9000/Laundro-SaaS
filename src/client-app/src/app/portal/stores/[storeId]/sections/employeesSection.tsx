@@ -20,6 +20,7 @@ import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store, StoreUser, User } from '@/models';
 
+import { getStoreDetailsById } from '../sharedApiRequestKeys';
 import AssignNewEmployeeToStoreForm from './_components/AssignNewEmployeeToStoreForm';
 
 export default function EmployeesSection({ store }: { store?: Store | null }) {
@@ -51,7 +52,7 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
     if (isUnassignEmployeeSuccess && !isUnassignEmployeePending) {
       notificationRef?.current.notifySuccess('Successfully un-assign employee');
       queryClientRef.current.invalidateQueries({
-        queryKey: ['get-store-details-by-id'],
+        queryKey: [getStoreDetailsById],
       });
     }
   }, [isUnassignEmployeeSuccess, isUnassignEmployeePending]);

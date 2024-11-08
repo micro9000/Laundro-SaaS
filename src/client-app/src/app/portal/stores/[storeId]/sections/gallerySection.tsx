@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -11,23 +11,82 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconTrash } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
-import { GenerateStoreImageUrl } from '@/constants/apiEndpoints';
+import {
+  GenerateStoreImageUrl,
+  StoreImageEndpoints,
+} from '@/constants/apiEndpoints';
 import { selectUserTenantGuid } from '@/features/userContext/userContextSlice';
+import { AppGeneralError } from '@/infrastructure/exceptions';
+import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store, StoreImage } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 
+import { getStoreDetailsById } from '../sharedApiRequestKeys';
+
 export default function GallerySection({ store }: { store?: Store | null }) {
   const tenantGuid = useAppSelector(selectUserTenantGuid);
+  const notification = useAppNotification();
+  const notificationRef = useRef(notification); // to resolve React Hook useEffect has a missing dependency:
+  const queryClient = useQueryClient();
+  const queryClientRef = useRef(queryClient);
 
   const [images, setImages] = useState<StoreImage[]>();
 
   useEffect(() => {
     setImages(store?.images);
-    //GenerateStoreImageUrl(img?.storeId, img?.id, tenantGuid)
   }, [store, store?.images.length]);
 
-  const onConfirmDeleteImage = useCallback((imageId?: number) => {}, []);
+  const {
+    mutate: deleteStoreImageMutate,
+    isError: isDeleteStoreImageError,
+    isSuccess: isDeleteStoreImageSuccess,
+    error: deleteStoreImageError,
+    isPending: isDeleteStoreImagePending,
+  } = useAppMutation({
+    path: StoreImageEndpoints.delete,
+    mutationKey: 'delete-store-image',
+    httpVerb: 'delete',
+  });
+
+  useEffect(() => {
+    if (isDeleteStoreImageSuccess && !isDeleteStoreImagePending) {
+      notificationRef?.current.notifySuccess('Successfully deleted an image');
+      queryClientRef.current.invalidateQueries({
+        queryKey: [getStoreDetailsById],
+      });
+    }
+  }, [isDeleteStoreImageSuccess, isDeleteStoreImagePending]);
+
+  useEffect(() => {
+    if (
+      isDeleteStoreImageError &&
+      deleteStoreImageError &&
+      deleteStoreImageError instanceof AxiosError
+    ) {
+      var generalError = (deleteStoreImageError as AxiosError).response
+        ?.data as AppGeneralError;
+
+      notificationRef.current.notifyError(
+        'Unable to un-assign employee',
+        generalError.errors?.generalErrors?.join(',')
+      );
+    }
+  }, [isDeleteStoreImageError, deleteStoreImageError]);
+
+  const onConfirmDeleteImage = useCallback(
+    (imageId?: number) => {
+      let formData = new FormData();
+
+      formData.append('imageId', imageId?.toString() ?? '0');
+      formData.append('storeId', store?.id?.toString() ?? '0');
+
+      deleteStoreImageMutate(formData);
+    },
+    [store?.id, deleteStoreImageMutate]
+  );
 
   const openDeleteModal = useCallback(
     (imageId?: number) =>

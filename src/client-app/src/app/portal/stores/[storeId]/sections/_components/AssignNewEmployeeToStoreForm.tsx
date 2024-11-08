@@ -28,6 +28,8 @@ import { Role, Store, User } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 import { nameof } from '@/utilities';
 
+import { getStoreDetailsById } from '../../sharedApiRequestKeys';
+
 interface AssignNewEmployeeFormValues {
   userId: number;
   roleId: number;
@@ -133,7 +135,7 @@ export default function AssignNewEmployeeToStoreForm({
       onSuccess();
       notificationRef.current.notifySuccess('Successfully assign new employee');
       queryClientRef.current.invalidateQueries({
-        queryKey: ['get-store-details-by-id'],
+        queryKey: [getStoreDetailsById],
       });
     }
   }, [isAssignEmployeeSuccess, onSuccess]);
