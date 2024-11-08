@@ -1,6 +1,7 @@
 import { Carousel } from '@mantine/carousel';
 import { Image } from '@mantine/core';
 
+import { GenerateStoreImageUrl } from '@/constants/apiEndpoints';
 import { selectUserTenantGuid } from '@/features/userContext/userContextSlice';
 import { StoreImage } from '@/models';
 import { useAppSelector } from '@/state/hooks';
@@ -37,7 +38,7 @@ export default function StoreImageCarousel({
     let image = storeImages.at(0);
     return (
       <Image
-        src={`https://localhost:7177/api/store/get-image-content/${tenantGuid}/${image?.storeId}/${image?.id}`}
+        src={`${GenerateStoreImageUrl(image?.storeId, image?.id, tenantGuid)}`}
         height={height}
         width={width}
         fit={fit}
@@ -53,7 +54,7 @@ export default function StoreImageCarousel({
         {storeImages?.map((image) => (
           <Carousel.Slide key={image.id}>
             <Image
-              src={`https://localhost:7177/api/store/get-image-content/${tenantGuid}/${image.storeId}/${image.id}`}
+              src={`${GenerateStoreImageUrl(image?.storeId, image?.id, tenantGuid)}`}
               height={height}
               width={width}
               fit={fit}

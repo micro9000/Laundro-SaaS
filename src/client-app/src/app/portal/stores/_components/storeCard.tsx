@@ -24,6 +24,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 
+import { GenerateStoreImageUrl } from '@/constants/apiEndpoints';
 import { selectUserTenantGuid } from '@/features/userContext/userContextSlice';
 import { Store } from '@/models';
 import { useAppSelector } from '@/state/hooks';
@@ -43,9 +44,8 @@ export default function StoreCard({ store }: StoreCardPromps) {
 
   useEffect(() => {
     setImages(
-      store?.images.map(
-        (img) =>
-          `https://localhost:7177/api/store/get-image-content/${tenantGuid}/${img?.storeId}/${img?.id}`
+      store?.images.map((img) =>
+        GenerateStoreImageUrl(img?.storeId, img?.id, tenantGuid)
       )
     );
   }, [store, store?.images.length]);
