@@ -1,13 +1,12 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
-using Laundro.API.Features.Stores;
 using Laundro.API.Features.Stores.GetStores;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
 using Laundro.Core.Features.UserContextState.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.API.Features.Stores.StoreImages.GetStoreImages;
+namespace Laundro.API.Features.Stores.StoreImages.Get;
 
 internal class GetStoreImagesInfoEndpoint : Endpoint<GetStoreImagesInfoRequest, GetStoreImagesInfoResponse>
 {
@@ -27,7 +26,7 @@ internal class GetStoreImagesInfoEndpoint : Endpoint<GetStoreImagesInfoRequest, 
 
     public override void Configure()
     {
-        Get("get-images-info/{@StoreId}", x => new { x.StoreId });
+        Get("get-details/{@StoreId}", x => new { x.StoreId });
         Group<StoreImagesGroup>();
         Policies(PolicyName.IsTenantOwner);
     }

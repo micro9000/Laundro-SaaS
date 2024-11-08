@@ -44,6 +44,7 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
   } = useAppMutation({
     path: StoreEndpoints.unassignEmployee,
     mutationKey: 'un-assign-employee-to-store',
+    httpVerb: 'delete',
   });
 
   useEffect(() => {

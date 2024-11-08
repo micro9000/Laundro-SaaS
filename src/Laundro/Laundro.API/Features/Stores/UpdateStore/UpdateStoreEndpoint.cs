@@ -33,14 +33,14 @@ internal class UpdateStoreEndpoint : Endpoint<UpdateStoreRequest, UpdateStoreRes
 
     public override void Configure()
     {
-        Post("update-store");
+        Put("update-store");
         Group<StoreGroup>();
         Policies(PolicyName.IsTenantOwner);
     }
 
     public override async Task HandleAsync(UpdateStoreRequest request, CancellationToken cancellationToken)
     {
-        ThrowIfAnyErrors();
+        //ThrowIfAnyErrors();
         var currentUser = _currentUserAccessor.GetCurrentUser();
         var tenantId = currentUser?.Tenant?.Id;
 

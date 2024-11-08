@@ -30,7 +30,7 @@ internal class UnAssignEmployeeEndpoint : Endpoint<UnAssignEmployeeRequest>
 
     public override void Configure()
     {
-        Post("unassign-employee");
+        Delete("unassign-employee");
         Group<StoreGroup>();
         Policies(PolicyName.IsTenantOwner);
     }
@@ -51,18 +51,15 @@ internal class UnAssignEmployeeEndpoint : Endpoint<UnAssignEmployeeRequest>
 
             if (selectedStore == null)
             {
-                AddError("Selected store not found");
-                ThrowIfAnyErrors();
+                ThrowError("Selected store not found");
             }
             if (selectedUser == null)
             {
-                AddError("Selected employee not found");
-                ThrowIfAnyErrors();
+                ThrowError("Selected employee not found");
             }
             if (selectedRole == null)
             {
-                AddError("Selected role not found");
-                ThrowIfAnyErrors();
+                ThrowError("Selected role not found");
             }
 
             var updatedCount = await _dbContext.StoreUsers

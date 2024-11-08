@@ -21,11 +21,10 @@ export const StoreEndpoints = {
   unassignEmployee: '/store/unassign-employee',
 };
 
-export const EmployeeEndpoints = {
-  register: '/employee/register',
-  getAll: '/employee/get-all-employees',
+export const StoreImageEndpoints = {
+  details: '/store/images/get-details',
+  delete: '/store/images/delete',
 };
-
 export const GenerateStoreImageUrl = (
   storeId?: number,
   imageId?: number,
@@ -33,4 +32,9 @@ export const GenerateStoreImageUrl = (
 ) => {
   const apiUrl = Config.ApiUrl;
   return `${apiUrl}/store/images/content/${tenantGuid}/${storeId}/${imageId}`;
+};
+
+export const EmployeeEndpoints = {
+  register: '/employee/register',
+  getAll: '/employee/get-all-employees',
 };

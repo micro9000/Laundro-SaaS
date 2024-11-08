@@ -8,7 +8,7 @@ public class StoreImagesGroup : SubGroup<StoreGroup>
     {
         Configure("images", ep =>
         {
-            ep.Description(x => x.Produces(401).WithTags("store_images"));
+            ep.Description(x => x.Produces(401).WithTags("StoreImages"));
         });
     }
 }

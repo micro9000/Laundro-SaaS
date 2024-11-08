@@ -7,6 +7,7 @@ import { loginRequest } from '../auth/authConfig';
 import { Config } from '../config';
 
 interface useQueryParams<TData extends {}, TError = unknown> {
+  httpVerb?: 'post' | 'delete' | 'put';
   mutationKey: string;
   path: string;
   params?: any;
@@ -16,6 +17,7 @@ const useAppMutation = <TData extends {}, TError = unknown>({
   mutationKey,
   path,
   params,
+  httpVerb = 'post',
 }: useQueryParams<TData, TError>) => {
   const { instance, accounts } = useMsal();
 
@@ -38,6 +40,30 @@ const useAppMutation = <TData extends {}, TError = unknown>({
           var tokenResponse = await instance.acquireTokenPopup(request);
           accessToken = tokenResponse.accessToken;
         }
+      }
+
+      if (httpVerb === 'delete') {
+        const response = await axios.delete<TData>(`${Config.ApiUrl}${path}`, {
+          data: formData,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json; charset=utf8',
+          },
+          params: params,
+        });
+
+        return response.data;
+      } else if (httpVerb === 'put') {
+        const response = await axios.put<TData>(`${Config.ApiUrl}${path}`, {
+          data: formData,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json; charset=utf8',
+          },
+          params: params,
+        });
+
+        return response.data;
       }
 
       const response = await axios.post<TData>(

@@ -1,11 +1,10 @@
 ﻿using FastEndpoints;
-using Laundro.API.Features.Stores;
 using Laundro.API.Features.Stores.GetStores;
 using Laundro.Core.Data;
 using Laundro.Core.Features.Stores.ProfileStorage;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.API.Features.Stores.StoreImages.GetStoreImages;
+namespace Laundro.API.Features.Stores.StoreImages.Get;
 
 internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentRequest>
 {

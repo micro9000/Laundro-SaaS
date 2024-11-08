@@ -70,6 +70,7 @@ export default function StoreDetailsSection({
   const { mutate, isError, isSuccess, error, isPending } = useAppMutation({
     path: StoreEndpoints.update,
     mutationKey: 'update-store-details',
+    httpVerb: 'put',
   });
 
   useEffect(() => {
