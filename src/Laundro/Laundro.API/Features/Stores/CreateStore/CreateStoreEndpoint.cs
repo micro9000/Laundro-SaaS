@@ -48,94 +48,94 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
     public override async Task HandleAsync(CreateStoreRequest request, CancellationToken ct)
     {
+        throw new NotImplementedException();
+        //var currentUser = _currentUserAccessor.GetCurrentUser();
 
-        var currentUser = _currentUserAccessor.GetCurrentUser();
+        //var strategy = _dbContext.Database.CreateExecutionStrategy();
 
-        var strategy = _dbContext.Database.CreateExecutionStrategy();
+        //await strategy.ExecuteAsync(async () =>
+        //{
+        //    await using (var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Snapshot, ct))
+        //    {
+        //        try
+        //        {
+        //            var tenantId = currentUser?.Tenant?.Id;
+        //            var tenantGuid = currentUser?.Tenant?.TenantGuid;
 
-        await strategy.ExecuteAsync(async () =>
-        {
-            await using (var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Snapshot, ct))
-            {
-                try
-                {
-                    var tenantId = currentUser?.Tenant?.Id;
-                    var tenantGuid = currentUser?.Tenant?.TenantGuid;
+        //            if (tenantId == null || tenantGuid == null)
+        //            {
+        //                _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
+        //                ThrowError("Unable to proceed creating your store due to internal server error");
+        //            }
 
-                    if (tenantId == null || tenantGuid == null)
-                    {
-                        _logger.LogError("Unable to create new store due to missing tenant id in the User Context {@UserContext}", currentUser);
-                        ThrowError("Unable to proceed creating your store due to internal server error");
-                    }
+        //            var newStore = new Store
+        //            {
+        //                Name = request.Name,
+        //                Location = request.Location,
+        //                CreatedAt = _clock.Now,
+        //                TenantId = (int)tenantId!
+        //            };
 
-                    var newStore = new Store
-                    {
-                        Name = request.Name,
-                        Location = request.Location,
-                        CreatedAt = _clock.Now,
-                        TenantId = (int)tenantId!
-                    };
+        //            _dbContext.Stores.Add(newStore);
+        //            await _dbContext.SaveChangesAsync();
 
-                    _dbContext.Stores.Add(newStore);
-                    await _dbContext.SaveChangesAsync();
+        //            if (request.StoreImages is not null && request.StoreImages.Any())
+        //            {
+        //                foreach (var file in request.StoreImages)
+        //                {
+        //                    var imageFileValidationResult = ValidateFile(file);
+        //                    if (imageFileValidationResult.ErrorOccured)
+        //                    {
+        //                        _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
+        //                        ThrowError(imageFileValidationResult.ErrorMessage);
+        //                    }
 
-                    if (request.StoreImages is not null && request.StoreImages.Any())
-                    {
-                        foreach (var file in request.StoreImages)
-                        {
-                            var imageFileValidationResult = ValidateFile(file);
-                            if (imageFileValidationResult.ErrorOccured)
-                            {
-                                _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
-                                ThrowError(imageFileValidationResult.ErrorMessage);
-                            }
+        //                    var imageId = Guid.NewGuid();
+        //                    var extension = Path.GetExtension(file?.FileName);
+        //                    var newFileName = $"{imageId}{extension}";
 
-                            var imageId = Guid.NewGuid();
-                            var extension = Path.GetExtension(file?.FileName);
-                            var newFileName = $"{imageId}{extension}";
+        //                    var fileContent = GetFileContent(file!);
+        //                    var imageFileUrl = await _storeProfileImagesStorage.Store(
+        //                        new InputFileStorageInformation
+        //                        {
+        //                            Id = imageId,
+        //                            TenantGuid = (Guid) tenantGuid!,
+        //                            FileName = file?.FileName,
+        //                            DateUploaded = _clock.Now
+        //                        }, fileContent);
 
-                            var fileContent = GetFileContent(file!);
-                            var imageFileUrl = await _storeProfileImagesStorage.Store(
-                                new InputFileStorageInformation
-                                {
-                                    Id = imageId,
-                                    TenantGuid = (Guid) tenantGuid!,
-                                    FileName = file?.FileName,
-                                    DateUploaded = _clock.Now
-                                }, fileContent);
+        //                    _dbContext.StoreImages.Add(new StoreImage
+        //                    {
+        //                        StoreId = newStore.Id,
+        //                        Url = imageFileUrl,
+        //                        ContentType = file?.ContentType,
+        //                        CreatedAt = _clock.Now,
+        //                        Filename = newFileName
+        //                    });
+        //                }
+        //            }
 
-                            _dbContext.StoreImages.Add(new StoreImage
-                            {
-                                StoreId = newStore.Id,
-                                Url = imageFileUrl,
-                                ContentType = file?.ContentType,
-                                CreatedAt = _clock.Now,
-                                Filename = newFileName
-                            });
-                        }
-                    }
+        //            await _dbContext.SaveChangesAsync();
+        //            await transaction.CommitAsync();
 
-                    await _dbContext.SaveChangesAsync();
-                    await transaction.CommitAsync();
+        //            await _userStoresRepository.RefreshAndGetCachedStoresByTenant(currentUser!.UserId);
 
-                    await _userStoresRepository.RefreshAndGetCachedStoresByTenant(currentUser!.UserId);
+        //            await SendAsync(new()
+        //            {
+        //                Store = newStore
+        //            });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            await transaction.RollbackAsync();
+        //            AddError("Unable to create new store due to internal server error");
+        //            _logger.LogError(ex, ex.Message);
+        //            throw;
+        //        }
+        //    }
+        //});
 
-                    await SendAsync(new()
-                    {
-                        Store = newStore
-                    });
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    AddError("Unable to create new store due to internal server error");
-                    _logger.LogError(ex, ex.Message);
-                    throw;
-                }
-            }
-        });
-
-        ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
+        //ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
     }
 
     private (bool ErrorOccured, string ErrorMessage) ValidateFile(IFormFile file)

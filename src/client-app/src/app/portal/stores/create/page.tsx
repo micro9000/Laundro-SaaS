@@ -18,6 +18,7 @@ import {
 } from '@mantine/core';
 import { FileRejection } from '@mantine/dropzone';
 import { useForm } from '@mantine/form';
+import { isArray, isObject } from 'lodash';
 
 import { StoreEndpoints } from '@/constants/apiEndpoints';
 import {
@@ -25,8 +26,9 @@ import {
   useAppNotification,
 } from '@/infrastructure/hooks';
 import { Store } from '@/models';
-import { nameof } from '@/utilities';
+import { ExtractErrorMessages, nameof } from '@/utilities';
 
+import { maximumStoreImages } from '../storeConfigs';
 import { CreateNewStoreFileDropzone } from './createNewStoreFileDropzone';
 import { CreateNewStoreFormValues } from './createNewStoreFormValues';
 
@@ -47,10 +49,16 @@ export default function Page() {
 
   useEffect(() => {
     if (isError) {
-      notificationRef.current.notifyError(
-        'Unable to save new store details',
-        error.message
-      );
+      var errorsToDisplay = ExtractErrorMessages(error);
+
+      if (isArray(errorsToDisplay)) {
+        errorsToDisplay.forEach((err) => {
+          notificationRef.current.notifyError(
+            'Unable to save new store details',
+            err
+          );
+        });
+      }
     }
   }, [isError, error]);
 
@@ -150,7 +158,7 @@ export default function Page() {
             <CreateNewStoreFileDropzone
               onDrop={(files) => uploadImages(files)}
               onReject={onRejectFiles}
-              maxFiles={4}
+              // maxFiles={maximumStoreImages}
             />
             <SimpleGrid
               cols={{ base: 1, sm: 4 }}

@@ -4,15 +4,19 @@ import {
   Button,
   Card,
   Container,
+  Drawer,
   Group,
   Image,
   SimpleGrid,
+  Space,
   Text,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { isArray } from 'lodash';
 
 import {
   GenerateStoreImageUrl,
@@ -23,7 +27,9 @@ import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store, StoreImage } from '@/models';
 import { useAppSelector } from '@/state/hooks';
+import { ExtractErrorMessages } from '@/utilities';
 
+import { maximumStoreImages } from '../../storeConfigs';
 import { getStoreDetailsById } from '../sharedApiRequestKeys';
 
 export default function GallerySection({ store }: { store?: Store | null }) {
@@ -34,6 +40,7 @@ export default function GallerySection({ store }: { store?: Store | null }) {
   const queryClientRef = useRef(queryClient);
 
   const [images, setImages] = useState<StoreImage[]>();
+  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     setImages(store?.images);
@@ -66,13 +73,13 @@ export default function GallerySection({ store }: { store?: Store | null }) {
       deleteStoreImageError &&
       deleteStoreImageError instanceof AxiosError
     ) {
-      var generalError = (deleteStoreImageError as AxiosError).response
-        ?.data as AppGeneralError;
+      var errorsToDisplay = ExtractErrorMessages(deleteStoreImageError);
 
-      notificationRef.current.notifyError(
-        'Unable to un-assign employee',
-        generalError.errors?.generalErrors?.join(',')
-      );
+      if (isArray(errorsToDisplay)) {
+        errorsToDisplay.forEach((err) => {
+          notificationRef.current.notifyError('Unable to delete an image', err);
+        });
+      }
     }
   }, [isDeleteStoreImageError, deleteStoreImageError]);
 
@@ -109,62 +116,72 @@ export default function GallerySection({ store }: { store?: Store | null }) {
       <Container size="xl">
         <Text fw={700}>Gallery</Text>
 
+        <Drawer
+          offset={4}
+          // radius="md"
+          size="lg"
+          opened={opened}
+          onClose={close}
+          title="Uplaod New Store Image"
+          position="right"
+        >
+          <h1>HI</h1>
+        </Drawer>
+
+        <Space h="lg" />
+        <Group justify="right">
+          <Button
+            leftSection={<IconPlus size={14} />}
+            variant="subtle"
+            disabled={(images?.length ?? 0) >= maximumStoreImages}
+            onClick={open}
+          >
+            Upload New Image
+          </Button>
+        </Group>
+        <Space h="md" />
+
         <SimpleGrid cols={4}>
           {images && images?.length > 1
             ? images.map((image) => (
-                <>
-                  <Card shadow="sm" padding="lg" radius="md" withBorder>
-                    <Card.Section>
-                      <Image
-                        src={GenerateStoreImageUrl(
-                          image?.storeId,
-                          image?.id,
-                          tenantGuid
-                        )}
-                        key={image?.id}
-                        radius="sm"
-                        width="auto"
-                        fit="contain"
+                <Card
+                  key={image?.id}
+                  shadow="sm"
+                  padding="lg"
+                  radius="md"
+                  withBorder
+                >
+                  <Card.Section>
+                    <Image
+                      src={GenerateStoreImageUrl(
+                        image?.storeId,
+                        image?.id,
+                        tenantGuid
+                      )}
+                      key={image?.id}
+                      radius="sm"
+                      width="auto"
+                      fit="contain"
+                    />
+                  </Card.Section>
+                  <Button
+                    color="blue"
+                    mt="md"
+                    variant="subtle"
+                    radius="md"
+                    size="sm"
+                    onClick={() => openDeleteModal(image?.id)}
+                    leftSection={
+                      <IconTrash
+                        size="0.8rem"
+                        stroke={1.5}
+                        className="mantine-rotate-rtl"
                       />
-                    </Card.Section>
-                    <Group>
-                      <Button
-                        color="blue"
-                        mt="md"
-                        variant="subtle"
-                        radius="md"
-                        size="sm"
-                        onClick={() => openDeleteModal(image?.id)}
-                        leftSection={
-                          <IconTrash
-                            size="0.8rem"
-                            stroke={1.5}
-                            className="mantine-rotate-rtl"
-                          />
-                        }
-                      >
-                        Delete
-                      </Button>
-
-                      <Button
-                        color="blue"
-                        mt="md"
-                        variant="subtle"
-                        radius="md"
-                        size="sm"
-                        leftSection={
-                          <IconTrash
-                            size="0.8rem"
-                            stroke={1.5}
-                            className="mantine-rotate-rtl"
-                          />
-                        }
-                      >
-                        Replace
-                      </Button>
-                    </Group>
-                  </Card>
-                </>
+                    }
+                  >
+                    Delete
+                  </Button>
+                </Card>
               ))
             : null}
         </SimpleGrid>
