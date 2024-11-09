@@ -9,6 +9,7 @@ using Laundro.Core.NodaTime;
 using Laundro.Core.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.IO;
 
 namespace Laundro.API.Features.Stores.CreateStore;
 
@@ -47,7 +48,6 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
 
     public override async Task HandleAsync(CreateStoreRequest request, CancellationToken ct)
     {
-
         var currentUser = _currentUserAccessor.GetCurrentUser();
 
         var strategy = _dbContext.Database.CreateExecutionStrategy();
@@ -82,19 +82,23 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                     {
                         foreach (var file in request.StoreImages)
                         {
-                            var imageFileValidationResult = ValidateFile(file);
+                            var imageFileValidationResult = StoreImageUtilities.ValidateFile(file);
                             if (imageFileValidationResult.ErrorOccured)
                             {
                                 _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
                                 ThrowError(imageFileValidationResult.ErrorMessage);
                             }
 
-                            var fileContent = GetFileContent(file);
+                            var imageId = Guid.NewGuid();
+                            var extension = Path.GetExtension(file?.FileName);
+                            var newFileName = $"{imageId}{extension}";
+
+                            var fileContent = StoreImageUtilities.GetFileContent(file!);
                             var imageFileUrl = await _storeProfileImagesStorage.Store(
                                 new InputFileStorageInformation
                                 {
-                                    Id = Guid.NewGuid(),
-                                    TenantGuid = (Guid) tenantGuid!,
+                                    Id = imageId,
+                                    TenantGuid = (Guid)tenantGuid!,
                                     FileName = file?.FileName,
                                     DateUploaded = _clock.Now
                                 }, fileContent);
@@ -104,7 +108,8 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                                 StoreId = newStore.Id,
                                 Url = imageFileUrl,
                                 ContentType = file?.ContentType,
-                                CreatedAt = _clock.Now
+                                CreatedAt = _clock.Now,
+                                Filename = newFileName
                             });
                         }
                     }
@@ -132,36 +137,4 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
         ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
     }
 
-    private (bool ErrorOccured, string ErrorMessage) ValidateFile(IFormFile file)
-    {
-        if (file == null)
-        {
-            return (ErrorOccured: true, ErrorMessage: "No file added");
-        }
-
-        var imageExtensions = new List<string>() { ".png", ".jpeg", ".jpg", ".svg" };
-        var fileIsImage = imageExtensions.Contains(Path.GetExtension(file.FileName), StringComparer.OrdinalIgnoreCase);
-
-        if (!fileIsImage)
-        {
-            return (ErrorOccured: true, ErrorMessage: "File is not an image");
-        }
-
-        var fileHaveContent = file.Length > 0;
-
-        if (!fileHaveContent)
-        {
-            return (ErrorOccured: true, ErrorMessage: "File have no content");
-        }
-
-
-        return (ErrorOccured: false, ErrorMessage: string.Empty);
-    }
-
-    private static byte[] GetFileContent(IFormFile file)
-    {
-        using var ms = new MemoryStream();
-        file.CopyTo(ms);
-        return ms.ToArray();
-    }
 }

@@ -4,7 +4,7 @@ using Laundro.Core.Data;
 using Laundro.Core.Features.Stores.ProfileStorage;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laundro.API.Features.Stores.GetStoreImages;
+namespace Laundro.API.Features.Stores.StoreImages.Get;
 
 internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentRequest>
 {
@@ -24,8 +24,8 @@ internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentReque
 
     public override void Configure()
     {
-        Get("get-image-content/{@TenantGuid}/{@StoreId}/{@ImageId}", x => new { x.tenantGuid, x.StoreId, x.ImageId });
-        Group<StoreGroup>();
+        Get("content/{@TenantGuid}/{@StoreId}/{@ImageId}", x => new { x.tenantGuid, x.StoreId, x.ImageId });
+        Group<StoreImagesGroup>();
         AllowAnonymous();
     }
 
@@ -33,8 +33,8 @@ internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentReque
     {
         // NOTE: This endpoint is a public endpoint, always return no content if exception thrown and image info and content not found
 
-        if (request.tenantGuid is null || 
-            request.ImageId == default || request.ImageId == 0 
+        if (request.tenantGuid is null ||
+            request.ImageId == default || request.ImageId == 0
             || request.StoreId == default || request.StoreId == 0)
         {
             _logger.LogError("Invalid arguments {@request}", request);
@@ -54,7 +54,7 @@ internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentReque
 
             var storesWithImage = await _dbContext.Stores
                 .Include(s => s.Images)
-                .FirstOrDefaultAsync(s => s.TenantId == tenant!.Id 
+                .FirstOrDefaultAsync(s => s.TenantId == tenant!.Id
                     && s.Id == request.StoreId
                     && s.Images != null && s.Images.Any(i => i.Id == request.ImageId));
 
@@ -64,7 +64,8 @@ internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentReque
                 var imageStream = await _storeProfileImagesStorage.GetStoreImage(imageInfo?.Url!, ct);
 
                 var fileName = "temp";
-                if (imageInfo?.Filename != null) {
+                if (imageInfo?.Filename != null)
+                {
                     fileName = imageInfo.Filename;
                 }
                 else if (imageInfo?.Url != null)
@@ -73,7 +74,8 @@ internal class GetStoreImageContentEndpoint : Endpoint<GetStoreImageContentReque
                     fileName = tmpFilename?.ElementAt(tmpFilename.Length - 1);
                 }
 
-                if (imageStream != null) {
+                if (imageStream != null)
+                {
                     await SendStreamAsync(
                         stream: imageStream,
                         fileName: fileName,

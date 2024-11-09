@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
-  Box,
   Button,
   Group,
   LoadingOverlay,
   Modal,
-  Space,
   Stepper,
   Text,
 } from '@mantine/core';
@@ -18,8 +16,7 @@ import { TenantEndpoints } from '@/constants/apiEndpoints';
 import { AppValidationError } from '@/infrastructure/exceptions';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Tenant } from '@/models';
-import { useAppDispatch } from '@/state/hooks';
-import { nameof } from '@/utilities';
+import { ExtractFormValidationErrorMessages, nameof } from '@/utilities';
 
 import { OnboardingFormValues } from './onboardingFormValues';
 import StoreDetailsInputs from './storeDetailsInputs';
@@ -33,37 +30,47 @@ interface OnboardingFormIndexProps {
 export default function OnboardingForm({
   isNeedToOnBoardTheUser,
 }: OnboardingFormIndexProps) {
-  var dispatch = useAppDispatch();
   const isMobile = useMediaQuery('(max-width: 50em)');
   const [activeForm, setActiveForm] = useState(0);
 
-  var notification = useAppNotification();
-  const { mutate, isError, isSuccess, error, isPending } = useAppMutation<{
+  // var notification = useAppNotification();
+  // var notificationRef = useRef(notification);
+
+  const { mutate, error, isPending } = useAppMutation<{
     tenant: Tenant;
   }>({
     path: TenantEndpoints.create,
     mutationKey: 'create-new-tenant',
-  });
-
-  useEffect(() => {
-    if (isError && error) {
-      var validationErrors = error?.response?.data as AppValidationError;
-      notification.notifyError(
-        validationErrors.statuCode?.toString(),
-        validationErrors.message
-      );
-    }
-  }, [isError, error, notification]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      notification.notifySuccess('Successfully submit onboarding form');
-
+    enableNotification: true,
+    successCallback: () => {
       setTimeout(() => {
         location.reload();
       }, 500);
-    }
-  }, [isSuccess, notification]);
+    },
+    successMessage: 'Successfully submit onboarding form',
+    failedCallback: () => {},
+    failedMessage: 'Unable to create your tenant',
+  });
+
+  // useEffect(() => {
+  //   if (isError && error) {
+  //     var validationErrors = error?.response?.data as AppValidationError;
+  //     notificationRef.current.notifyError(
+  //       validationErrors.statuCode?.toString(),
+  //       validationErrors.message
+  //     );
+  //   }
+  // }, [isError, error]);
+
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     notification.notifySuccess('Successfully submit onboarding form');
+
+  //     setTimeout(() => {
+  //       location.reload();
+  //     }, 500);
+  //   }
+  // }, [isSuccess, notification]);
 
   const form = useForm<OnboardingFormValues>({
     mode: 'uncontrolled',
@@ -148,16 +155,7 @@ export default function OnboardingForm({
   const prevStep = () =>
     setActiveForm((current) => (current > 0 ? current - 1 : current));
 
-  var validationErrors = (error?.response?.data as AppValidationError)?.errors;
-
-  var errorsToDisplay: { [property: string]: string | undefined } = {};
-  if (validationErrors) {
-    Object.keys(validationErrors).forEach((key) => {
-      var validationErr = validationErrors[key]?.at(0);
-      errorsToDisplay[key] = validationErr;
-    });
-    console.log(errorsToDisplay);
-  }
+  let errorsToDisplay = ExtractFormValidationErrorMessages(error);
 
   return (
     <>

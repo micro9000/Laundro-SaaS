@@ -1,3 +1,5 @@
+import { Config } from '@/infrastructure/config';
+
 export const RoleEndpoints = {
   getAll: '/role/get-all-roles',
 };
@@ -17,6 +19,20 @@ export const StoreEndpoints = {
   get: '/store/get-store',
   assignEmployee: '/store/assign-employee',
   unassignEmployee: '/store/unassign-employee',
+};
+
+export const StoreImageEndpoints = {
+  details: '/store/images/get-details',
+  delete: '/store/images/delete',
+  upload: '/store/images/upload',
+};
+export const GenerateStoreImageUrl = (
+  storeId?: number,
+  imageId?: number,
+  tenantGuid?: string
+) => {
+  const apiUrl = Config.ApiUrl;
+  return `${apiUrl}/store/images/content/${tenantGuid}/${storeId}/${imageId}`;
 };
 
 export const EmployeeEndpoints = {

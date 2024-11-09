@@ -24,6 +24,8 @@ import {
   IconBuildingStore,
   IconChevronRight,
   IconHome2,
+  IconList,
+  IconPlus,
   IconUserEdit,
 } from '@tabler/icons-react';
 
@@ -174,10 +176,30 @@ export function PortalShell({
               defaultOpened
             >
               <NavLink
+                label="Create"
+                href="/portal/stores/create"
+                component={Link}
+                active={pathname === '/portal/stores/create'}
+                leftSection={
+                  <IconPlus
+                    size="0.8rem"
+                    stroke={1.5}
+                    className="mantine-rotate-rtl"
+                  />
+                }
+              />
+              <NavLink
                 label="All"
                 href="/portal/stores"
                 component={Link}
                 active={pathname === '/portal/stores'}
+                leftSection={
+                  <IconList
+                    size="0.8rem"
+                    stroke={1.5}
+                    className="mantine-rotate-rtl"
+                  />
+                }
               />
               {stores?.map((s) => (
                 <NavLink
@@ -188,6 +210,13 @@ export function PortalShell({
                   }}
                   component={Link}
                   active={pathname === `/portal/stores/${s.obfuscatedId}`}
+                  leftSection={
+                    <IconHome2
+                      size="0.8rem"
+                      stroke={1.5}
+                      className="mantine-rotate-rtl"
+                    />
+                  }
                 />
               ))}
             </NavLink>

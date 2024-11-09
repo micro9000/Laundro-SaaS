@@ -29,6 +29,7 @@ import ReviewsSection from './sections/ReviewsSection';
 import EmployeesSection from './sections/employeesSection';
 import GallerySection from './sections/gallerySection';
 import StoreDetailsSection from './sections/storeDetailsSection';
+import { getStoreDetailsById } from './sharedApiRequestKeys';
 
 export default function Page({
   params,
@@ -44,7 +45,7 @@ export default function Page({
       ObfuscatedStoreId: obfuscatedId,
     },
     queryOptions: {
-      queryKey: ['get-store-details-by-id', { storeId: obfuscatedId }],
+      queryKey: [getStoreDetailsById, { storeId: obfuscatedId }],
       enabled: obfuscatedId !== null,
     },
   });

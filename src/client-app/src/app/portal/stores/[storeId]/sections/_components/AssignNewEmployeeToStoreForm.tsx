@@ -28,6 +28,8 @@ import { Role, Store, User } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 import { nameof } from '@/utilities';
 
+import { getStoreDetailsById } from '../../sharedApiRequestKeys';
+
 interface AssignNewEmployeeFormValues {
   userId: number;
   roleId: number;
@@ -117,42 +119,47 @@ export default function AssignNewEmployeeToStoreForm({
     }
   }, [getRolesData, getRolesIsLoading]);
 
-  const {
-    mutate: assignEmployeeMutate,
-    isError: isAssignEmployeeError,
-    isSuccess: isAssignEmployeeSuccess,
-    error: assignEmployeeError,
-    isPending: isAssignEmployeePending,
-  } = useAppMutation({
-    path: StoreEndpoints.assignEmployee,
-    mutationKey: 'assign-employee-to-store',
-  });
+  const { mutate: assignEmployeeMutate, isPending: isAssignEmployeePending } =
+    useAppMutation({
+      path: StoreEndpoints.assignEmployee,
+      mutationKey: 'assign-employee-to-store',
+      enableNotification: true,
+      successCallback: () => {
+        onSuccess();
+        queryClientRef.current.invalidateQueries({
+          queryKey: [getStoreDetailsById],
+        });
+      },
+      successMessage: 'Successfully assign new employee',
+      failedCallback: () => {},
+      failedMessage: 'Unable to assign employee',
+    });
 
-  useEffect(() => {
-    if (isAssignEmployeeSuccess) {
-      onSuccess();
-      notificationRef.current.notifySuccess('Successfully assign new employee');
-      queryClientRef.current.invalidateQueries({
-        queryKey: ['get-store-details-by-id'],
-      });
-    }
-  }, [isAssignEmployeeSuccess, onSuccess]);
+  // useEffect(() => {
+  //   if (isAssignEmployeeSuccess) {
+  //     onSuccess();
+  //     notificationRef.current.notifySuccess('Successfully assign new employee');
+  //     queryClientRef.current.invalidateQueries({
+  //       queryKey: [getStoreDetailsById],
+  //     });
+  //   }
+  // }, [isAssignEmployeeSuccess, onSuccess]);
 
-  useEffect(() => {
-    if (
-      isAssignEmployeeError &&
-      assignEmployeeError &&
-      assignEmployeeError instanceof AxiosError
-    ) {
-      var generalError = (assignEmployeeError as AxiosError).response
-        ?.data as AppGeneralError;
+  // useEffect(() => {
+  //   if (
+  //     isAssignEmployeeError &&
+  //     assignEmployeeError &&
+  //     assignEmployeeError instanceof AxiosError
+  //   ) {
+  //     var generalError = (assignEmployeeError as AxiosError).response
+  //       ?.data as AppGeneralError;
 
-      notificationRef.current.notifyError(
-        'Unable to assign employee',
-        generalError.errors?.generalErrors?.join(',')
-      );
-    }
-  }, [isAssignEmployeeError, assignEmployeeError]);
+  //     notificationRef.current.notifyError(
+  //       'Unable to assign employee',
+  //       generalError.errors?.generalErrors?.join(',')
+  //     );
+  //   }
+  // }, [isAssignEmployeeError, assignEmployeeError]);
 
   const form = useForm<AssignNewEmployeeFormValues>({
     mode: 'uncontrolled',

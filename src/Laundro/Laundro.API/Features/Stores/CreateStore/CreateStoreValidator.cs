@@ -13,5 +13,9 @@ internal class CreateStoreValidator : Validator<CreateStoreRequest>
         RuleFor(x => x.Location)
             .NotEmpty().WithMessage("Store Location is required")
             .MinimumLength(3).WithMessage("Your Store Location is too short!");
+
+        RuleFor(x => x.StoreImages)
+            .Must(imgs => imgs != null && imgs.Count <= 4)
+            .WithMessage("Maximum store images is 4");
     }
 }

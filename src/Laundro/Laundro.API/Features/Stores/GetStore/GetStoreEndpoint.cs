@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using Laundro.API.Authorization;
-using Laundro.API.Features.Stores.GetStoreImages;
 using Laundro.API.Features.Stores.GetStores;
 using Laundro.Core.Data;
 using Laundro.Core.Domain.Entities;
