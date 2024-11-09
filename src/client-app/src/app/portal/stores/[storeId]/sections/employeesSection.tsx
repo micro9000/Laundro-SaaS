@@ -38,40 +38,49 @@ export default function EmployeesSection({ store }: { store?: Store | null }) {
 
   const {
     mutate: unassignEmployeeMutate,
-    isError: isUnassignEmployeeError,
-    isSuccess: isUnassignEmployeeSuccess,
-    error: unAssignEmployeeError,
-    isPending: isUnassignEmployeePending,
+    // isError: isUnassignEmployeeError,
+    // isSuccess: isUnassignEmployeeSuccess,
+    // error: unAssignEmployeeError,
+    // isPending: isUnassignEmployeePending,
   } = useAppMutation({
     path: StoreEndpoints.unassignEmployee,
     mutationKey: 'un-assign-employee-to-store',
     httpVerb: 'delete',
-  });
-
-  useEffect(() => {
-    if (isUnassignEmployeeSuccess && !isUnassignEmployeePending) {
-      notificationRef?.current.notifySuccess('Successfully un-assign employee');
+    enableNotification: true,
+    successCallback: () => {
       queryClientRef.current.invalidateQueries({
         queryKey: [getStoreDetailsById],
       });
-    }
-  }, [isUnassignEmployeeSuccess, isUnassignEmployeePending]);
+    },
+    successMessage: 'Successfully un-assign employee',
+    failedCallback: () => {},
+    failedMessage: 'Unable to un-assign employee',
+  });
 
-  useEffect(() => {
-    if (
-      isUnassignEmployeeError &&
-      unAssignEmployeeError &&
-      unAssignEmployeeError instanceof AxiosError
-    ) {
-      var generalError = (unAssignEmployeeError as AxiosError).response
-        ?.data as AppGeneralError;
+  // useEffect(() => {
+  //   if (isUnassignEmployeeSuccess && !isUnassignEmployeePending) {
+  //     notificationRef?.current.notifySuccess('Successfully un-assign employee');
+  //     queryClientRef.current.invalidateQueries({
+  //       queryKey: [getStoreDetailsById],
+  //     });
+  //   }
+  // }, [isUnassignEmployeeSuccess, isUnassignEmployeePending]);
 
-      notificationRef.current.notifyError(
-        'Unable to un-assign employee',
-        generalError.errors?.generalErrors?.join(',')
-      );
-    }
-  }, [isUnassignEmployeeError, unAssignEmployeeError]);
+  // useEffect(() => {
+  //   if (
+  //     isUnassignEmployeeError &&
+  //     unAssignEmployeeError &&
+  //     unAssignEmployeeError instanceof AxiosError
+  //   ) {
+  //     var generalError = (unAssignEmployeeError as AxiosError).response
+  //       ?.data as AppGeneralError;
+
+  //     notificationRef.current.notifyError(
+  //       'Unable to un-assign employee',
+  //       generalError.errors?.generalErrors?.join(',')
+  //     );
+  //   }
+  // }, [isUnassignEmployeeError, unAssignEmployeeError]);
 
   const onConfirmUnassignEmployee = useCallback(
     (userId?: number, roleId?: number) => {

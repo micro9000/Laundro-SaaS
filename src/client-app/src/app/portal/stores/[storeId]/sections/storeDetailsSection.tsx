@@ -10,11 +10,9 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 
 import { StoreEndpoints } from '@/constants/apiEndpoints';
-import { AppGeneralError } from '@/infrastructure/exceptions';
-import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
+import { useAppMutation } from '@/infrastructure/hooks';
 import { Store } from '@/models';
 import { nameof } from '@/utilities';
 
@@ -31,8 +29,6 @@ export default function StoreDetailsSection({
 }: {
   store?: Store | null;
 }) {
-  const notification = useAppNotification();
-  const notificationRef = useRef(notification); // to resolve React Hook useEffect has a missing dependency:
   const queryClient = useQueryClient();
   const queryClientRef = useRef(queryClient);
 
@@ -69,34 +65,43 @@ export default function StoreDetailsSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store]);
 
-  const { mutate, isError, isSuccess, error, isPending } = useAppMutation({
+  const { mutate } = useAppMutation({
     path: StoreEndpoints.update,
     mutationKey: 'update-store-details',
     httpVerb: 'put',
-  });
-
-  useEffect(() => {
-    if (isSuccess && !isPending) {
-      notificationRef.current.notifySuccess(
-        'Store details has successful updated'
-      );
+    enableNotification: true,
+    successCallback: () => {
       queryClientRef.current.invalidateQueries({
         queryKey: [getStoreDetailsById],
       });
-    }
-  }, [isSuccess, isPending]);
+    },
+    successMessage: 'Store details has successful updated',
+    failedCallback: () => {},
+    failedMessage: 'Unable to update store',
+  });
 
-  useEffect(() => {
-    if (isError && error && error instanceof AxiosError) {
-      var generalError = (error as AxiosError).response
-        ?.data as AppGeneralError;
+  // useEffect(() => {
+  //   if (isSuccess && !isPending) {
+  //     notificationRef.current.notifySuccess(
+  //       'Store details has successful updated'
+  //     );
+  //     queryClientRef.current.invalidateQueries({
+  //       queryKey: [getStoreDetailsById],
+  //     });
+  //   }
+  // }, [isSuccess, isPending]);
 
-      notificationRef.current.notifyError(
-        'Unable to update store',
-        generalError.errors?.generalErrors?.join(',')
-      );
-    }
-  }, [isError, error]);
+  // useEffect(() => {
+  //   if (isError && error && error instanceof AxiosError) {
+  //     var generalError = (error as AxiosError).response
+  //       ?.data as AppGeneralError;
+
+  //     notificationRef.current.notifyError(
+  //       'Unable to update store',
+  //       generalError.errors?.generalErrors?.join(',')
+  //     );
+  //   }
+  // }, [isError, error]);
 
   const onFormSubmit = (values: UpdateStoreDetailsFormValues) => {
     let formData = new FormData();

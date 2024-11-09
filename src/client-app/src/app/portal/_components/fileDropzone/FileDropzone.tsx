@@ -2,7 +2,17 @@ import { Group, Text, rem } from '@mantine/core';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
-export function CreateNewStoreFileDropzone(props: Partial<DropzoneProps>) {
+interface FileDropzoneParams {
+  dropzoneProps: Partial<DropzoneProps>;
+  title: string;
+  description: string;
+}
+
+export function FileDropzone({
+  dropzoneProps,
+  title,
+  description,
+}: FileDropzoneParams) {
   return (
     <>
       <Dropzone
@@ -10,7 +20,7 @@ export function CreateNewStoreFileDropzone(props: Partial<DropzoneProps>) {
         onReject={(files) => console.log('rejected files', files)}
         maxSize={5 * 1024 ** 2}
         accept={IMAGE_MIME_TYPE}
-        {...props}
+        {...dropzoneProps}
       >
         <Group
           justify="center"
@@ -51,10 +61,10 @@ export function CreateNewStoreFileDropzone(props: Partial<DropzoneProps>) {
 
           <div>
             <Text size="xl" inline>
-              Drag images here or click to select files
+              {title}
             </Text>
             <Text size="sm" c="dimmed" inline mt={7}>
-              Attach as at least 4 images, each file should not exceed 5mb
+              {description}
             </Text>
           </div>
         </Group>

@@ -11,23 +11,22 @@ import {
   Space,
   Text,
 } from '@mantine/core';
+import { FileRejection } from '@mantine/dropzone';
+import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { isArray } from 'lodash';
 
+import { FileDropzone } from '@/app/portal/_components/fileDropzone/FileDropzone';
 import {
   GenerateStoreImageUrl,
   StoreImageEndpoints,
 } from '@/constants/apiEndpoints';
 import { selectUserTenantGuid } from '@/features/userContext/userContextSlice';
-import { AppGeneralError } from '@/infrastructure/exceptions';
 import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store, StoreImage } from '@/models';
 import { useAppSelector } from '@/state/hooks';
-import { ExtractErrorMessages } from '@/utilities';
 
 import { maximumStoreImages } from '../../storeConfigs';
 import { getStoreDetailsById } from '../sharedApiRequestKeys';
@@ -38,6 +37,7 @@ export default function GallerySection({ store }: { store?: Store | null }) {
   const notificationRef = useRef(notification); // to resolve React Hook useEffect has a missing dependency:
   const queryClient = useQueryClient();
   const queryClientRef = useRef(queryClient);
+  const [storeImages, setStoreImages] = useState<File[] | null>(null);
 
   const [images, setImages] = useState<StoreImage[]>();
   const [opened, { open, close }] = useDisclosure(false);
@@ -46,42 +46,34 @@ export default function GallerySection({ store }: { store?: Store | null }) {
     setImages(store?.images);
   }, [store, store?.images.length]);
 
-  const {
-    mutate: deleteStoreImageMutate,
-    isError: isDeleteStoreImageError,
-    isSuccess: isDeleteStoreImageSuccess,
-    error: deleteStoreImageError,
-    isPending: isDeleteStoreImagePending,
-  } = useAppMutation({
+  const { mutate: deleteStoreImageMutate } = useAppMutation({
     path: StoreImageEndpoints.delete,
     mutationKey: 'delete-store-image',
     httpVerb: 'delete',
-  });
-
-  useEffect(() => {
-    if (isDeleteStoreImageSuccess && !isDeleteStoreImagePending) {
-      notificationRef?.current.notifySuccess('Successfully deleted an image');
+    enableNotification: true,
+    successMessage: 'Successfully deleted an image',
+    successCallback: () => {
       queryClientRef.current.invalidateQueries({
         queryKey: [getStoreDetailsById],
       });
-    }
-  }, [isDeleteStoreImageSuccess, isDeleteStoreImagePending]);
+    },
+    failedMessage: 'Unable to delete an image',
+    failedCallback: () => {},
+  });
 
-  useEffect(() => {
-    if (
-      isDeleteStoreImageError &&
-      deleteStoreImageError &&
-      deleteStoreImageError instanceof AxiosError
-    ) {
-      var errorsToDisplay = ExtractErrorMessages(deleteStoreImageError);
-
-      if (isArray(errorsToDisplay)) {
-        errorsToDisplay.forEach((err) => {
-          notificationRef.current.notifyError('Unable to delete an image', err);
-        });
-      }
-    }
-  }, [isDeleteStoreImageError, deleteStoreImageError]);
+  const { mutate: uploadImagesMutate } = useAppMutation({
+    path: StoreImageEndpoints.upload,
+    mutationKey: 'upload-store-image',
+    enableNotification: true,
+    successMessage: 'Successfully uploaded new image(s)',
+    successCallback: () => {
+      queryClientRef.current.invalidateQueries({
+        queryKey: [getStoreDetailsById],
+      });
+    },
+    failedMessage: 'Unable to upload an image',
+    failedCallback: () => {},
+  });
 
   const onConfirmDeleteImage = useCallback(
     (imageId?: number) => {
@@ -111,6 +103,45 @@ export default function GallerySection({ store }: { store?: Store | null }) {
     [onConfirmDeleteImage]
   );
 
+  const uploadImages = (images: File[]) => {
+    setStoreImages(images);
+  };
+
+  const onRejectFiles = useCallback((images: FileRejection[]) => {
+    var invalidFiles = images.map((i) => i.file.name).join(', ');
+    var errors = images.map((i) => i.errors).flat();
+    notificationRef.current.notifyWarning(`Invalid files: [${invalidFiles}]`);
+    errors.forEach((e) => {
+      notificationRef.current.notifyError(e.code, e.message);
+    });
+  }, []);
+
+  const previews = storeImages?.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        key={index}
+        src={imageUrl}
+        onLoad={() => URL.revokeObjectURL(imageUrl)}
+      />
+    );
+  });
+
+  const form = useForm({
+    mode: 'uncontrolled',
+  });
+
+  const onFormSubmit = useCallback(() => {
+    var formData = new FormData();
+
+    if (storeImages !== null && storeImages.length > 0) {
+      storeImages.forEach((f) => formData.append('images', f));
+    }
+    formData.append('storeId', store?.id?.toString() ?? '0');
+
+    uploadImagesMutate(formData);
+  }, [storeImages, store?.id]);
+
   return (
     <>
       <Container size="xl">
@@ -125,7 +156,32 @@ export default function GallerySection({ store }: { store?: Store | null }) {
           title="Uplaod New Store Image"
           position="right"
         >
-          <h1>HI</h1>
+          <form onSubmit={form.onSubmit(onFormSubmit)}>
+            <FileDropzone
+              dropzoneProps={{
+                onDrop: (files) => uploadImages(files),
+                onReject: onRejectFiles,
+                maxFiles: maximumStoreImages,
+              }}
+              title="Drag images here or click to select files"
+              description="Attach as at least 4 images, each file should not exceed 5mb"
+            />
+            <SimpleGrid
+              cols={{ base: 1, sm: 4 }}
+              mt={previews && previews.length > 0 ? 'xl' : 0}
+            >
+              {previews}
+            </SimpleGrid>
+
+            <Group justify="right" mt="md">
+              <Button
+                type="submit"
+                disabled={storeImages === null || storeImages?.length === 0}
+              >
+                Submit
+              </Button>
+            </Group>
+          </form>
         </Drawer>
 
         <Space h="lg" />

@@ -24,37 +24,46 @@ import { nameof } from '@/utilities';
 import { RegisterNewEmployeeFormValues } from './registerNewEmployeeFormValues';
 
 export default function Page() {
-  const notification = useAppNotification();
+  // const notification = useAppNotification();
   const router = useRouter();
 
-  const { mutate, isError, isSuccess, error, isPending } = useAppMutation<{
+  const { mutate, isPending } = useAppMutation<{
     employee: User;
   }>({
     path: EmployeeEndpoints.register,
     mutationKey: 'register-new-employee',
-  });
-
-  useEffect(() => {
-    if (isError && error && error instanceof AxiosError) {
-      var generalError = (error as AxiosError).response
-        ?.data as AppGeneralError;
-
-      notification.notifyError(
-        'Unable to save employee details',
-        generalError.errors?.generalErrors?.join(',')
-      );
-    }
-  }, [isError, error, notification]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      notification.notifySuccess('Successfully register new employee');
-
+    enableNotification: true,
+    failedCallback: () => {},
+    failedMessage: 'Unable to save employee details',
+    successCallback: () => {
       setTimeout(() => {
         router.push('/portal/employees');
       }, 500);
-    }
-  }, [isSuccess, notification, router]);
+    },
+    successMessage: 'Successfully register new employee',
+  });
+
+  // useEffect(() => {
+  //   if (isError && error && error instanceof AxiosError) {
+  //     var generalError = (error as AxiosError).response
+  //       ?.data as AppGeneralError;
+
+  //     notification.notifyError(
+  //       'Unable to save employee details',
+  //       generalError.errors?.generalErrors?.join(',')
+  //     );
+  //   }
+  // }, [isError, error, notification]);
+
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     notification.notifySuccess('Successfully register new employee');
+
+  //     setTimeout(() => {
+  //       router.push('/portal/employees');
+  //     }, 500);
+  //   }
+  // }, [isSuccess, notification, router]);
 
   const form = useForm<RegisterNewEmployeeFormValues>({
     mode: 'uncontrolled',

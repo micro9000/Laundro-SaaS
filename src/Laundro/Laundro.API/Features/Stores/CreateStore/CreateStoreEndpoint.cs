@@ -82,7 +82,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                     {
                         foreach (var file in request.StoreImages)
                         {
-                            var imageFileValidationResult = ValidateFile(file);
+                            var imageFileValidationResult = StoreImageUtilities.ValidateFile(file);
                             if (imageFileValidationResult.ErrorOccured)
                             {
                                 _logger.LogError("Unable to create new store due to {ErrorMessage}", imageFileValidationResult.ErrorMessage);
@@ -93,7 +93,7 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
                             var extension = Path.GetExtension(file?.FileName);
                             var newFileName = $"{imageId}{extension}";
 
-                            var fileContent = GetFileContent(file!);
+                            var fileContent = StoreImageUtilities.GetFileContent(file!);
                             var imageFileUrl = await _storeProfileImagesStorage.Store(
                                 new InputFileStorageInformation
                                 {
@@ -137,36 +137,4 @@ internal class CreateStoreEndpoint : Endpoint<CreateStoreRequest, CreateStoreRes
         ThrowIfAnyErrors();// If there are errors, execution shouldn't go beyond this point
     }
 
-    private (bool ErrorOccured, string ErrorMessage) ValidateFile(IFormFile file)
-    {
-        if (file == null)
-        {
-            return (ErrorOccured: true, ErrorMessage: "No file added");
-        }
-
-        var imageExtensions = new List<string>() { ".png", ".jpeg", ".jpg", ".svg" };
-        var fileIsImage = imageExtensions.Contains(Path.GetExtension(file.FileName), StringComparer.OrdinalIgnoreCase);
-
-        if (!fileIsImage)
-        {
-            return (ErrorOccured: true, ErrorMessage: "File is not an image");
-        }
-
-        var fileHaveContent = file.Length > 0;
-
-        if (!fileHaveContent)
-        {
-            return (ErrorOccured: true, ErrorMessage: "File have no content");
-        }
-
-
-        return (ErrorOccured: false, ErrorMessage: string.Empty);
-    }
-
-    private static byte[] GetFileContent(IFormFile file)
-    {
-        using var ms = new MemoryStream();
-        file.CopyTo(ms);
-        return ms.ToArray();
-    }
 }

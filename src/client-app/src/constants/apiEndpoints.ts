@@ -24,6 +24,7 @@ export const StoreEndpoints = {
 export const StoreImageEndpoints = {
   details: '/store/images/get-details',
   delete: '/store/images/delete',
+  upload: '/store/images/upload',
 };
 export const GenerateStoreImageUrl = (
   storeId?: number,

@@ -28,8 +28,8 @@ import {
 import { Store } from '@/models';
 import { ExtractErrorMessages, nameof } from '@/utilities';
 
+import { FileDropzone } from '../../_components/fileDropzone/FileDropzone';
 import { maximumStoreImages } from '../storeConfigs';
-import { CreateNewStoreFileDropzone } from './createNewStoreFileDropzone';
 import { CreateNewStoreFormValues } from './createNewStoreFormValues';
 
 export default function Page() {
@@ -155,10 +155,14 @@ export default function Page() {
               )}
             />
             <Space h="lg" />
-            <CreateNewStoreFileDropzone
-              onDrop={(files) => uploadImages(files)}
-              onReject={onRejectFiles}
-              // maxFiles={maximumStoreImages}
+            <FileDropzone
+              dropzoneProps={{
+                onDrop: (files) => uploadImages(files),
+                onReject: onRejectFiles,
+                maxFiles: maximumStoreImages,
+              }}
+              title="Drag images here or click to select files"
+              description="Attach as at least 4 images, each file should not exceed 5mb"
             />
             <SimpleGrid
               cols={{ base: 1, sm: 4 }}

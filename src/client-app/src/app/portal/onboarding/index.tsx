@@ -33,35 +33,44 @@ export default function OnboardingForm({
   const isMobile = useMediaQuery('(max-width: 50em)');
   const [activeForm, setActiveForm] = useState(0);
 
-  var notification = useAppNotification();
-  var notificationRef = useRef(notification);
+  // var notification = useAppNotification();
+  // var notificationRef = useRef(notification);
 
-  const { mutate, isError, isSuccess, error, isPending } = useAppMutation<{
+  const { mutate, error, isPending } = useAppMutation<{
     tenant: Tenant;
   }>({
     path: TenantEndpoints.create,
     mutationKey: 'create-new-tenant',
-  });
-
-  useEffect(() => {
-    if (isError && error) {
-      var validationErrors = error?.response?.data as AppValidationError;
-      notificationRef.current.notifyError(
-        validationErrors.statuCode?.toString(),
-        validationErrors.message
-      );
-    }
-  }, [isError, error]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      notification.notifySuccess('Successfully submit onboarding form');
-
+    enableNotification: true,
+    successCallback: () => {
       setTimeout(() => {
         location.reload();
       }, 500);
-    }
-  }, [isSuccess, notification]);
+    },
+    successMessage: 'Successfully submit onboarding form',
+    failedCallback: () => {},
+    failedMessage: 'Unable to create your tenant',
+  });
+
+  // useEffect(() => {
+  //   if (isError && error) {
+  //     var validationErrors = error?.response?.data as AppValidationError;
+  //     notificationRef.current.notifyError(
+  //       validationErrors.statuCode?.toString(),
+  //       validationErrors.message
+  //     );
+  //   }
+  // }, [isError, error]);
+
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     notification.notifySuccess('Successfully submit onboarding form');
+
+  //     setTimeout(() => {
+  //       location.reload();
+  //     }, 500);
+  //   }
+  // }, [isSuccess, notification]);
 
   const form = useForm<OnboardingFormValues>({
     mode: 'uncontrolled',
