@@ -44,11 +44,6 @@ internal class UploadStoreImagesEndpoint : Endpoint<UploadStoreImagesRequest>
 
     public override async Task HandleAsync(UploadStoreImagesRequest request, CancellationToken ct)
     {
-        if (request.Images is null || !request.Images.Any())
-        {
-            ThrowError("Invalid Request: No uploaded file/image");
-        }
-
         var currentUser = _currentUserAccessor.GetCurrentUser();
 
         var tenantId = currentUser?.Tenant?.Id;
@@ -69,15 +64,17 @@ internal class UploadStoreImagesEndpoint : Endpoint<UploadStoreImagesRequest>
             ThrowError("Invalid store id");
         }
 
-        var existingActiveImages = await _dbContext.StoreImages.Where(img => img.StoreId == store.Id).ToListAsync();
-        if (existingActiveImages.Count() >= 4)
-        {
-            ThrowError("A store can only have a maximum of 4 images");
-        }
+        int existingActiveImagesCount = await _dbContext.StoreImages.Where(img => img.StoreId == store.Id).CountAsync();
 
         if (request.Images is not null && request.Images.Any())
         {
-            foreach(var file in request.Images)
+            existingActiveImagesCount += request.Images?.Count() ?? 0;
+            if (existingActiveImagesCount > 4)
+            {
+                ThrowError("A store can only have a maximum of 4 images");
+            }
+
+            foreach (var file in request.Images!)
             {
                 var imageFileValidationResult = StoreImageUtilities.ValidateFile(file);
                 if (imageFileValidationResult.ErrorOccured)
@@ -110,16 +107,14 @@ internal class UploadStoreImagesEndpoint : Endpoint<UploadStoreImagesRequest>
                 };
                 _dbContext.StoreImages.Add(image);
 
-                await _dbContext.SaveChangesAsync();
-                await SendCreatedAtAsync<GetStoreImageContentEndpoint>(new GetStoreImageContentRequest
-                {
-                    ImageId = image.Id,
-                    StoreId = store.Id,
-                    tenantGuid = tenantGuid.ToString()
-                }, "Uploaded");
             }
+
+            await _dbContext.SaveChangesAsync();
+            await SendOkAsync();
+            return;
         }
 
+        await SendStringAsync("No uploaded image");
     }
 }
 
@@ -134,7 +129,7 @@ internal class UploadStoreImagesValidator : Validator<UploadStoreImagesRequest>
     public UploadStoreImagesValidator()
     {
         RuleFor(x => x.Images)
-            .Must(imgs => imgs == null || imgs.Count == 0)
+            .NotNull()
             .WithMessage("Upload at least 1 image");
 
         RuleFor(x => x.Images)

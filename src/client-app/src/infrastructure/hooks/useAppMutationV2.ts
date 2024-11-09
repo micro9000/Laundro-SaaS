@@ -70,15 +70,6 @@ const useAppMutation = <TData extends {}, TError = unknown>(
     mutationFn: async (formData: FormData) => {
       var accessToken = null;
 
-      let defaultAxiosConfig: AxiosRequestConfig<any> | undefined = {
-        data: formData,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json; charset=utf8',
-        },
-        params: params,
-      };
-
       try {
         var tokenResponse = await instance.acquireTokenSilent(request);
         accessToken = tokenResponse.accessToken;
@@ -88,6 +79,15 @@ const useAppMutation = <TData extends {}, TError = unknown>(
           accessToken = tokenResponse.accessToken;
         }
       }
+
+      let defaultAxiosConfig: AxiosRequestConfig<any> | undefined = {
+        data: formData,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json; charset=utf8',
+        },
+        params: params,
+      };
 
       if (httpVerb === 'delete') {
         const response = await axios.delete<TData>(

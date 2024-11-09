@@ -21,14 +21,12 @@ import { useForm } from '@mantine/form';
 import { isArray, isObject } from 'lodash';
 
 import { StoreEndpoints } from '@/constants/apiEndpoints';
-import {
-  useAppMultipartMutation,
-  useAppNotification,
-} from '@/infrastructure/hooks';
+import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store } from '@/models';
 import { ExtractErrorMessages, nameof } from '@/utilities';
 
 import { FileDropzone } from '../../_components/fileDropzone/FileDropzone';
+import ImagePreviews from '../_components/imagePreviews';
 import { maximumStoreImages } from '../storeConfigs';
 import { CreateNewStoreFormValues } from './createNewStoreFormValues';
 
@@ -39,38 +37,47 @@ export default function Page() {
   const notificationRef = useRef(notification);
   const [storeImages, setStoreImages] = useState<File[] | null>(null);
 
-  const { mutate, isError, isSuccess, error, isPending } =
-    useAppMultipartMutation<{
-      store: Store;
-    }>({
-      path: StoreEndpoints.create,
-      mutationKey: 'create-new-store',
-    });
-
-  useEffect(() => {
-    if (isError) {
-      var errorsToDisplay = ExtractErrorMessages(error);
-
-      if (isArray(errorsToDisplay)) {
-        errorsToDisplay.forEach((err) => {
-          notificationRef.current.notifyError(
-            'Unable to save new store details',
-            err
-          );
-        });
-      }
-    }
-  }, [isError, error]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      notificationRef.current.notifySuccess('Successfully created new store');
-
+  const { mutate, isPending } = useAppMutation<{
+    store: Store;
+  }>({
+    path: StoreEndpoints.create,
+    mutationKey: 'create-new-store',
+    enableMultipartForm: true,
+    enableNotification: true,
+    successCallback: () => {
       setTimeout(() => {
         routerRef.current.push('/portal/stores');
       }, 500);
-    }
-  }, [isSuccess]);
+    },
+    successMessage: 'Successfully created new store',
+    failedCallback: () => {},
+    failedMessage: 'Unable to save new store details',
+  });
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     var errorsToDisplay = ExtractErrorMessages(error);
+
+  //     if (isArray(errorsToDisplay)) {
+  //       errorsToDisplay.forEach((err) => {
+  //         notificationRef.current.notifyError(
+  //           'Unable to save new store details',
+  //           err
+  //         );
+  //       });
+  //     }
+  //   }
+  // }, [isError, error]);
+
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     notificationRef.current.notifySuccess('Successfully created new store');
+
+  //     setTimeout(() => {
+  //       routerRef.current.push('/portal/stores');
+  //     }, 500);
+  //   }
+  // }, [isSuccess]);
 
   const uploadImages = (images: File[]) => {
     setStoreImages(images);
@@ -116,17 +123,6 @@ export default function Page() {
     [storeImages]
   );
 
-  const previews = storeImages?.map((file, index) => {
-    const imageUrl = URL.createObjectURL(file);
-    return (
-      <Image
-        key={index}
-        src={imageUrl}
-        onLoad={() => URL.revokeObjectURL(imageUrl)}
-      />
-    );
-  });
-
   return (
     <>
       <LoadingOverlay
@@ -164,12 +160,12 @@ export default function Page() {
               title="Drag images here or click to select files"
               description="Attach as at least 4 images, each file should not exceed 5mb"
             />
-            <SimpleGrid
-              cols={{ base: 1, sm: 4 }}
-              mt={previews && previews.length > 0 ? 'xl' : 0}
-            >
-              {previews}
-            </SimpleGrid>
+            <ImagePreviews
+              images={storeImages}
+              removeImage={(file: File) => {
+                setStoreImages(storeImages?.filter((f) => f !== file) ?? null);
+              }}
+            />
 
             <Group justify="right" mt="md">
               <Button

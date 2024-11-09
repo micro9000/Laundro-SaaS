@@ -125,6 +125,7 @@ export default function AssignNewEmployeeToStoreForm({
       mutationKey: 'assign-employee-to-store',
       enableNotification: true,
       successCallback: () => {
+        onSuccess();
         queryClientRef.current.invalidateQueries({
           queryKey: [getStoreDetailsById],
         });

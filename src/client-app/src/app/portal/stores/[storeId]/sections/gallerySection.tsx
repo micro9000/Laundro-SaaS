@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
+  Box,
   Button,
   Card,
+  CloseButton,
   Container,
   Drawer,
   Group,
   Image,
+  Indicator,
   SimpleGrid,
   Space,
   Text,
@@ -28,6 +31,7 @@ import { useAppMutation, useAppNotification } from '@/infrastructure/hooks';
 import { Store, StoreImage } from '@/models';
 import { useAppSelector } from '@/state/hooks';
 
+import ImagePreviews from '../../_components/imagePreviews';
 import { maximumStoreImages } from '../../storeConfigs';
 import { getStoreDetailsById } from '../sharedApiRequestKeys';
 
@@ -64,12 +68,15 @@ export default function GallerySection({ store }: { store?: Store | null }) {
   const { mutate: uploadImagesMutate } = useAppMutation({
     path: StoreImageEndpoints.upload,
     mutationKey: 'upload-store-image',
+    enableMultipartForm: true,
     enableNotification: true,
     successMessage: 'Successfully uploaded new image(s)',
     successCallback: () => {
+      close();
       queryClientRef.current.invalidateQueries({
         queryKey: [getStoreDetailsById],
       });
+      setStoreImages([]);
     },
     failedMessage: 'Unable to upload an image',
     failedCallback: () => {},
@@ -116,17 +123,6 @@ export default function GallerySection({ store }: { store?: Store | null }) {
     });
   }, []);
 
-  const previews = storeImages?.map((file, index) => {
-    const imageUrl = URL.createObjectURL(file);
-    return (
-      <Image
-        key={index}
-        src={imageUrl}
-        onLoad={() => URL.revokeObjectURL(imageUrl)}
-      />
-    );
-  });
-
   const form = useForm({
     mode: 'uncontrolled',
   });
@@ -166,12 +162,12 @@ export default function GallerySection({ store }: { store?: Store | null }) {
               title="Drag images here or click to select files"
               description="Attach as at least 4 images, each file should not exceed 5mb"
             />
-            <SimpleGrid
-              cols={{ base: 1, sm: 4 }}
-              mt={previews && previews.length > 0 ? 'xl' : 0}
-            >
-              {previews}
-            </SimpleGrid>
+            <ImagePreviews
+              images={storeImages}
+              removeImage={(file: File) => {
+                setStoreImages(storeImages?.filter((f) => f !== file) ?? null);
+              }}
+            />
 
             <Group justify="right" mt="md">
               <Button
@@ -198,7 +194,7 @@ export default function GallerySection({ store }: { store?: Store | null }) {
         <Space h="md" />
 
         <SimpleGrid cols={4}>
-          {images && images?.length > 1
+          {images && images?.length > 0
             ? images.map((image) => (
                 <Card
                   key={image?.id}
