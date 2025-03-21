@@ -26,3 +26,7 @@ Laundro is a powerful **SaaS application** designed to streamline operations for
 With **Laundro**, laundry shop owners can **reduce wait times, improve staff efficiency, and enhance customer satisfaction** like never before. Upgrade your laundry management system and take full control of your business operations today!
 
 ![alt text](./docs/sample-dashboard-img.png)
+
+## Personal Project
+
+This is an **in-progress personal project** where I am building a **scalable web application** using modern technologies across the stack. The project showcases my ability to develop **efficient backend APIs**, design **a responsive frontend**, and implement **robust data storage and caching strategies**.
